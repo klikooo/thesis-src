@@ -4,7 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-from ascad import load_ascad, HW, test_model
+from util import HW
+from ascad import load_ascad, test_model
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -27,6 +28,8 @@ class SpreadNet(nn.Module):
         self.fc3 = nn.Linear(n_hidden * spread_factor, out_shape).to(device)
         torch.nn.init.xavier_uniform_(self.fc1.weight)
         torch.nn.init.xavier_uniform_(self.fc3.weight)
+        self.training = True
+
 
     def forward(self, x):
         # x = F.relu(self.fc1(x)).to(device)
@@ -41,16 +44,16 @@ class SpreadNet(nn.Module):
         batch_size = input_size[0]
         num_neurons = input_size[1]
 
-        x_max, _ = x.max(dim=0)
-        x_min, _ = x.min(dim=0)
-
         tensor_max = Variable(torch.from_numpy(self.tensor_max), requires_grad=False).to(device)
         tensor_min = Variable(torch.from_numpy(self.tensor_min), requires_grad=False).to(device)
-        tensor_max = torch.max(tensor_max, x_max).to(device)
-        tensor_min = torch.min(tensor_min, x_min).to(device)
-        self.tensor_max = tensor_max.detach().cpu().numpy()
-        self.tensor_min = tensor_min.detach().cpu().numpy()
-        # print('Size x: {}'.format(input_size))
+        if self.training:
+            x_max, _ = x.max(dim=0)
+            x_min, _ = x.min(dim=0)
+            tensor_max = torch.max(tensor_max, x_max).to(device)
+            tensor_min = torch.min(tensor_min, x_min).to(device)
+            self.tensor_max = tensor_max.detach().cpu().numpy()
+            self.tensor_min = tensor_min.detach().cpu().numpy()
+            # print('Size x: {}'.format(input_size))
 
         tensor_numerator = x - tensor_min
         tensor_denominator = tensor_max - tensor_min
@@ -108,6 +111,7 @@ class SpreadNet(nn.Module):
         model.load_state_dict(checkpoint['model_state_dict'])
         model.tensor_max = checkpoint['max']
         model.tensor_min = checkpoint['min']
+        model.training = False
         return model
 
     def name(self):

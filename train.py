@@ -3,7 +3,7 @@ from torch.autograd import Variable
 import torch.nn as nn
 import numpy as np
 
-from ascad import HW
+from util import HW
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 

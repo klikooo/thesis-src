@@ -18,22 +18,21 @@ ranks_y = []
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 spread_factor = 6
-runs = 1
-train_size = 50000
-epochs = 300
+runs = 5
+train_size = 1000
+epochs = 1400
 batch_size = 100
 lr = 0.00001
-sub_key_index = 2
-attack_size = 1000
+sub_key_index = 0
+attack_size = 2000
 rank_step = 10
 #####################################################################################
 # Select the number of classes to use depending on hw
 n_classes = 9 if use_hw else 256
 type_network = ''
 file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
-
 
 network = None
 title = 'Torch {} \nSpread factor {}\nTrain size {}, batch {}, lr {}, epochs {}, Type {}'.format(
@@ -61,8 +60,8 @@ dir_name = 'subkey_{}/{}_SF{}_E{}_BZ{}_LR1E-5/train{}'.format(
                                                                                                      =True)
 for i in range(runs):
     # Choose which network to use
-    network = SpreadNet(spread_factor=spread_factor, input_shape=700, out_shape=n_classes)
-    # network = DenseSpreadNet(spread_factor=spread_factor, input_shape=700, out_shape=n_classes)
+    # network = SpreadNet(spread_factor=spread_factor, input_shape=700, out_shape=n_classes)
+    network = DenseSpreadNet(spread_factor=spread_factor, input_shape=700, out_shape=n_classes)
     # network = TestNet(pr_shape=460, sbox_shape=500, n_classes=n_classes)
     # network = DenseNet(input_shape=700, n_classes=n_classes)
 
@@ -74,6 +73,8 @@ for i in range(runs):
                     use_hw=use_hw,
                     lr=lr
                     )
+    if isinstance(network, SpreadNet):
+        network.training = False
 
     x, y = test(x_attack, y_attack, metadata_attack,
                 network=network,
@@ -88,9 +89,13 @@ for i in range(runs):
 
     model_save_file = '{}/runs/{}/model_r{}_{}.pt'.format(path, dir_name, i, type_network)
     os.makedirs(os.path.dirname(model_save_file), exist_ok=True)
-    torch.save(network.state_dict(), model_save_file)
+
     if isinstance(network, SpreadNet):
         network.save(model_save_file)
+    elif isinstance(network, DenseSpreadNet):
+        network.save(model_save_file)
+    else:
+        torch.save(network.state_dict(), model_save_file)
 
 x_save_file = '{}/runs/{}/x_{}.r'.format(path, dir_name, type_network)
 y_save_file = '{}/runs/{}/y_{}.r'.format(path, dir_name, type_network)

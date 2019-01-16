@@ -43,13 +43,14 @@ def get(path, file):
 
 
 if __name__ == '__main__':
-    use_hw = False
-    type_network = 'HW' if use_hw else 'ID'
-    train_size = 50000
+    use_hw = True
+    train_size = 1000
     batch_size = 100
-    subkey_index = 2
-    epochs = 500
-    path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF6_E{}_BZ{}_LR1E-5/train{}'.format(
+    subkey_index = 0
+    epochs = 1400
+
+    type_network = 'HW' if use_hw else 'ID'
+    path = '/media/rico/Data/TU/thesis/runs/_subkey_{}/{}_SF6_E{}_BZ{}_LR1E-5/train{}'.format(
         subkey_index, type_network, epochs, batch_size, train_size)
 
     os.chdir(path)

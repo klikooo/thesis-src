@@ -42,47 +42,6 @@ def labelize(plaintexts, keys, subkey_index=2):
     return AES_Sbox[plaintexts[:, subkey_index] ^ keys[:, subkey_index]]
 
 
-def show_snr(traces_file, sub_key_index=0):
-    try:
-        in_file = h5py.File(traces_file, "r")
-    except:
-        print("Error: can't open HDF5 file '%s' for reading (it might be malformed) ..." % traces_file)
-        sys.exit(-1)
-    length = 2000
-    raw_traces = in_file['traces'][0:length]
-    raw_plaintexts = in_file['metadata']['plaintext'][0:length]
-    raw_keys = in_file['metadata']['key'][0:length]
-    z = raw_plaintexts[:, sub_key_index] ^ raw_keys[:, sub_key_index]
-    print('shape zz {}'.format(np.shape(z)))
-    sbox = AES_Sbox[raw_plaintexts[:, sub_key_index] ^ raw_keys[:, sub_key_index]]
-    print("shape sbox {}".format(np.shape(sbox)))
-    print("shape traces {}".format(np.shape(raw_traces)))
-    z = np.corrcoef(raw_traces, sbox)
-    print('shaepe z {}'.format(z))
-
-    # a = np.asanyarray(raw_traces)
-    print(raw_traces[0, 1])
-    print(np.shape(raw_traces))
-    m = np.mean(raw_traces, axis=0)
-    sd = np.std(raw_traces, axis=0)
-    print(np.shape(m))
-    print(np.shape(sd))
-    # return np.where
-    # m = a.mean(axis)
-    # sd = a.std(axis=axis, ddof=ddof)
-    res = np.where(sd == 0, 0, m / sd)
-    # print(np.shape(res))
-    # print(np.flip(np.argsort(res))[0:10])
-    plt.title('Snr ')
-    plt.xlabel('x')
-    plt.ylabel('snr')
-    # plt.grid(True)
-    plt.plot([x for x in range(0, len(res))], raw_traces[0])
-    plt.show()
-
-    return res
-
-
 # TODO: sanity checks on the parameters
 def extract_traces(traces_file, labeled_traces_file, profiling_index=[n for n in range(0, 50000)],
                    attack_index=[n for n in range(50000, 60000)], target_points=[n for n in range(45400, 46100)],
@@ -180,14 +139,15 @@ if __name__ == "__main__":
     ascad_databases_folder = ascad_data_folder
 
     original_raw_traces_file = ascad_databases_folder + "ATMega8515_raw_traces.h5"
-    # show_snr(original_raw_traces_file)
-    target_points = [n for n in range(14350, 14560)] + [n for n in range(15000, 15250)] + [n for n in range(53700, 54200)]
+    # target_points = [n for n in range(14350, 14560)] + [n for n in range(15000, 15250)] + [n for n in range(53700, 54200)]
+    #
+    # print('Size of target points: {}'.format(len(target_points)))
+    subkey_index = 5
 
-    print('Size of target points: {}'.format(len(target_points)))
-
-    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_3.h5", sub_key_index=3,
-                   target_points=[n for n in range(14350, 14560)] +
-                                 [n for n in range(15000, 15250)] +
-                                 [n for n in range(53700, 54200)])
-    # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_desync50.h5", attack_desync=50)
+    # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_3.h5", sub_key_index=3,
+    #                target_points=[n for n in range(14350, 14560)] +
+    #                              [n for n in range(15000, 15250)] +
+    #                              [n for n in range(53700, 54200)])
+    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_{}.h5".format(subkey_index),
+                   sub_key_index=subkey_index)
     # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_desync100.h5", attack_desync=100)
