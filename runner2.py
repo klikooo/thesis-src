@@ -21,13 +21,13 @@ ranks_y = []
 use_hw = True
 spread_factor = 6
 runs = 5
-train_size = 1000
-epochs = 1400
+train_size = 50000
+epochs = 80
 batch_size = 100
 lr = 0.00001
 sub_key_index = 0
-attack_size = 2000
-rank_step = 10
+attack_size = 100
+rank_step = 2
 #####################################################################################
 # Select the number of classes to use depending on hw
 n_classes = 9 if use_hw else 256
@@ -73,6 +73,7 @@ for i in range(runs):
                     use_hw=use_hw,
                     lr=lr
                     )
+    # Make sure don't mess with our min/max
     if isinstance(network, SpreadNet):
         network.training = False
 

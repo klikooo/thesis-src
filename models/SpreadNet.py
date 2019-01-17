@@ -30,7 +30,6 @@ class SpreadNet(nn.Module):
         torch.nn.init.xavier_uniform_(self.fc3.weight)
         self.training = True
 
-
     def forward(self, x):
         # x = F.relu(self.fc1(x)).to(device)
         x = self.fc1(x).to(device)
@@ -102,6 +101,7 @@ class SpreadNet(nn.Module):
             'out_shape': self.out_shape,
             'input_shape': self.input_shape
         }, path)
+
 
     @staticmethod
     def load_spread(file):
