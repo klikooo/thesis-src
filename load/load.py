@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import torch
 
 from models import DenseSpreadNet
@@ -17,7 +19,7 @@ use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(5)]
-train_size = 50000
+train_size = 1000
 epochs = 80
 batch_size = 100
 lr = 0.00001
@@ -38,20 +40,24 @@ ranks_x = []
 ranks_y = []
 
 for run in runs:
-    model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR1E-5/train{}/model_r{}_{}.pt'.format(
+    model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
         sub_key_index,
         type_network,
         spread_factor,
         epochs,
         batch_size,
+        '%.2E' % Decimal(lr),
         train_size,
         run,
         network_name
     )
     print('path={}'.format(model_path))
 
-    model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
-    # model = SpreadNet.load_spread(model_path)
+    if "Dense" in network_name:
+        model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
+    else:
+        model = SpreadNet.load_spread(model_path)
+    print("Using {}".format(model))
     model.to(device)
 
     (x_profiling, y_profiling), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file,
@@ -71,8 +77,6 @@ for run in runs:
     data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
     print('x_test size: {}'.format(data.cpu().size()))
     predictions = F.softmax(model(data).to(device), dim=-1).to(device)
-    d = predictions[0].detach().cpu().numpy()
-    print(d)
 
 
 plt.title('Performance of {}'.format(network_name))

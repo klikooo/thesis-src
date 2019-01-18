@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from models.SpreadNet import SpreadNet
 from models.DenseSpreadNet import DenseSpreadNet
 
@@ -8,27 +10,31 @@ from ascad import load_ascad
 from train import train
 
 
-def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape):
+def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape, checkpoints):
     path = '/media/rico/Data/TU/thesis'
 
     sub_key_index = subkey_index
 
     # Select the number of classes to use depending on hw
     n_classes = 9 if use_hw else 256
-    file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
+    traces_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
 
     # Save the ranks to a file
-    dir_name = 'subkey_{}/{}_SF{}_E{}_BZ{}_LR1E-5/train{}'.format(
+    dir_name = 'subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
         sub_key_index,
         'HW' if use_hw else 'ID',
         spread_factor,
         epochs,
         batch_size,
+        '%.2E' % Decimal(lr),
         train_size
     )
 
     # Load data
-    (x_profiling, y_profiling), (_, _), (_, _) = load_ascad(file, load_metadata=True)
+    (x_profiling, y_profiling), (_, _), (_, _) = load_ascad(traces_file, load_metadata=True)
+
+
+
 
     # Do the runs
     for i in range(runs):
@@ -46,7 +52,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                         use_hw=use_hw,
                         lr=lr
                         )
-        # Make sure don't mess with our min/max
+        # Make sure don't mess with our min/max of the spread network
         if isinstance(network, SpreadNet):
             network.training = False
 
