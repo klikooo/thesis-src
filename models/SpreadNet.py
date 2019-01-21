@@ -102,7 +102,6 @@ class SpreadNet(nn.Module):
             'input_shape': self.input_shape
         }, path)
 
-
     @staticmethod
     def load_spread(file):
         checkpoint = torch.load(file)

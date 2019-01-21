@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from util import SBOX, HW, SBOX_INV, C8
 
 
-
 def check_file_exists(file_path):
     if not os.path.exists(file_path):
         print("Error: provided file path '%s' does not exist!" % file_path)
@@ -123,14 +122,16 @@ def get_model(model_name, db, num_classes=256, batch_size=100, epochs=75, new=Fa
 # def full_ranks(model, dataset, metadata, min_trace_idx, max_trace_idx, rank_step, sub_key_index):
 
 
-def test_model(predictions, metadata, sub_key_index, use_hw=False, title='Tensorflow', show_plot=True, rank_step=10):
+def test_model(predictions, metadata, sub_key_index, use_hw=False, title='Tensorflow', show_plot=True, rank_step=10
+               , unmask=False):
     if predictions is None:
         predictions = model.predict(x_test)
     real_key = metadata[0]['key'][sub_key_index]
     min_trace_idx = 0
     num_traces = len(metadata)
 
-    ranks = full_ranks(predictions, real_key, metadata, min_trace_idx, num_traces, rank_step, sub_key_index, use_hw)
+    ranks = full_ranks(predictions, real_key, metadata, min_trace_idx
+                       , num_traces, rank_step, sub_key_index, use_hw, unmask)
     # We plot the results
     x = [ranks[i][0] for i in range(0, ranks.shape[0])]
     y = [ranks[i][1] for i in range(0, ranks.shape[0])]
@@ -146,19 +147,23 @@ def test_model(predictions, metadata, sub_key_index, use_hw=False, title='Tensor
     return x, y
 
 
-def full_ranks(predictions, real_key, metadata, min_trace_idx, max_trace_idx, rank_step, sub_key_index, use_hw):
+def full_ranks(predictions, real_key, metadata, min_trace_idx, max_trace_idx, rank_step, sub_key_index, use_hw,
+               unmask=False):
     index = np.arange(min_trace_idx + rank_step, max_trace_idx, rank_step)
     f_ranks = np.zeros((len(index), 2), dtype=np.uint32)
     key_bytes_proba = []
     f = rank_hw if use_hw else rank
     for t, i in zip(index, range(0, len(index))):
         real_key_rank, key_bytes_proba = f(predictions[t - rank_step:t], metadata, real_key, t - rank_step, t,
-                                           key_bytes_proba, sub_key_index)
+                                           key_bytes_proba, sub_key_index, unmask)
         f_ranks[i] = [t - min_trace_idx, real_key_rank]
     return f_ranks
 
 
-def rank(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index):
+def rank(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index
+         , unmask=False):
+    # TODO: use unmask to unmask the data as with rank_hw
+
     # Compute the rank
     if len(last_key_bytes_proba) == 0:
         # If this is the first rank we compute, initialize all the estimates to zero
@@ -192,7 +197,8 @@ def rank(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key
     return real_key_rank, key_bytes_proba
 
 
-def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index):
+def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index,
+            unmask=False):
     # Compute the rank
     if len(last_key_bytes_proba) == 0:
         # If this is the first rank we compute, initialize all the estimates to zero
@@ -205,10 +211,25 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
     for p in range(0, max_trace_idx - min_trace_idx):
         # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
         plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
+        if unmask:
+            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
+            # real_key = real_key ^ mask
+        else:
+            mask = 0
         for i in range(0, 256):
             # Our candidate key byte probability is the sum of the predictions logs
-            proba = predictions[p][HW[i]] / C8[i]
-            index = SBOX_INV[i] ^ plaintext
+
+            # Original:
+            j = i ^ mask
+            proba = predictions[p][HW[j]] / C8[j]
+            index = SBOX_INV[j] ^ plaintext
+
+            # index = SBOX_INV[i] ^ plaintext
+            # proba = predictions[p][HW[index]] / C8[i]
+            # index = SBOX_INV[i] ^ plaintext
+            # else:
+            #     proba = predictions[p][HW[i]] / C8[i]
+            #     index = SBOX_INV[i] ^ plaintext
 
             if proba != 0:
                 key_bytes_proba[index] += np.log(proba)

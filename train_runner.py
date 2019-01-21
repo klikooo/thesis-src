@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
 from models.DenseSpreadNet import DenseSpreadNet
 
@@ -8,9 +9,11 @@ import torch
 
 from ascad import load_ascad
 from train import train
+from util import SBOX
 
 
-def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape, checkpoints):
+def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape, checkpoints,
+        unmask=False):
     path = '/media/rico/Data/TU/thesis'
 
     sub_key_index = subkey_index
@@ -31,7 +34,28 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     )
 
     # Load data
-    (x_profiling, y_profiling), (_, _), (_, _) = load_ascad(traces_file, load_metadata=True)
+    (x_profiling, y_profiling), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
+    if unmask:
+        y_profiling = [y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))]
+
+    # i = 100
+    # j = sub_key_index
+    # k = metadata_profiling[i]['key'][j]
+    # y = y_profiling[i]
+    # p = metadata_profiling[i]['plaintext'][j]
+    # s = SBOX[p ^ k]
+    # m = metadata_profiling[i]['masks'][j]
+    # r = [s ^ mask for mask in metadata_profiling[i]['masks']]
+    # print('Y label: {}'.format(y))
+    # print('Key: {}'.format(k))
+    # print('Plain: {}'.format(p))
+    # print('Sbox out: {} '.format(s))
+    # print('mask : {}'.format(m))
+    # print('Res:  {}'.format(s^m))
+    # print('Res:  {}'.format(r))
+
+    # print(metadata_profiling[:]['masks'][15])
+    # exit(1)
 
 
 
@@ -64,6 +88,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         if isinstance(network, SpreadNet):
             network.save(model_save_file)
         elif isinstance(network, DenseSpreadNet):
+            network.save(model_save_file)
+        elif isinstance(network, DenseNet):
             network.save(model_save_file)
         else:
             torch.save(network.state_dict(), model_save_file)

@@ -8,7 +8,10 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 class DenseNet(nn.Module):
     def __init__(self, input_shape, n_classes):
         super(DenseNet, self).__init__()
-        n_hidden = 600
+        n_hidden = 200
+        self.input_shape = input_shape
+        self.out_shape = n_classes
+
         self.fc1 = nn.Linear(input_shape, n_hidden).to(device)
         self.fc2 = nn.Linear(n_hidden, n_hidden).to(device)
         self.fc3 = nn.Linear(n_hidden, n_hidden).to(device)
@@ -37,3 +40,20 @@ class DenseNet(nn.Module):
     def name(self):
         return "DenseNet"
 
+    def save(self, path):
+        torch.save({
+            'model_state_dict': self.state_dict(),
+            'out_shape': self.out_shape,
+            'input_shape': self.input_shape
+        }, path)
+
+    @staticmethod
+    def load_model(file):
+        checkpoint = torch.load(file)
+
+        model = DenseNet(input_shape=checkpoint['input_shape'], n_classes=checkpoint['out_shape'])
+        model.load_state_dict(checkpoint['model_state_dict'])
+        return model
+
+    def name(self):
+        return "MLPBEST"
