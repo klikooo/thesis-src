@@ -7,11 +7,10 @@ from models.DenseSpreadNet import DenseSpreadNet
 import os
 import torch
 
-from ascad import load_ascad
+from util import load_ascad
 from train import train
 
 import numpy as np
-from util import SBOX
 
 
 def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape, checkpoints,

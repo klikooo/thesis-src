@@ -2,13 +2,13 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-from ascad import HW, test_model
+from util import HW, test_model
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=True, attack_size=10000, rank_step=10
-         , unmask=False):
+def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=True, attack_size=10000, rank_step=10,
+         unmask=False):
     # Cut to the correct attack size
     x_attack = x_attack[0:attack_size]
     y_attack = y_attack[0:attack_size]
@@ -36,7 +36,6 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
         # Calculate num of traces needed
         return test_model(predictions.cpu().numpy(), metadata_attack, sub_key_index,
                           use_hw=use_hw,
-                          show_plot=False,
                           rank_step=rank_step,
                           unmask=unmask)
 

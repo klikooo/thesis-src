@@ -1,7 +1,4 @@
-import h5py
-import os.path
-import sys
-import numpy as np
+
 from keras import Model, Input
 
 from keras.models import Sequential, load_model
@@ -9,39 +6,10 @@ from keras.layers import Dense, Flatten, Dropout, Conv1D, Conv2D, MaxPooling1D, 
 from keras.utils import to_categorical
 from keras.optimizers import RMSprop, Adam
 from keras.callbacks import ModelCheckpoint
-import matplotlib.pyplot as plt
 
-from util import SBOX, HW, SBOX_INV, C8
-
-
-def check_file_exists(file_path):
-    if not os.path.exists(file_path):
-        print("Error: provided file path '%s' does not exist!" % file_path)
-        sys.exit(-1)
-    return
+from util import SBOX, HW, load_ascad, check_file_exists, test_model
 
 
-def load_ascad(ascad_database_file, load_metadata=False):
-    check_file_exists(ascad_database_file)
-    # Open the ASCAD database HDF5 for reading
-    try:
-        in_file = h5py.File(ascad_database_file, "r")
-    except:
-        print("Error: can't open HDF5 file '%s' for reading (it might be malformed) ..." % ascad_database_file)
-        sys.exit(-1)
-    # Load profiling traces
-    X_profiling = np.array(in_file['Profiling_traces/traces'], dtype=np.int8)
-    # Load profiling labels
-    Y_profiling = np.array(in_file['Profiling_traces/labels'])
-    # Load attacking traces
-    X_attack = np.array(in_file['Attack_traces/traces'], dtype=np.int8)
-    # Load attacking labels
-    Y_attack = np.array(in_file['Attack_traces/labels'])
-    if not load_metadata:
-        return (X_profiling, Y_profiling), (X_attack, Y_attack)
-    else:
-        return (X_profiling, Y_profiling), (X_attack, Y_attack), \
-               (in_file['Profiling_traces/metadata'], in_file['Attack_traces/metadata'])
 
 
 def cnn_model(num_classes):
@@ -118,136 +86,7 @@ def get_model(model_name, db, num_classes=256, batch_size=100, epochs=75, new=Fa
     return model
 
 
-# ranks = full_ranks(model, X_attack, Metadata_attack, 0, num_traces, 10, sub_key_index)
-# def full_ranks(model, dataset, metadata, min_trace_idx, max_trace_idx, rank_step, sub_key_index):
 
-
-def test_model(predictions, metadata, sub_key_index, use_hw=False, title='Tensorflow', show_plot=True, rank_step=10
-               , unmask=False):
-    if predictions is None:
-        predictions = model.predict(x_test)
-    real_key = metadata[0]['key'][sub_key_index]
-    min_trace_idx = 0
-    num_traces = len(metadata)
-
-    ranks = full_ranks(predictions, real_key, metadata, min_trace_idx
-                       , num_traces, rank_step, sub_key_index, use_hw, unmask)
-    # We plot the results
-    x = [ranks[i][0] for i in range(0, ranks.shape[0])]
-    y = [ranks[i][1] for i in range(0, ranks.shape[0])]
-
-    if show_plot:
-        plt.title('Performance of {}'.format(title))
-        plt.xlabel('number of traces')
-        plt.ylabel('rank')
-        plt.grid(True)
-        plt.plot(x, y)
-        plt.show()
-        plt.figure()
-    return x, y
-
-
-def full_ranks(predictions, real_key, metadata, min_trace_idx, max_trace_idx, rank_step, sub_key_index, use_hw,
-               unmask=False):
-    index = np.arange(min_trace_idx + rank_step, max_trace_idx, rank_step)
-    f_ranks = np.zeros((len(index), 2), dtype=np.uint32)
-    key_bytes_proba = []
-    f = rank_hw if use_hw else rank
-    for t, i in zip(index, range(0, len(index))):
-        real_key_rank, key_bytes_proba = f(predictions[t - rank_step:t], metadata, real_key, t - rank_step, t,
-                                           key_bytes_proba, sub_key_index, unmask)
-        f_ranks[i] = [t - min_trace_idx, real_key_rank]
-    return f_ranks
-
-
-def rank(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index
-         , unmask=False):
-    # TODO: use unmask to unmask the data as with rank_hw
-
-    # Compute the rank
-    if len(last_key_bytes_proba) == 0:
-        # If this is the first rank we compute, initialize all the estimates to zero
-        key_bytes_proba = np.zeros(256)
-    else:
-        # This is not the first rank we compute: we optimize things by using the
-        # previous computations to save time!
-        key_bytes_proba = last_key_bytes_proba
-
-    for p in range(0, max_trace_idx - min_trace_idx):
-        # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
-        plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
-        if unmask:
-            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
-        else:
-            mask = 0
-        for i in range(0, 256):
-            # Our candidate key byte probability is the sum of the predictions logs
-            proba = predictions[p][SBOX[plaintext ^ i] ^ mask]
-            if proba != 0:
-                key_bytes_proba[i] += np.log(proba)
-            else:
-                # We do not want an -inf here, put a very small epsilon
-                # that correspondis to a power of our min non zero proba
-                min_proba_predictions = predictions[p][np.array(predictions[p]) != 0]
-                if len(min_proba_predictions) == 0:
-                    print("Error: got a prediction with only zeroes ... this should not happen!")
-                    sys.exit(-1)
-                min_proba = min(min_proba_predictions)
-                key_bytes_proba[i] += np.log(min_proba ** 2)
-    # Now we find where our real key candidate lies in the estimation.
-    # We do this by sorting our estimates and find the rank in the sorted array.
-    sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
-    real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
-    return real_key_rank, key_bytes_proba
-
-
-def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key_bytes_proba, sub_key_index,
-            unmask=False):
-    # Compute the rank
-    if len(last_key_bytes_proba) == 0:
-        # If this is the first rank we compute, initialize all the estimates to zero
-        key_bytes_proba = np.zeros(256)
-    else:
-        # This is not the first rank we compute: we optimize things by using the
-        # previous computations to save time!
-        key_bytes_proba = last_key_bytes_proba
-
-    for p in range(0, max_trace_idx - min_trace_idx):
-        # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
-        plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
-        if unmask:
-            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
-            # real_key = real_key ^ mask
-        else:
-            mask = 0
-        for i in range(0, 256):
-            # Our candidate key byte probability is the sum of the predictions logs
-
-            # Original:
-            # j = i ^ mask
-            # proba = predictions[p][HW[j]] / C8[j]
-            # index = SBOX_INV[j] ^ plaintext
-
-            index = i
-            proba = predictions[p][HW[SBOX[plaintext ^ i] ^ mask]]
-
-
-            if proba != 0:
-                key_bytes_proba[index] += np.log(proba)
-            else:
-                # We do not want an -inf here, put a very small epsilon
-                # that correspondis to a power of our min non zero proba
-                min_proba_predictions = predictions[p][np.array(predictions[p]) != 0]
-                if len(min_proba_predictions) == 0:
-                    print("Error: got a prediction with only zeroes ... this should not happen!")
-                    sys.exit(-1)
-                min_proba = min(min_proba_predictions)
-                key_bytes_proba[index] += np.log(min_proba ** 2)
-    # Now we find where our real key candidate lies in the estimation.
-    # We do this by sorting our estimates and find the rank in the sorted array.
-    sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
-    real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
-    return real_key_rank, key_bytes_proba
 
 
 if __name__ == "__main__":
@@ -262,7 +101,7 @@ if __name__ == "__main__":
         (_, _), (x_test, y_test), (metadata_profiling, metadata_attack) = \
             load_ascad(file, load_metadata=True)
         predi = model.predict(x_test)
-        test_model(predi, metadata_attack, sub_key_index, title='Keras')
 
-# loss_and_metrics = model.evaluate(x_attack, y_attack, batch_size=200)
-# (X_profiling, Y_profiling), (X_attack, Y_attack), (Metadata_profiling, Metadata_attack) =
+        x,y = test_model(predi, metadata_attack, sub_key_index)
+        #TODO: plot result
+

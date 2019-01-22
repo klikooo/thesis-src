@@ -4,8 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-from util import HW
-from ascad import load_ascad, test_model
+from util import load_ascad, test_model, HW
 
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     use_hw = True
     spread_factor = 6
     runs = 5
-    train_sizes = [2000, 5000, 10000]
+    train_sizes = [1000]
     epochs = 80
     batch_size = 100
     lr = 0.00001

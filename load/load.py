@@ -6,11 +6,15 @@ from models import DenseSpreadNet
 from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
 import numpy as np
+
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-from ascad import load_ascad
+
+from util import load_ascad
 from test import test
+
+
 
 path = '/media/rico/Data/TU/thesis'
 
@@ -20,7 +24,7 @@ use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(5)]
-train_size = 50000
+train_size = 1000
 epochs = 80
 batch_size = 100
 lr = 0.00001
