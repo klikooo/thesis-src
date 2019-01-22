@@ -9,6 +9,8 @@ import torch
 
 from ascad import load_ascad
 from train import train
+
+import numpy as np
 from util import SBOX
 
 
@@ -36,7 +38,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     # Load data
     (x_profiling, y_profiling), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
     if unmask:
-        y_profiling = [y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))]
+        y_profiling = np.array([y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))])
 
     # i = 100
     # j = sub_key_index

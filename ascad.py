@@ -176,9 +176,13 @@ def rank(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_key
     for p in range(0, max_trace_idx - min_trace_idx):
         # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
         plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
+        if unmask:
+            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
+        else:
+            mask = 0
         for i in range(0, 256):
             # Our candidate key byte probability is the sum of the predictions logs
-            proba = predictions[p][SBOX[plaintext ^ i]]
+            proba = predictions[p][SBOX[plaintext ^ i] ^ mask]
             if proba != 0:
                 key_bytes_proba[i] += np.log(proba)
             else:
@@ -220,16 +224,13 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
             # Our candidate key byte probability is the sum of the predictions logs
 
             # Original:
-            j = i ^ mask
-            proba = predictions[p][HW[j]] / C8[j]
-            index = SBOX_INV[j] ^ plaintext
+            # j = i ^ mask
+            # proba = predictions[p][HW[j]] / C8[j]
+            # index = SBOX_INV[j] ^ plaintext
 
-            # index = SBOX_INV[i] ^ plaintext
-            # proba = predictions[p][HW[index]] / C8[i]
-            # index = SBOX_INV[i] ^ plaintext
-            # else:
-            #     proba = predictions[p][HW[i]] / C8[i]
-            #     index = SBOX_INV[i] ^ plaintext
+            index = i
+            proba = predictions[p][HW[SBOX[plaintext ^ i] ^ mask]]
+
 
             if proba != 0:
                 key_bytes_proba[index] += np.log(proba)

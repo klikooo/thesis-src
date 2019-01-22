@@ -15,7 +15,7 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
 
     metadata_attack = metadata_attack[0:attack_size]
     if unmask:
-        y_attack = [y_attack[i] ^ metadata_attack[i]['masks'][0] for i in range(attack_size)]
+        y_attack = np.array([y_attack[i] ^ metadata_attack[i]['masks'][0] for i in range(attack_size)])
 
     # Convert values to hamming weight if asked for
     if use_hw:
