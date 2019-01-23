@@ -2,7 +2,8 @@ from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
 from train_runner import run
-
+import sys
+import os
 
 def init_dense(spread_factor, input_shape, out_shape):
     return DenseSpreadNet(spread_factor=spread_factor, out_shape=out_shape, input_shape=input_shape)
@@ -17,12 +18,27 @@ def init_mlp_best(spread_factor, input_shape, out_shape):
 
 
 if __name__ == "__main__":
+
+    traces_path = '/media/rico/Data/TU/thesis/data/'
+    model_save_path = '/media/rico/Data/TU/thesis/runs/'
+
+    if len(sys.argv) == 3:
+        traces_path = sys.argv[1]
+        model_save_path = sys.argv[2]
+
+    if not os.path.isdir(model_save_path):
+        print("Model save path ({}) does not exist.".format(model_save_path))
+        exit(-1)
+
+    print('Using traces path: {}'.format(traces_path))
+    print('Using model save path: {}'.format(model_save_path))
+
     # Parameters
-    init_funcs = [init_mlp_best, init_dense, init_spread]
+    init_funcs = [init_dense]
     use_hw = True
     spread_factor = 6
     runs = 5
-    train_sizes = [1000]
+    train_sizes = [1500]
     epochs = 80
     batch_size = 100
     lr = 0.00001
@@ -31,7 +47,6 @@ if __name__ == "__main__":
     input_shape = 700
     checkpoints = [100]
     unmask = False if subkey_index < 2 else True
-
     ############################
 
     for train_size in train_sizes:
@@ -41,4 +56,6 @@ if __name__ == "__main__":
                 init=init_func,
                 input_shape=input_shape,
                 checkpoints=checkpoints,
-                unmask=unmask)
+                unmask=unmask,
+                traces_path=traces_path,
+                model_save_path=model_save_path)

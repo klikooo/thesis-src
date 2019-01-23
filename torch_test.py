@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-from ascad import load_ascad, HW, SBOX_INV, SBOX, test_model
+from util import load_ascad, HW, SBOX_INV, SBOX, test_model
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -128,5 +128,4 @@ with torch.no_grad():
 
     accuracy(predictions, y_attack)
 
-    test_model(predictions.cpu().numpy(), metadata_attack, 2, use_hw=use_hw, title='Torch {}'.format(
-        'HW' if use_hw else 'ID'))
+    test_model(predictions.cpu().numpy(), metadata_attack, 2, use_hw=use_hw)
