@@ -1,10 +1,8 @@
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
-import numpy as np
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from util import device
 
 
 class TestNet(nn.Module):

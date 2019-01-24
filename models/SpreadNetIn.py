@@ -3,8 +3,7 @@ from torch.autograd import Variable
 import torch.nn as nn
 import numpy as np
 
-
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from util import device
 
 
 class SpreadNetIn(nn.Module):
@@ -14,6 +13,8 @@ class SpreadNetIn(nn.Module):
         np_min = np.array([np.finfo(np.float32).min] * n_hidden)
         np_max = np.array([np.finfo(np.float32).max] * n_hidden)
         self.spread_factor = spread_factor
+        self.input_shape = input_shape
+        self.out_shape = out_shape
         # self.tensor_min = Variable(torch.from_numpy(np_max), requires_grad=False).to(device)
         # self.tensor_max = Variable(torch.from_numpy(np_min), requires_grad=False).to(device)
         self.tensor_min = np_max
@@ -25,10 +26,12 @@ class SpreadNetIn(nn.Module):
         self.fc3 = nn.Linear(n_hidden * spread_factor, out_shape).to(device)
         torch.nn.init.xavier_uniform_(self.fc1.weight)
         torch.nn.init.xavier_uniform_(self.fc3.weight)
+        self.training = True
 
     def forward(self, x):
         # x = F.relu(self.fc1(x)).to(device)
         x = self.fc1(x).to(device)
+
         x = self.spread(x)
         self.intermediate_values.append(x.detach().cpu().numpy())
         x = self.fc3(x).to(device)
@@ -39,16 +42,16 @@ class SpreadNetIn(nn.Module):
         batch_size = input_size[0]
         num_neurons = input_size[1]
 
-        x_max, _ = x.max(dim=0)
-        x_min, _ = x.min(dim=0)
-
         tensor_max = Variable(torch.from_numpy(self.tensor_max), requires_grad=False).to(device)
         tensor_min = Variable(torch.from_numpy(self.tensor_min), requires_grad=False).to(device)
-        tensor_max = torch.max(tensor_max, x_max).to(device)
-        tensor_min = torch.min(tensor_min, x_min).to(device)
-        self.tensor_max = tensor_max.detach().cpu().numpy()
-        self.tensor_min = tensor_min.detach().cpu().numpy()
-        # print('Size x: {}'.format(input_size))
+        if self.training:
+            x_max, _ = x.max(dim=0)
+            x_min, _ = x.min(dim=0)
+            tensor_max = torch.max(tensor_max, x_max).to(device)
+            tensor_min = torch.min(tensor_min, x_min).to(device)
+            self.tensor_max = tensor_max.detach().cpu().numpy()
+            self.tensor_min = tensor_min.detach().cpu().numpy()
+            # print('Size x: {}'.format(input_size))
 
         tensor_numerator = x - tensor_min
         tensor_denominator = tensor_max - tensor_min
@@ -88,6 +91,27 @@ class SpreadNetIn(nn.Module):
         res = result.transpose(0, 1).contiguous().view(batch_size, num_neurons * self.spread_factor)
         return res
 
+    def save(self, path):
+        torch.save({
+            'model_state_dict': self.state_dict(),
+            'min': self.tensor_min,
+            'max': self.tensor_max,
+            'sf': self.spread_factor,
+            'out_shape': self.out_shape,
+            'input_shape': self.input_shape
+        }, path)
+
+    @staticmethod
+    def load_spread(file):
+        checkpoint = torch.load(file)
+
+        model = SpreadNetIn(checkpoint['sf'], input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.tensor_max = checkpoint['max']
+        model.tensor_min = checkpoint['min']
+        model.training = False
+        return model
 
     def name(self):
         return "SpreadNetIn"
+

@@ -5,6 +5,7 @@ import torch
 from models import DenseSpreadNet
 from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
+from models.SpreadNetIn import SpreadNetIn
 import numpy as np
 
 import torch.nn.functional as F
@@ -15,7 +16,6 @@ from util import load_ascad
 from test import test
 
 
-
 path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
@@ -24,8 +24,8 @@ use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(5)]
-train_size = 1000
-epochs = 10
+train_size = 50000
+epochs = 80
 batch_size = 100
 lr = 0.00001
 sub_key_index = 2
@@ -37,7 +37,8 @@ unmask = False if sub_key_index < 2 else True
 # network_name = 'DenseSpreadNet'
 # network_name = "MLPBEST"
 
-network_names = ['SpreadNet', 'MLPBEST', 'DenseSpreadNet']
+# network_names = ['SpreadNet', 'MLPBEST', 'DenseSpreadNet']
+network_names = ['SpreadNet']
 #####################################################################################
 
 trace_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
@@ -68,7 +69,7 @@ def get_ranks(use_hw, runs, train_size,
         elif "MLP" in network_name:
             model = DenseNet.load_model(model_path)
         else:
-            model = SpreadNet.load_spread(model_path)
+            model = SpreadNetIn.load_spread(model_path)
         print("Using {}".format(model))
         model.to(device)
 
@@ -82,6 +83,25 @@ def get_ranks(use_hw, runs, train_size,
                     rank_step=rank_step,
                     unmask=unmask)
 
+        if isinstance(model, SpreadNetIn):
+            v = model.intermediate_values
+            print('len v {}'.format(np.shape(v)))
+            s = np.std(v, axis=1)
+            print('std len: {}'.format(np.shape(s)))
+            res = np.where(s[0] < 0.05, 1, 0)
+            m_res = np.mean(v, axis=1)
+            m_res2 = np.where(m_res[0] < 0.05, 1, 0)
+            print('Sum  std results {}'.format(np.sum(res)))
+            print('Sum mean results {}'.format(np.sum(m_res2)))
+            plt.title('Performance of networks')
+            plt.xlabel('Number of traces')
+            plt.ylabel('Mean rank')
+            plt.grid(True)
+            plt.plot(s[0], label='std')
+            plt.legend()
+            plt.show()
+
+            # exit(1)
         ranks_x.append(x)
         ranks_y.append(y)
 
@@ -109,9 +129,9 @@ for i in range(len(rank_mean_y)):
     plt.xlabel('number of traces')
     plt.ylabel('rank')
     plt.grid(True)
-    for x, y in zip(ranks_x[i], ranks_y[i]):
-        # Plot the results
 
+    # Plot the results
+    for x, y in zip(ranks_x[i], ranks_y[i]):
         plt.plot(x, y)
     plt.figure()
 

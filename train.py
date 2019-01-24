@@ -1,14 +1,11 @@
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
 
 from DataAscad import DataAscad
 from optimizers.Nadam import Nadam
-from util import HW
-
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from util import HW, device
 
 
 def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001, use_hw=True):
@@ -48,7 +45,7 @@ def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=
             # zero the parameter gradients
             optimizer.zero_grad()
 
-            # TODO: klopt dit?
+            # Calculate the batch and do a backward pass
             net_out = network(batch_x)
             loss = criterion(net_out, batch_y)
             loss.backward()

@@ -2,9 +2,7 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 
-from util import HW, test_model
-
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from util import HW, test_model, device
 
 
 def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=True, attack_size=10000, rank_step=10,
@@ -27,8 +25,8 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
         print('x_test size: {}'.format(data.cpu().size()))
 
         predictions = F.softmax(network(data).to(device), dim=-1).to(device)
-        d = predictions[0].cpu().numpy()
-        print('Sum predictions: {}'.format(np.sum(d)))
+        # d = predictions[0].cpu().numpy()
+        # print('Sum predictions: {}'.format(np.sum(d)))
 
         # Print accuracy
         accuracy(network, x_attack, y_attack)

@@ -1,9 +1,7 @@
 from torch.utils.data import Dataset
 import torch
 import numpy as np
-
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
+from util import device
 
 class DataAscad(Dataset):
     def __init__(self, x_profiling, y_profiling, train_size):

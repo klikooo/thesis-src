@@ -7,7 +7,7 @@ import numpy as np
 from util import load_ascad, test_model, HW
 
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from util import device
 
 
 class DenseSpreadNet(nn.Module):
