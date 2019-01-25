@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from util import device
 
+
 class DataAscad(Dataset):
     def __init__(self, x_profiling, y_profiling, train_size):
         self.train_size = train_size

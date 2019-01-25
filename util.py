@@ -1,10 +1,13 @@
+import argparse
+
 import numpy as np
 import sys
 import h5py
 import os.path
 import torch
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0')
 
 
 SBOX = np.array([
@@ -193,3 +196,15 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
     return real_key_rank, key_bytes_proba
 
 
+class BoolAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, nargs)
+        self.default = kwargs['default']
+        if nargs is not None:
+            raise ValueError("nargs not allowed")
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not(values in ['True', 'true', '1'] or values in ['False', 'false', '0']):
+            print("aaaaaaaaaaaaaaaaaaaaaa")
+            raise ValueError("arg should be either true or false")
+        setattr(namespace, self.dest, values in ['True', 'true', '1'])
