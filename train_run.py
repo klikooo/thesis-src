@@ -26,7 +26,7 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [init_spread]
+    init_funcs = [init_spread, init_mlp_best, init_dense]
     use_hw = True
     spread_factor = 6
     runs = 5
