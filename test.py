@@ -6,7 +6,8 @@ from util import HW, test_model, device
 
 
 def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=True, attack_size=10000, rank_step=10,
-         unmask=False):
+         unmask=False,
+         only_accuracy=False):
     # Cut to the correct attack size
     x_attack = x_attack[0:attack_size]
     y_attack = y_attack[0:attack_size]
@@ -31,11 +32,14 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
         # Print accuracy
         accuracy(network, x_attack, y_attack)
 
-        # Calculate num of traces needed
-        return test_model(predictions.cpu().numpy(), metadata_attack, sub_key_index,
-                          use_hw=use_hw,
-                          rank_step=rank_step,
-                          unmask=unmask)
+        if not only_accuracy:
+            # Calculate num of traces needed
+            return test_model(predictions.cpu().numpy(), metadata_attack, sub_key_index,
+                              use_hw=use_hw,
+                              rank_step=rank_step,
+                              unmask=unmask)
+        else:
+            return None, None
 
 
 def accuracy(network, x_test, y_test):
