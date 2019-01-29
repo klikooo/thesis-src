@@ -1,6 +1,7 @@
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
+from models.CosNet import CosNet
 from train_runner import run
 import os
 import argparse
@@ -8,16 +9,16 @@ import argparse
 from util import BoolAction
 
 
-def init_dense(spread_factor, input_shape, out_shape):
-    return DenseSpreadNet(spread_factor=spread_factor, out_shape=out_shape, input_shape=input_shape)
+def init_dense(arg):
+    return DenseSpreadNet(spread_factor=arg['sf'], out_shape=arg['n_classes'], input_shape=arg['input_shape'])
 
 
-def init_spread(spread_factor, input_shape, out_shape):
-    return SpreadNet(spread_factor=spread_factor, out_shape=out_shape, input_shape=input_shape)
+def init_spread(arg):
+    return SpreadNet(spread_factor=arg['sf'], out_shape=arg['n_classes'], input_shape=arg['input_shape'])
 
 
-def init_mlp_best(spread_factor, input_shape, out_shape):
-    return DenseNet(input_shape=input_shape, n_classes=out_shape)
+def init_mlp_best(arg):
+    return DenseNet(input_shape=arg['input_shape'], n_classes=arg['n_classes'])
 
 
 if __name__ == "__main__":
@@ -26,13 +27,13 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [init_spread, init_mlp_best, init_dense]
+    init_funcs = [CosNet.init, SpreadNet.init, DenseSpreadNet.init, DenseNet.init]
     use_hw = True
     spread_factor = 6
     runs = 5
-    train_sizes = [500]
+    train_sizes = [1000]
     epochs = 80
-    batch_size = 500
+    batch_size = 100
     lr = 0.0001
     # lr = 0.001
     subkey_index = 2

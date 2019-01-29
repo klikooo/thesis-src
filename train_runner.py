@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
 from models.DenseSpreadNet import DenseSpreadNet
@@ -41,10 +42,15 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         y_profiling = np.array(
             [y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))])
 
+    init_args = {"sf": spread_factor,
+                 "input_shape": input_shape,
+                 "n_classes": n_classes
+                 }
+
     # Do the runs
     for i in range(runs):
         # Initialize the network and train it
-        network = init(spread_factor, input_shape, n_classes)
+        network = init(init_args)
         network = train(x_profiling, y_profiling,
                         train_size=train_size,
                         network=network,
@@ -70,6 +76,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         elif isinstance(network, DenseSpreadNet):
             network.save(model_save_file)
         elif isinstance(network, DenseNet):
+            network.save(model_save_file)
+        elif isinstance(network, CosNet):
             network.save(model_save_file)
         else:
             torch.save(network.state_dict(), model_save_file)

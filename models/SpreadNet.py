@@ -113,6 +113,10 @@ class SpreadNet(nn.Module):
     def name(self):
         return "SpreadNet"
 
+    @staticmethod
+    def init(args):
+        return SpreadNet(spread_factor=args['sf'], out_shape=args['n_classes'], input_shape=args['input_shape'])
+
 
 def accuracy(predictions, y_test):
     _, pred = predictions.max(1)
@@ -126,9 +130,9 @@ def train_test(data_file, train_size, network, sub_key_index, epochs=700, batch_
                attack_size=10000, rank_step=10):
     # Load data
     traces_file = data_file
-    (x_profiling, y_profiling), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(traces_file,
-                                                                                                         load_metadata
-                                                                                                         =True)
+    (x_profiling, y_profiling), (x_attack, y_attack), (metadata_profiling, metadata_attack) = \
+        load_ascad(traces_file, load_metadata=True)
+
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]
     y_profiling = y_profiling[0:train_size]

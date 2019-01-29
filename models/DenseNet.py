@@ -55,5 +55,9 @@ class DenseNet(nn.Module):
         model.load_state_dict(checkpoint['model_state_dict'])
         return model
 
+    @staticmethod
+    def init(args):
+        return DenseNet(n_classes=args['n_classes'], input_shape=args['input_shape'])
+
     def name(self):
         return "MLPBEST"

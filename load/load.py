@@ -4,6 +4,7 @@ from decimal import Decimal
 import torch
 
 from models import DenseSpreadNet
+from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
 from models.SpreadNetIn import SpreadNetIn
@@ -23,29 +24,27 @@ path = '/media/rico/Data/TU/thesis'
 # Parameters
 use_hw = True
 n_classes = 9 if use_hw else 256
-spread_factor = 9
-runs = [x for x in range(10)]
-train_size = 2000
+spread_factor = 6
+runs = [x for x in range(5)]
+train_size = 1000
 epochs = 80
-batch_size = 1000
+batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 attack_size = 1000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
-# network_name = 'SpreadNet'
-# network_name = 'DenseSpreadNet'
-# network_name = "MLPBEST"
 
-network_names = ['SpreadNet', 'MLPBEST', 'DenseSpreadNet']
-# network_names = ['SpreadNet']
+network_names = ['SpreadNet', 'MLPBEST', 'DenseSpreadNet', "CosNet"]
+# network_names = ['CosNet']
 # network_names = ['MLPBEST']
+only_accuracy = False
+
 #####################################################################################
 
 trace_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
 device = torch.device("cuda")
-only_accuracy = False
 
 
 def get_ranks(use_hw, runs, train_size,
@@ -54,7 +53,7 @@ def get_ranks(use_hw, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs2/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
             sub_key_index,
             type_network,
             spread_factor,
@@ -75,6 +74,8 @@ def get_ranks(use_hw, runs, train_size,
         #     model = SpreadNetIn.load_spread(model_path)
         elif "SpreadNet" in network_name:
             model = SpreadNet.load_spread(model_path)
+        elif "CosNet" in network_name:
+            model = CosNet.load_model(model_path)
         else:
             raise Exception("Unkown model")
         print("Using {}".format(model))
@@ -104,14 +105,14 @@ def get_ranks(use_hw, runs, train_size,
             print('msq max: {}'.format(msq_max))
 
             # Plot the distribution of each neuron right after the first fully connected layer
-            # for k in range(100):
-            #     plt.grid(True)
-            #     plt.axvline(x=model.tensor_min[k], color='green')
-            #     plt.axvline(x=model.tensor_max[k], color='green')
-            #     plt.hist(z[:][k], bins=40)
-            #
-            #     plt.show()
-            # exit()
+            for k in range(100):
+                plt.grid(True)
+                plt.axvline(x=model.tensor_min[k], color='green')
+                plt.axvline(x=model.tensor_max[k], color='green')
+                plt.hist(z[:][k], bins=40)
+
+                plt.show()
+            exit()
 
             # Retrieve the intermediate values right after the spread layer,
             # and order them such that each 6 values after each other belong to the neuron of the

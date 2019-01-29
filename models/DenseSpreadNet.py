@@ -51,6 +51,10 @@ class DenseSpreadNet(nn.Module):
         model.load_state_dict(checkpoint['model_state_dict'])
         return model
 
+    @staticmethod
+    def init(args):
+        return DenseSpreadNet(spread_factor=args['sf'], out_shape=args['n_classes'], input_shape=args['input_shape'])
+
 
 def accuracy(predictions, y_test):
     _, pred = predictions.max(1)
