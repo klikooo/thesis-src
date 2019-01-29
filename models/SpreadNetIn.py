@@ -21,6 +21,7 @@ class SpreadNetIn(nn.Module):
         self.tensor_max = np_min
 
         self.intermediate_values = []
+        self.intermediate_values2 = []
 
         self.fc1 = nn.Linear(input_shape, n_hidden).to(device)
         self.fc3 = nn.Linear(n_hidden * spread_factor, out_shape).to(device)
@@ -31,6 +32,7 @@ class SpreadNetIn(nn.Module):
     def forward(self, x):
         # x = F.relu(self.fc1(x)).to(device)
         x = self.fc1(x).to(device)
+        self.intermediate_values2.append(x.detach().cpu().numpy())
 
         x = self.spread(x)
         self.intermediate_values.append(x.detach().cpu().numpy())

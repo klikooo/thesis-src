@@ -30,10 +30,10 @@ if __name__ == "__main__":
     use_hw = True
     spread_factor = 6
     runs = 5
-    train_sizes = [1200]
+    train_sizes = [500]
     epochs = 80
-    batch_size = 100
-    lr = 0.00001
+    batch_size = 500
+    lr = 0.0001
     # lr = 0.001
     subkey_index = 2
     input_shape = 700

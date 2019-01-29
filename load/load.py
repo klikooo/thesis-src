@@ -23,15 +23,15 @@ path = '/media/rico/Data/TU/thesis'
 # Parameters
 use_hw = True
 n_classes = 9 if use_hw else 256
-spread_factor = 3
+spread_factor = 9
 runs = [x for x in range(10)]
 train_size = 2000
 epochs = 80
-batch_size = 100
-lr = 0.00001
+batch_size = 1000
+lr = 0.0001
 sub_key_index = 2
-attack_size = 3000
-rank_step = 5
+attack_size = 1000
+rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 # network_name = 'SpreadNet'
@@ -45,6 +45,7 @@ network_names = ['SpreadNet', 'MLPBEST', 'DenseSpreadNet']
 
 trace_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
 device = torch.device("cuda")
+only_accuracy = False
 
 
 def get_ranks(use_hw, runs, train_size,
@@ -88,31 +89,59 @@ def get_ranks(use_hw, runs, train_size,
                     attack_size=attack_size,
                     rank_step=rank_step,
                     unmask=unmask,
-                    only_accuracy=False)
+                    only_accuracy=only_accuracy)
 
         if isinstance(model, SpreadNetIn):
+            # Get the intermediate values right after the first fully connected layer
+            z = np.transpose(model.intermediate_values2[0])
+
+            # Calculate the mse for the maximum and minumum from these traces and the learned min and max
+            min_z = np.min(z, axis=1)
+            max_z = np.max(z, axis=1)
+            msq_min = np.mean(np.square(min_z - model.tensor_min), axis=None)
+            msq_max = np.mean(np.square(max_z - model.tensor_max), axis=None)
+            print('msq min: {}'.format(msq_min))
+            print('msq max: {}'.format(msq_max))
+
+            # Plot the distribution of each neuron right after the first fully connected layer
+            # for k in range(100):
+            #     plt.grid(True)
+            #     plt.axvline(x=model.tensor_min[k], color='green')
+            #     plt.axvline(x=model.tensor_max[k], color='green')
+            #     plt.hist(z[:][k], bins=40)
+            #
+            #     plt.show()
+            # exit()
+
+            # Retrieve the intermediate values right after the spread layer,
+            # and order them such that each 6 values after each other belong to the neuron of the
+            # previous layer
             v = model.intermediate_values
             order = [int((x % spread_factor) * 100 + math.floor(x / spread_factor)) for x in range(spread_factor * 100)]
             inter = []
             for x in range(len(v[0])):
                 inter.append([v[0][x][j] for j in order])
 
+            # Calculate the standard deviation of each neuron in the spread layer
             std = np.std(inter, axis=0)
-            div_by = 1.0 / attack_size * 10
-            print("divby: {}".format(div_by))
-            res = np.where(std < div_by, 1, 0)
+            threshold = 1.0 / attack_size * 10
+            print("divby: {}".format(threshold))
+            res = np.where(std < threshold, 1, 0)
 
+            # Calculate the mean of each neuron in the spread layer
             mean_res = np.mean(inter, axis=0)
-            mean_res2 = np.where(mean_res < div_by, 1, 0)
+            mean_res2 = np.where(mean_res < threshold, 1, 0)
             print('Sum  std results {}'.format(np.sum(res)))
             print('Sum mean results {}'.format(np.sum(mean_res2)))
 
+            # Check which neurons have a std and mean where it is smaller than threshold
             total_same = 0
             for j in range(len(mean_res2)):
                 if mean_res2[j] == 1 and res[j] == 1:
                     total_same += 1
             print('Total same: {}'.format(total_same))
 
+            # Plot the standard deviations
             plt.title('Performance of networks')
             plt.xlabel('#neuron')
             plt.ylabel('std')
@@ -123,6 +152,7 @@ def get_ranks(use_hw, runs, train_size,
             plt.plot(std, label='std')
             plt.figure()
 
+            # Plot the means
             plt.title('Performance of networks')
             plt.xlabel('#neuron')
             plt.ylabel('mean')
