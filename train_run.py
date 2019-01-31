@@ -9,36 +9,24 @@ import argparse
 from util import BoolAction
 
 
-def init_dense(arg):
-    return DenseSpreadNet(spread_factor=arg['sf'], out_shape=arg['n_classes'], input_shape=arg['input_shape'])
-
-
-def init_spread(arg):
-    return SpreadNet(spread_factor=arg['sf'], out_shape=arg['n_classes'], input_shape=arg['input_shape'])
-
-
-def init_mlp_best(arg):
-    return DenseNet(input_shape=arg['input_shape'], n_classes=arg['n_classes'])
-
-
 if __name__ == "__main__":
 
     traces_path = '/media/rico/Data/TU/thesis/data/'
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [CosNet.init, SpreadNet.init, DenseSpreadNet.init, DenseNet.init]
+    init_funcs = [SpreadNet.init]
     use_hw = True
     spread_factor = 6
-    runs = 5
+    runs = 10
     train_sizes = [1000]
-    epochs = 80
+    epochs = 120
     batch_size = 100
-    lr = 0.0001
+    lr = 0.001
     # lr = 0.001
     subkey_index = 2
     input_shape = 700
-    checkpoints = [100]
+    checkpoints = [1,20,40,60,80,100]
     unmask = False if subkey_index < 2 else True
     ############################
 

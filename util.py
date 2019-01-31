@@ -7,6 +7,11 @@ import os.path
 import torch
 
 # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+# from models.CosNet import CosNet
+# from models.DenseNet import DenseNet
+# from models.DenseSpreadNet import DenseSpreadNet
+# from models.SpreadNet import SpreadNet
+
 device = torch.device('cuda:0')
 
 
@@ -163,7 +168,7 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
         # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
         plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
         if unmask:
-            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
+            mask = metadata[min_trace_idx + p]['masks'][sub_key_index-2]
             # real_key = real_key ^ mask
         else:
             mask = 0
@@ -194,6 +199,30 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
     sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
     real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
     return real_key_rank, key_bytes_proba
+
+
+def shuffle_permutation(permutation, to_shuffle):
+    # Shuffle the arrays by giving the permutation in the square brackets.
+    shuffled_a = to_shuffle[permutation]
+    return shuffled_a
+
+
+def save_model(network, model_save_file):
+    # Make sure the path where the model is saved is stored
+    os.makedirs(os.path.dirname(model_save_file), exist_ok=True)
+    network.save(model_save_file)
+
+    # # Save the model
+    # if isinstance(network, SpreadNet):
+    #     network.save(model_save_file)
+    # elif isinstance(network, DenseSpreadNet):
+    #     network.save(model_save_file)
+    # elif isinstance(network, DenseNet):
+    #     network.save(model_save_file)
+    # elif isinstance(network, CosNet):
+    #     network.save(model_save_file)
+    # else:
+    #     torch.save(network.state_dict(), model_save_file)
 
 
 class BoolAction(argparse.Action):

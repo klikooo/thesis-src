@@ -35,7 +35,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
-network_names = ['SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_names = ['SpreadNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 if len(plt_titles) != len(network_names):
     plt_titles = network_names
@@ -54,8 +54,10 @@ def get_ranks(use_hw, runs, train_size,
     ranks_x = []
     ranks_y = []
 
-    for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt.1.pt'.format(
+    epochs_checkpoint = ['.1.pt', '.20.pt', '.40.pt', '.60.pt', '.80.pt', '.100.pt', '']
+
+    for epoch in epochs_checkpoint:
+        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt{}'.format(
             sub_key_index,
             type_network,
             spread_factor,
@@ -63,23 +65,13 @@ def get_ranks(use_hw, runs, train_size,
             batch_size,
             '%.2E' % Decimal(lr),
             train_size,
-            run,
-            network_name
+            1,  # the run
+            network_name,
+            epoch
         )
         print('path={}'.format(model_path))
 
-        if "Dense" in network_name:
-            model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
-        elif "MLP" in network_name:
-            model = DenseNet.load_model(model_path)
-        elif "SpreadNet" in network_name:
-            model = SpreadNetIn.load_spread(model_path)
-        elif "SpreadNet" in network_name:
-            model = SpreadNet.load_spread(model_path)
-        elif "CosNet" in network_name:
-            model = CosNet.load_model(model_path)
-        else:
-            raise Exception("Unkown model")
+        model = SpreadNetIn.load_spread(model_path)
         print("Using {}".format(model))
         model.to(device)
 
@@ -111,14 +103,17 @@ def get_ranks(use_hw, runs, train_size,
             print('msq max: {}'.format(msq_max))
 
             # Plot the distribution of each neuron right after the first fully connected layer
-            for k in [50]:
+            for k in [53]:
                 plt.grid(True)
                 plt.axvline(x=model.tensor_min[k], color='green')
                 plt.axvline(x=model.tensor_max[k], color='green')
                 plt.hist(z[:][k], bins=40)
+                plt.xlim([-50, 400])
+
+                fig = plt.gcf()
+                fig.savefig('/home/rico/Pictures/spread-{}.png'.format(epoch.replace('.pt', '').replace('.', '')), dpi=100)
 
                 plt.show()
-            exit()
 
             # Retrieve the intermediate values right after the spread layer,
             # and order them such that each 6 values after each other belong to the neuron of the
@@ -171,13 +166,6 @@ def get_ranks(use_hw, runs, train_size,
             plt.legend()
             plt.show()
 
-        ranks_x.append(x)
-        ranks_y.append(y)
-
-        # accuracy()
-        data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
-        print('x_test size: {}'.format(data.cpu().size()))
-        predictions = F.softmax(model(data).to(device), dim=-1).to(device)
     return ranks_x, ranks_y
 
 

@@ -1,14 +1,8 @@
 from decimal import Decimal
 
-from models.CosNet import CosNet
-from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
-from models.DenseSpreadNet import DenseSpreadNet
 
-import os
-import torch
-
-from util import load_ascad
+from util import load_ascad, save_model
 from train import train
 
 import numpy as np
@@ -41,6 +35,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     if unmask:
         y_profiling = np.array(
             [y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))])
+        # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
 
     init_args = {"sf": spread_factor,
                  "input_shape": input_shape,
@@ -51,33 +46,25 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     for i in range(runs):
         # Initialize the network and train it
         network = init(init_args)
+
+        # Where the file is stored
+        model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, network.name())
+
         network = train(x_profiling, y_profiling,
                         train_size=train_size,
                         network=network,
                         epochs=epochs,
                         batch_size=batch_size,
                         use_hw=use_hw,
-                        lr=lr
+                        lr=lr,
+                        checkpoints=checkpoints,
+                        save_path=model_save_file
                         )
 
         # Make sure don't mess with our min/max of the spread network
         if isinstance(network, SpreadNet):
             network.training = False
 
-        type_network = network.name()
+        # Save the final model
+        save_model(network, model_save_file)
 
-        # Make sure the directory where the model should be saved exists
-        model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, type_network)
-        os.makedirs(os.path.dirname(model_save_file), exist_ok=True)
-
-        # Save the model
-        if isinstance(network, SpreadNet):
-            network.save(model_save_file)
-        elif isinstance(network, DenseSpreadNet):
-            network.save(model_save_file)
-        elif isinstance(network, DenseNet):
-            network.save(model_save_file)
-        elif isinstance(network, CosNet):
-            network.save(model_save_file)
-        else:
-            torch.save(network.state_dict(), model_save_file)

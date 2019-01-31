@@ -5,10 +5,11 @@ from torch.utils.data import DataLoader
 
 from DataAscad import DataAscad
 from optimizers.Nadam import Nadam
-from util import HW, device
+from util import HW, device, save_model
 
 
-def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001, use_hw=True):
+def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001, use_hw=True,
+          checkpoints=None, save_path=None):
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]
     y_profiling = y_profiling[0:train_size]
@@ -32,6 +33,11 @@ def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=
 
     # Perform training
     for epoch in range(epochs):
+
+        # Save checkpoints
+        if checkpoints is not None and epoch in checkpoints:
+            save_model(network, '{}.{}.pt'.format(save_path, epoch))
+
         # Load the data and shuffle it each epoch
         train_loader = DataLoader(train_data_set, batch_size=batch_size, shuffle=True)
         train_iter = iter(train_loader)
