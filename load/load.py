@@ -13,7 +13,7 @@ import numpy as np
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-
+from models.SpreadV2 import SpreadV2
 from util import load_ascad, shuffle_permutation
 from test import test
 
@@ -25,23 +25,23 @@ use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(10)]
-train_size = 1000
-epochs = 120
-batch_size = 100
+train_size = 150
+epochs = 80
+batch_size = 50
 lr = 0.001
 sub_key_index = 2
-attack_size = 10000
+attack_size = 500
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
-network_names = ['SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 if len(plt_titles) != len(network_names):
     plt_titles = network_names
 # network_names = ['CosNet']
 # network_names = ['MLPBEST']
-only_accuracy = True
+only_accuracy = False
 
 #####################################################################################
 
@@ -53,9 +53,10 @@ def get_ranks(use_hw, runs, train_size,
               epochs, lr, sub_key_index, attack_size, rank_step, unmask, network_name):
     ranks_x = []
     ranks_y = []
+    (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt.1.pt'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
             sub_key_index,
             type_network,
             spread_factor,
@@ -68,12 +69,14 @@ def get_ranks(use_hw, runs, train_size,
         )
         print('path={}'.format(model_path))
 
-        if "Dense" in network_name:
+        if "DenseSpreadNet" in network_name:
             model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
         elif "MLP" in network_name:
             model = DenseNet.load_model(model_path)
-        elif "SpreadNet" in network_name:
-            model = SpreadNetIn.load_spread(model_path)
+        elif "SpreadV2" in network_name:
+            model = SpreadV2.load_spread(model_path)
+        # elif "SpreadNet" in network_name:
+        #     model = SpreadNetIn.load_spread(model_path)
         elif "SpreadNet" in network_name:
             model = SpreadNet.load_spread(model_path)
         elif "CosNet" in network_name:
@@ -83,7 +86,6 @@ def get_ranks(use_hw, runs, train_size,
         print("Using {}".format(model))
         model.to(device)
 
-        (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
         permutation = np.random.permutation(x_attack.shape[0])
         x_attack = shuffle_permutation(permutation, np.array(x_attack))
         y_attack = shuffle_permutation(permutation, np.array(y_attack))
@@ -175,9 +177,9 @@ def get_ranks(use_hw, runs, train_size,
         ranks_y.append(y)
 
         # accuracy()
-        data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
-        print('x_test size: {}'.format(data.cpu().size()))
-        predictions = F.softmax(model(data).to(device), dim=-1).to(device)
+        # data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
+        # print('x_test size: {}'.format(data.cpu().size()))
+        # predictions = F.softmax(model(data).to(device), dim=-1).to(device)
     return ranks_x, ranks_y
 
 

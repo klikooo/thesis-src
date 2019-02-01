@@ -2,6 +2,7 @@ from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
 from models.CosNet import CosNet
+from models.SpreadV2 import SpreadV2
 from train_runner import run
 import os
 import argparse
@@ -15,18 +16,18 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [SpreadNet.init]
+    init_funcs = [SpreadV2.init, SpreadNet.init, DenseSpreadNet.init, DenseNet.init]
     use_hw = True
     spread_factor = 6
     runs = 10
-    train_sizes = [1000]
-    epochs = 120
+    train_sizes = [5000]
+    epochs = 80
     batch_size = 100
     lr = 0.001
     # lr = 0.001
     subkey_index = 2
     input_shape = 700
-    checkpoints = [1,20,40,60,80,100]
+    checkpoints = None
     unmask = False if subkey_index < 2 else True
     ############################
 
