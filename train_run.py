@@ -7,8 +7,7 @@ from train_runner import run
 import os
 import argparse
 
-from util import BoolAction
-
+from util import BoolAction, DataSet
 
 if __name__ == "__main__":
 
@@ -16,19 +15,20 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [SpreadV2.init, SpreadNet.init, DenseSpreadNet.init, DenseNet.init]
+    init_funcs = [SpreadV2.init]
     use_hw = True
     spread_factor = 6
     runs = 10
-    train_sizes = [5000]
+    train_sizes = [1000]
     epochs = 80
-    batch_size = 100
+    batch_size = 1000
     lr = 0.001
     # lr = 0.001
     subkey_index = 2
-    input_shape = 700
+    input_shape = 50
     checkpoints = None
     unmask = False if subkey_index < 2 else True
+    data_set = DataSet.AES_HD
     ############################
 
     # Parse arguments
@@ -66,4 +66,5 @@ if __name__ == "__main__":
                 checkpoints=checkpoints,
                 unmask=args.unmask,
                 traces_path=args.traces_path,
-                model_save_path=args.model_save_path)
+                model_save_path=args.model_save_path,
+                data_set=data_set)

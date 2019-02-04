@@ -1,10 +1,9 @@
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
 
-from util import load_ascad, test_model, HW, device
+from util import device
 
 
 class SpreadV2(nn.Module):

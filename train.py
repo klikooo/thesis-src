@@ -3,20 +3,15 @@ import torch.nn as nn
 import numpy as np
 from torch.utils.data import DataLoader
 
-from DataAscad import DataAscad
-from optimizers.Nadam import Nadam
+from DataLoaders.DataAscad import DataAscad
 from util import HW, device, save_model
 
 
-def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001, use_hw=True,
+def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001,
           checkpoints=None, save_path=None):
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]
     y_profiling = y_profiling[0:train_size]
-
-    # Convert values to hamming weight if asked for
-    if use_hw:
-        y_profiling = np.array([HW[val] for val in y_profiling])
 
     train_data_set = DataAscad(x_profiling, y_profiling, train_size)
 

@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from models.SpreadNet import SpreadNet
 
-from util import load_ascad, save_model
+from util import load_ascad, save_model, HW, load_ascad_train_traces, load_data_set
 from train import train
 
 import numpy as np
@@ -11,16 +11,17 @@ import numpy as np
 def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_factor, init, input_shape, checkpoints,
         traces_path,
         model_save_path,
+        data_set,
         unmask=False):
 
     sub_key_index = subkey_index
 
     # Select the number of classes to use depending on hw
     n_classes = 9 if use_hw else 256
-    traces_file = '{}/ASCAD_{}.h5'.format(traces_path, sub_key_index)
 
     # Save the models to this folder
-    dir_name = 'subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
+    dir_name = '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
+        str(data_set),
         sub_key_index,
         'HW' if use_hw else 'ID',
         spread_factor,
@@ -30,13 +31,19 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         train_size
     )
 
+    # Arguments for loading data
+    load_args = {"unmask": unmask,
+                 "use_hw": use_hw,
+                 "traces_path": traces_path,
+                 "sub_key_index": sub_key_index}
     # Load data
-    (x_profiling, y_profiling), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
-    if unmask:
-        y_profiling = np.array(
-            [y_profiling[i] ^ metadata_profiling[i]['masks'][sub_key_index-2] for i in range(len(y_profiling))])
-        # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
+    load_function = load_data_set(data_set)
+    print(load_args)
+    x_train, y_train = load_function(load_args)
 
+    print('Shape x: {}'.format(np.shape(x_train)))
+
+    # Arguments for initializing the model
     init_args = {"sf": spread_factor,
                  "input_shape": input_shape,
                  "n_classes": n_classes
@@ -50,12 +57,11 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         # Where the file is stored
         model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, network.name())
 
-        network = train(x_profiling, y_profiling,
+        network = train(x_train, y_train,
                         train_size=train_size,
                         network=network,
                         epochs=epochs,
                         batch_size=batch_size,
-                        use_hw=use_hw,
                         lr=lr,
                         checkpoints=checkpoints,
                         save_path=model_save_file

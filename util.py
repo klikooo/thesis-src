@@ -5,12 +5,9 @@ import sys
 import h5py
 import os.path
 import torch
+from enum import Enum
 
 # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-# from models.CosNet import CosNet
-# from models.DenseNet import DenseNet
-# from models.DenseSpreadNet import DenseSpreadNet
-# from models.SpreadNet import SpreadNet
 
 device = torch.device('cuda:0')
 
@@ -237,3 +234,56 @@ class BoolAction(argparse.Action):
             print("aaaaaaaaaaaaaaaaaaaaaa")
             raise ValueError("arg should be either true or false")
         setattr(namespace, self.dest, values in ['True', 'true', '1'])
+
+
+def load_csv(file, delimiter=','):
+    return np.genfromtxt(file, delimiter=delimiter)
+
+
+def load_ascad_train_traces(args):
+    print(args)
+    traces_file = '{}/ASCAD_{}.h5'.format(args['traces_path'], args['sub_key_index'])
+    (x_train, y_train), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
+    if args['unmask']:
+        y_train = np.array(
+            [y_train[i] ^ metadata_profiling[i]['masks'][args['sub_key_index']-2] for i in range(len(y_train))])
+        # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
+
+    # Convert values to hamming weight if asked for
+    if args['use_hw']:
+        y_train = np.array([HW[val] for val in y_train])
+
+    return x_train, y_train
+
+
+def load_aes_hd(args):
+    print(args)
+    hw = 'HW' if args['use_hw'] else 'Value'
+    x_train = load_csv('{}/AES_HD/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
+    y_train = load_csv('{}/AES_HD/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ')
+    print(np.shape(y_train))
+
+    return x_train, y_train
+
+
+class DataSet(Enum):
+    ASCAD = 1
+    AES_HD = 2
+    DPA_V4 = 3
+
+    def __str__(self):
+        if self.value == 1:
+            return "ASCAD"
+        elif self.value == 2:
+            return "AES_HD"
+        elif self.value == 3:
+            return "DPAV4"
+        else:
+            print("ERROR {}".format(self.value))
+
+
+def load_data_set(data_set):
+    table = {DataSet.ASCAD: load_ascad_train_traces,
+             DataSet.AES_HD: load_aes_hd}
+    return table[data_set]
+
