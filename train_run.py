@@ -15,21 +15,22 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    init_funcs = [SpreadV2.init]
-    use_hw = True
+    data_set = DataSet.AES_HD
+    init_funcs = [SpreadV2.init, SpreadNet.init, DenseNet.init, DenseSpreadNet.init]
+    use_hw = False
     spread_factor = 6
-    runs = 10
-    train_sizes = [1000]
+    runs = 5
+    train_sizes = [10000]
     epochs = 80
-    batch_size = 1000
+    batch_size = 100
     lr = 0.001
     # lr = 0.001
     subkey_index = 2
-    input_shape = 50
+    input_shape = 700 if data_set == DataSet.ASCAD else 50
     checkpoints = None
-    unmask = False if subkey_index < 2 else True
-    data_set = DataSet.AES_HD
+    unmask = False  # False if subkey_index < 2 else True
     ############################
+
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')

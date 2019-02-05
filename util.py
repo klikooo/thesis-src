@@ -236,8 +236,8 @@ class BoolAction(argparse.Action):
         setattr(namespace, self.dest, values in ['True', 'true', '1'])
 
 
-def load_csv(file, delimiter=','):
-    return np.genfromtxt(file, delimiter=delimiter)
+def load_csv(file, delimiter=',', dtype=np.float):
+    return np.genfromtxt(file, delimiter=delimiter, dtype=dtype)
 
 
 def load_ascad_train_traces(args):
@@ -260,8 +260,16 @@ def load_aes_hd(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
     x_train = load_csv('{}/AES_HD/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
-    y_train = load_csv('{}/AES_HD/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ')
-    print(np.shape(y_train))
+    y_train = load_csv('{}/AES_HD/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
+
+    return x_train, y_train
+
+
+def load_dpav4(args):
+    print(args)
+    hw = 'HW' if args['use_hw'] else 'Value'
+    x_train = load_csv('{}/DPAv4/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
+    y_train = load_csv('{}/DPAv4/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
 
     return x_train, y_train
 
@@ -277,13 +285,14 @@ class DataSet(Enum):
         elif self.value == 2:
             return "AES_HD"
         elif self.value == 3:
-            return "DPAV4"
+            return "DPAv4"
         else:
             print("ERROR {}".format(self.value))
 
 
 def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
-             DataSet.AES_HD: load_aes_hd}
+             DataSet.AES_HD: load_aes_hd,
+             DataSet.DPA_V4: load_dpav4}
     return table[data_set]
 

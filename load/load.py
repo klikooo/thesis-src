@@ -14,7 +14,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
 from models.SpreadV2 import SpreadV2
-from util import load_ascad, shuffle_permutation
+from util import load_ascad, shuffle_permutation, DataSet
 from test import test
 
 path = '/media/rico/Data/TU/thesis'
@@ -24,19 +24,20 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
-runs = [x for x in range(10)]
-train_size = 1000
+runs = [x for x in range(5)]
+train_size = 5000
 epochs = 80
-batch_size = 1000
+batch_size = 100
 lr = 0.001
 sub_key_index = 2
-attack_size = 500
+attack_size = 3000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
-unmask = False if sub_key_index < 2 else True
+unmask = False  # False if sub_key_index < 2 else True
+data_set = DataSet.ASCAD
 
-# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['SpreadV2', 'SpreadNet']
+network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+# network_names = ['SpreadV2', 'SpreadNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 if len(plt_titles) != len(network_names):
     plt_titles = network_names
@@ -57,7 +58,8 @@ def get_ranks(use_hw, runs, train_size,
     (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs/{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+            str(data_set),
             sub_key_index,
             type_network,
             spread_factor,
@@ -83,7 +85,7 @@ def get_ranks(use_hw, runs, train_size,
         elif "CosNet" in network_name:
             model = CosNet.load_model(model_path)
         else:
-            raise Exception("Unkown model")
+            raise Exception("Unknown model")
         print("Using {}".format(model))
         model.to(device)
 
@@ -105,7 +107,7 @@ def get_ranks(use_hw, runs, train_size,
             # Get the intermediate values right after the first fully connected layer
             z = np.transpose(model.intermediate_values2[0])
 
-            # Calculate the mse for the maximum and minumum from these traces and the learned min and max
+            # Calculate the mse for the maximum and minimum from these traces and the learned min and max
             min_z = np.min(z, axis=1)
             max_z = np.max(z, axis=1)
             msq_min = np.mean(np.square(min_z - model.tensor_min), axis=None)

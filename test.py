@@ -51,3 +51,39 @@ def accuracy(network, x_test, y_test):
     num_correct = z.sum().item()
     print('Correct: {}'.format(num_correct))
     print('Accuracy: {}'.format(num_correct / len(y_test)))
+
+
+def test_with_key_guess(x_attack, y_attack, key_guesses, network,
+                        attack_size=10000, n_classes=9, real_key=108):
+
+    # Test the model
+    with torch.no_grad():
+        data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
+        print('x_test size: {}'.format(data.cpu().size()))
+
+        predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+        # d = predictions[0].cpu().numpy()
+        accuracy(network, x_attack, y_attack)
+
+    ranks = np.zeros(attack_size)
+    predictions = predictions.cpu().numpy()
+    probabilities = np.zeros(n_classes)
+    for trace_num in range(attack_size):
+        for key_guess in range(n_classes):
+            sbox_out = key_guesses[trace_num][key_guess]
+            probabilities[key_guess] += predictions[trace_num][sbox_out]
+
+        res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
+        ranks[trace_num] = res
+    print('Key guess: {}'.format(np.argmax(probabilities)))
+    print(np.sort(probabilities))
+    print(probabilities[real_key])
+
+    # sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
+    # real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
+
+    return np.array(range(attack_size)), ranks
+
+
+
+
