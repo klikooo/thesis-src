@@ -53,8 +53,8 @@ def accuracy(network, x_test, y_test):
     print('Accuracy: {}'.format(num_correct / len(y_test)))
 
 
-def test_with_key_guess(x_attack, y_attack, key_guesses, network,
-                        attack_size=10000, n_classes=9, real_key=108):
+def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_key,
+                        attack_size=10000, n_classes=9):
 
     # Test the model
     with torch.no_grad():
@@ -67,14 +67,23 @@ def test_with_key_guess(x_attack, y_attack, key_guesses, network,
 
     ranks = np.zeros(attack_size)
     predictions = predictions.cpu().numpy()
-    probabilities = np.zeros(n_classes)
-    for trace_num in range(attack_size):
-        for key_guess in range(n_classes):
-            sbox_out = key_guesses[trace_num][key_guess]
-            probabilities[key_guess] += predictions[trace_num][sbox_out]
+    probabilities = np.zeros(256)
+    if not use_hw:
+        for trace_num in range(attack_size):
+            for key_guess in range(n_classes):
+                sbox_out = key_guesses[trace_num][key_guess]
+                probabilities[key_guess] += predictions[trace_num][sbox_out]
 
-        res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
-        ranks[trace_num] = res
+            res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
+            ranks[trace_num] = res
+    else:
+        for trace_num in range(attack_size):
+            for key_guess in range(256):
+                sbox_out = key_guesses[trace_num][key_guess]
+                probabilities[key_guess] += predictions[trace_num][HW[sbox_out]]
+            res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
+            ranks[trace_num] = res
+
     print('Key guess: {}'.format(np.argmax(probabilities)))
     print(np.sort(probabilities))
     print(probabilities[real_key])

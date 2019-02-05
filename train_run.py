@@ -15,22 +15,20 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.AES_HD
+    data_set = DataSet.RANDOM_DELAY
     init_funcs = [SpreadV2.init, SpreadNet.init, DenseNet.init, DenseSpreadNet.init]
-    use_hw = False
+    use_hw = True
     spread_factor = 6
     runs = 5
-    train_sizes = [10000]
+    train_sizes = [30000]
     epochs = 80
     batch_size = 100
     lr = 0.001
     # lr = 0.001
     subkey_index = 2
-    input_shape = 700 if data_set == DataSet.ASCAD else 50
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
     ############################
-
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -47,8 +45,13 @@ if __name__ == "__main__":
     parser.add_argument('-m', "--model_save_path", default=model_save_path, type=str,
                         help="Path were the models are saved")
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
+    parser.add_argument('-d', "--data_set", default=data_set, type=DataSet.from_string, choices=list(DataSet),
+                        help="The data set to use")
     args = parser.parse_args()
     print(args)
+
+    # Change input shape according to the selected data set
+    input_shape = 700 if args.data_set == DataSet.ASCAD else 50
 
     if not os.path.isdir(args.model_save_path):
         print("Model save path ({}) does not exist.".format(args.model_save_path))
@@ -68,4 +71,4 @@ if __name__ == "__main__":
                 unmask=args.unmask,
                 traces_path=args.traces_path,
                 model_save_path=args.model_save_path,
-                data_set=data_set)
+                data_set=args.data_set)

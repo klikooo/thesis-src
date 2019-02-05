@@ -7,8 +7,6 @@ import os.path
 import torch
 from enum import Enum
 
-# device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
 device = torch.device('cuda:0')
 
 
@@ -274,10 +272,20 @@ def load_dpav4(args):
     return x_train, y_train
 
 
+def load_random_delay(args):
+    print(args)
+    hw = 'HW' if args['use_hw'] else 'Value'
+    x_train = load_csv('{}/Random_Delay/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
+    y_train = load_csv('{}/Random_Delay/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
+
+    return x_train, y_train
+
+
 class DataSet(Enum):
     ASCAD = 1
     AES_HD = 2
     DPA_V4 = 3
+    RANDOM_DELAY = 4
 
     def __str__(self):
         if self.value == 1:
@@ -286,13 +294,24 @@ class DataSet(Enum):
             return "AES_HD"
         elif self.value == 3:
             return "DPAv4"
+        elif self.value == 4:
+            return "Random_Delay"
         else:
             print("ERROR {}".format(self.value))
+
+    @staticmethod
+    def from_string(s):
+        try:
+            return DataSet[s]
+        except KeyError:
+            raise ValueError()
 
 
 def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
              DataSet.AES_HD: load_aes_hd,
-             DataSet.DPA_V4: load_dpav4}
+             DataSet.DPA_V4: load_dpav4,
+             DataSet.RANDOM_DELAY: load_random_delay}
     return table[data_set]
+
 

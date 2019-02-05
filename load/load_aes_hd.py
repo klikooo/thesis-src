@@ -1,27 +1,20 @@
-import math
 from decimal import Decimal
 
 import torch
 
-from models import DenseSpreadNet
-from models.CosNet import CosNet
-from models.DenseNet import DenseNet
-from models.SpreadNet import SpreadNet
-from models.SpreadNetIn import SpreadNetIn
 import numpy as np
 
-import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
-from models.SpreadV2 import SpreadV2
-from util import load_ascad, shuffle_permutation, load_csv, load_aes_hd, load_dpav4, DataSet
-from test import test, test_with_key_guess
+from models.load_model import load_model
+from test import test_with_key_guess
+import util
 
 path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(5)]
@@ -30,34 +23,38 @@ epochs = 80
 batch_size = 100
 lr = 0.001
 sub_key_index = 2
-attack_size = 10000
+attack_size = 5000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
-# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['DenseSpreadNet', 'SpreadV2', 'SpreadNet']
-plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '']
+network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+# network_names = ['SpreadV2']
+plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '']
 only_accuracy = False
-data_set = DataSet.AES_HD
+data_set = util.DataSet.RANDOM_DELAY
 #####################################################################################
 data_set_name = str(data_set)
 if len(plt_titles) != len(network_names):
     plt_titles = network_names
-
-
 device = torch.device("cuda")
 
 
 # Load Data
-x_attack, y_attack = load_dpav4({'use_hw': use_hw,
-                                  'traces_path': '/media/rico/Data/TU/thesis/data'})
+loader = util.load_data_set(data_set)
+x_attack, y_attack = loader({'use_hw': use_hw,
+                            'traces_path': '/media/rico/Data/TU/thesis/data'})
 key_guesses = np.transpose(
-    load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesses_ALL.csv'.format(data_set_name), delimiter=' ', dtype=np.int))
+    util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesses_ALL.csv'.format(data_set_name),
+                  delimiter=' ',
+                  dtype=np.int))
+real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name), dtype=np.int)
 
+# Select the correct attack set
 x_attack = x_attack[train_size:train_size + attack_size]
 y_attack = y_attack[train_size:train_size + attack_size]
 key_guesses = key_guesses[train_size:train_size + attack_size]
+
 
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
@@ -81,20 +78,8 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
         )
         print('path={}'.format(model_path))
 
-        if "DenseSpreadNet" in network_name:
-            model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
-        elif "MLP" in network_name:
-            model = DenseNet.load_model(model_path)
-        elif "SpreadV2" in network_name:
-            model = SpreadV2.load_spread(model_path)
-        # elif "SpreadNet" in network_name:
-        #     model = SpreadNetIn.load_spread(model_path)
-        elif "SpreadNet" in network_name:
-            model = SpreadNet.load_spread(model_path)
-        elif "CosNet" in network_name:
-            model = CosNet.load_model(model_path)
-        else:
-            raise Exception("Unknown model")
+        # Load the model
+        model = load_model(network_name=network_name, model_path=model_path)
         print("Using {}".format(model))
         model.to(device)
 
@@ -102,14 +87,14 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
         # x_attack = shuffle_permutation(permutation, np.array(x_attack))
         # y_attack = shuffle_permutation(permutation, np.array(y_attack))
 
-        x, y = test_with_key_guess(x_attack, y_attack, key_guesses, model, attack_size, n_classes=256)
+        x, y = test_with_key_guess(x_attack, y_attack, key_guesses, model,
+                                   attack_size=attack_size,
+                                   n_classes=256,
+                                   real_key=real_key,
+                                   use_hw=use_hw)
+        # Add the ranks
         ranks_x.append(x)
         ranks_y.append(y)
-
-        # accuracy()
-        # data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
-        # print('x_test size: {}'.format(data.cpu().size()))
-        # predictions = F.softmax(model(data).to(device), dim=-1).to(device)
     return ranks_x, ranks_y
 
 
