@@ -14,22 +14,22 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = True
+use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 6
 runs = [x for x in range(5)]
-train_size = 10000
+train_size = 200
 epochs = 80
 batch_size = 100
 lr = 0.001
 sub_key_index = 2
-attack_size = 5000
+attack_size = 20000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
-network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-# network_names = ['SpreadV2']
+network_names = ['SpreadV2', 'SpreadNet']
+# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
@@ -54,7 +54,6 @@ real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.fo
 x_attack = x_attack[train_size:train_size + attack_size]
 y_attack = y_attack[train_size:train_size + attack_size]
 key_guesses = key_guesses[train_size:train_size + attack_size]
-
 
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,

@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from models.SpreadNet import SpreadNet
 
-from util import load_ascad, save_model, HW, load_ascad_train_traces, load_data_set
+from util import save_model, load_data_set
 from train import train
 
 import numpy as np
