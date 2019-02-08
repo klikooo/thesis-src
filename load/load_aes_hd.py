@@ -14,23 +14,23 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 n_classes = 9 if use_hw else 256
-spread_factor = 6
-runs = [x for x in range(5)]
-train_size = 200
+spread_factor = 3
+runs = [x for x in range(10)]
+train_size = 45000
 epochs = 80
-batch_size = 100
+batch_size = 1000
 lr = 0.001
 sub_key_index = 2
-attack_size = 20000
+attack_size = 5000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
-network_names = ['SpreadV2', 'SpreadNet']
-# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '']
+# network_names = ['SpreadV2', 'SpreadNet']
+network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
 #####################################################################################
@@ -39,10 +39,9 @@ if len(plt_titles) != len(network_names):
     plt_titles = network_names
 device = torch.device("cuda")
 
-
 # Load Data
 loader = util.load_data_set(data_set)
-x_attack, y_attack = loader({'use_hw': use_hw,
+total_x_attack, total_y_attack = loader({'use_hw': use_hw,
                             'traces_path': '/media/rico/Data/TU/thesis/data'})
 key_guesses = np.transpose(
     util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesses_ALL.csv'.format(data_set_name),
@@ -51,8 +50,8 @@ key_guesses = np.transpose(
 real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name), dtype=np.int)
 
 # Select the correct attack set
-x_attack = x_attack[train_size:train_size + attack_size]
-y_attack = y_attack[train_size:train_size + attack_size]
+x_attack = total_x_attack[train_size:train_size + attack_size]
+y_attack = total_y_attack[train_size:train_size + attack_size]
 key_guesses = key_guesses[train_size:train_size + attack_size]
 
 
@@ -62,7 +61,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/' \
+        model_path = '/media/rico/Data/TU/thesis/runs2/' \
                      '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
             data_set_name,
             sub_key_index,

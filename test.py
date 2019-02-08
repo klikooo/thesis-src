@@ -54,7 +54,7 @@ def accuracy(network, x_test, y_test):
 
 
 def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_key,
-                        attack_size=10000, n_classes=9):
+                        attack_size=10000):
 
     # Test the model
     with torch.no_grad():
@@ -70,7 +70,7 @@ def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_k
     probabilities = np.zeros(256)
     if not use_hw:
         for trace_num in range(attack_size):
-            for key_guess in range(n_classes):
+            for key_guess in range(256):
                 sbox_out = key_guesses[trace_num][key_guess]
                 probabilities[key_guess] += predictions[trace_num][sbox_out]
 
@@ -91,7 +91,7 @@ def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_k
     # sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
     # real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
 
-    return np.array(range(attack_size)), ranks
+    return np.array(range(1,attack_size+1)), ranks
 
 
 
