@@ -14,13 +14,15 @@ class ConvNet(nn.Module):
 
         self.hidden_size = 100
 
-        self.conv1 = nn.Conv1d(input_shape, 200, kernel_size=2, padding=1).to(device)
-        self.conv2 = nn.Conv1d(200, 200, kernel_size=2, padding=2).to(device)
+        self.conv1 = nn.Conv1d(1, 5, kernel_size=10, padding=3).to(device)
         self.mp1 = nn.MaxPool1d(2).to(device)
-
-        self.conv3 = nn.Conv1d(200, 100, kernel_size=2, padding=2).to(device)
-        self.conv4 = nn.Conv1d(100, 100, kernel_size=2, padding=2).to(device)
+        self.conv2 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
         self.mp2 = nn.MaxPool1d(2).to(device)
+
+        self.conv3 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
+        self.mp3 = nn.MaxPool1d(2).to(device)
+        self.conv4 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
+        self.mp4 = nn.MaxPool1d(2).to(device)
 
         # self.features = torch.nn.Sequential(
         #     nn.Conv1d(self.input_shape, 50, kernel_size=2, padding=1).to(device),
@@ -35,8 +37,9 @@ class ConvNet(nn.Module):
         #     nn.MaxPool1d(2).to(device),
         # )
 
-        self.fc3 = torch.nn.Linear(400, 200).to(device)
-        self.fc4 = torch.nn.Linear(200, self.out_shape).to(device)
+        self.fc4 = torch.nn.Linear(1075, 400).to(device)
+        self.fc5 = torch.nn.Linear(400, 400).to(device)
+        self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
         # torch.nn.init.xavier_uniform_(self.fc1.weight)
         # torch.nn.init.xavier_uniform_(self.fc2.weight)
         # torch.nn.init.xavier_uniform_(self.fc3.weight)
@@ -46,26 +49,28 @@ class ConvNet(nn.Module):
         batch_size = x.size()[0]
         # print('Batch size: {}'.format(batch_size))
         # exit()
-        inputs = x.to(device).view(batch_size, self.input_shape, 1).contiguous()
+        inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
         # print('Inputs size: {}'.format(inputs.size()))
 
         # print('Inputs size {}'.format(inputs.size()))
         x = self.conv1(inputs)
         x = F.relu(x)
+        x = self.mp1(x)
         x = self.conv2(x)
         x = F.relu(x)
-        x = self.mp1(x)
+        x = self.mp2(x)
 
         x = self.conv3(x)
         x = F.relu(x)
+        x = self.mp3(x)
         x = self.conv4(x)
         x = F.relu(x)
-        x = self.mp2(x)
+        x = self.mp4(x)
 
         # x = self.features(inputs)
         # exit()
         # print('Shape x {}'.format(x.size()))
-        x = x.view(batch_size, 400)
+        x = x.view(batch_size, 1075)
         # print('Shape x {}'.format(x.size()))
         # exit()
 
@@ -74,11 +79,12 @@ class ConvNet(nn.Module):
 
         # x = self.features(inputs)
 
-        x = self.fc3(x).to(device)
-
+        x = self.fc4(x).to(device)
+        x = F.relu(x).to(device)
+        x = self.fc5(x).to(device)
         x = F.relu(x).to(device)
 
-        x = self.fc4(x).to(device)
+        x = self.fc6(x).to(device)
         return x
 
     def name(self):

@@ -16,26 +16,26 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = True
+use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 6
-runs = [x for x in range(5)]
-train_size = 50000
+runs = [x for x in range(2)]
+train_size = 10000
 epochs = 80
 batch_size = 100
-lr = 0.001
+lr = 0.0001
 sub_key_index = 2
-attack_size = 100
+attack_size = 10000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
-network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-# network_names = ['ConvNet']
+# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_names = ['ConvNet']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
-data_set = util.DataSet.DPA_V4
+data_set = util.DataSet.RANDOM_DELAY
 raw_traces = True
 #####################################################################################
 
@@ -84,7 +84,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs2/' \
+        model_path = '/media/rico/Data/TU/thesis/runs/' \
                      '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
                         data_set_name,
                         sub_key_index,

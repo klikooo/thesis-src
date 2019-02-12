@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
 from models.SpreadV2 import SpreadV2
+from models.load_model import load_model
 from util import load_ascad, shuffle_permutation, DataSet
 from test import test
 
@@ -24,19 +25,20 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 6
-runs = [x for x in range(5)]
-train_size = 5000
+runs = [x for x in range(2)]
+train_size = 50000
 epochs = 80
 batch_size = 100
-lr = 0.001
+lr = 0.0001
 sub_key_index = 2
-attack_size = 3000
+attack_size = 5000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
 
-network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_names = ['ConvNet']
 # network_names = ['SpreadV2', 'SpreadNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 if len(plt_titles) != len(network_names):
@@ -72,20 +74,21 @@ def get_ranks(use_hw, runs, train_size,
         )
         print('path={}'.format(model_path))
 
-        if "DenseSpreadNet" in network_name:
-            model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
-        elif "MLP" in network_name:
-            model = DenseNet.load_model(model_path)
-        elif "SpreadV2" in network_name:
-            model = SpreadV2.load_spread(model_path)
+        model = load_model(network_name, model_path)
+        # if "DenseSpreadNet" in network_name:
+        #     model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
+        # elif "MLP" in network_name:
+        #     model = DenseNet.load_model(model_path)
+        # elif "SpreadV2" in network_name:
+        #     model = SpreadV2.load_spread(model_path)
+        # # elif "SpreadNet" in network_name:
+        # #     model = SpreadNetIn.load_spread(model_path)
         # elif "SpreadNet" in network_name:
-        #     model = SpreadNetIn.load_spread(model_path)
-        elif "SpreadNet" in network_name:
-            model = SpreadNet.load_spread(model_path)
-        elif "CosNet" in network_name:
-            model = CosNet.load_model(model_path)
-        else:
-            raise Exception("Unknown model")
+        #     model = SpreadNet.load_spread(model_path)
+        # elif "CosNet" in network_name:
+        #     model = CosNet.load_model(model_path)
+        # else:
+        #     raise Exception("Unknown model")
         print("Using {}".format(model))
         model.to(device)
 

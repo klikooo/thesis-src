@@ -18,11 +18,11 @@ if __name__ == "__main__":
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
     init_funcs = [ConvNet.init]
-    use_hw = True
+    use_hw = False
     spread_factor = 6
-    runs = 1
-    train_sizes = [10000]
-    epochs = 200
+    runs = 2
+    train_sizes = [25000]
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     # lr = 0.001
