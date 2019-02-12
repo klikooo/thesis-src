@@ -1,3 +1,4 @@
+from models.ConvNet import ConvNet
 from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
@@ -18,6 +19,8 @@ def load_model(network_name, model_path):
         model = SpreadNet.load_spread(model_path)
     elif "CosNet" in network_name:
         model = CosNet.load_model(model_path)
+    elif "ConvNet" in network_name:
+        model = ConvNet.load_model(model_path)
     else:
         raise Exception("Unknown model")
     return model

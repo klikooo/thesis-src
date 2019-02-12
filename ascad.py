@@ -9,6 +9,8 @@ from keras.callbacks import ModelCheckpoint
 
 from util import SBOX, HW, load_ascad, check_file_exists, test_model
 
+import matplotlib.pyplot as plt
+
 
 
 
@@ -62,11 +64,13 @@ def get_model(model_name, db, num_classes=256, batch_size=100, epochs=75, new=Fa
     if new is False:
         try:
             check_file_exists(model_name)
+            # print('oke')
             return load_model(model_name)
         except:
             pass
 
     (x_profiling, y_profiling), (x_attack, y_attack) = load_ascad(db)
+
     y_profiling = to_categorical(y_profiling, num_classes=num_classes, dtype='int32')
     y_attack = to_categorical(y_attack, num_classes=num_classes, dtype='int32')
 
@@ -74,7 +78,10 @@ def get_model(model_name, db, num_classes=256, batch_size=100, epochs=75, new=Fa
     callbacks = [save_model]
 
     # model = spread_model(num_classes)
-    model = mlp_model(num_classes)
+    # model = mlp_model(num_classes)
+    model = cnn_model(num_classes)
+    x_profiling = x_profiling[0:5000]
+    y_profiling = y_profiling[0:5000]
 
     # num_traces = 500
     # x_profiling = x_profiling[:num_traces, :]
@@ -86,9 +93,6 @@ def get_model(model_name, db, num_classes=256, batch_size=100, epochs=75, new=Fa
     return model
 
 
-
-
-
 if __name__ == "__main__":
     for sub_key_index in range(2, 3):
         model_n = "_model_subkey_{}".format(sub_key_index)
@@ -96,12 +100,16 @@ if __name__ == "__main__":
         file = '/media/rico/Data/TU/thesis/data/ASCAD.h5'
         use_hw = True
         n_classes = 8 if use_hw else 256
-        model = get_model(model_n, file, epochs=200, batch_size=100, new=True)
+        model = get_model(model_n, file, epochs=80, batch_size=100, new=False)
 
         (_, _), (x_test, y_test), (metadata_profiling, metadata_attack) = \
             load_ascad(file, load_metadata=True)
+        x_test = x_test.reshape((x_test.shape[0], x_test.shape[1], 1))
         predi = model.predict(x_test)
 
-        x,y = test_model(predi, metadata_attack, sub_key_index)
-        #TODO: plot result
+        x, y = test_model(predi, metadata_attack, sub_key_index)
+        plt.plot(x, y)
+
+        plt.grid(True)
+        plt.show()
 

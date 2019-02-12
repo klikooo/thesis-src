@@ -1,3 +1,4 @@
+from models.ConvNet import ConvNet
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
@@ -16,18 +17,19 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [SpreadV2.init, SpreadNet.init, DenseNet.init, DenseSpreadNet.init]
+    init_funcs = [ConvNet.init]
     use_hw = True
     spread_factor = 6
-    runs = 5
-    train_sizes = [30000]
-    epochs = 80
+    runs = 1
+    train_sizes = [10000]
+    epochs = 200
     batch_size = 100
-    lr = 0.001
+    lr = 0.0001
     # lr = 0.001
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
+    raw_traces = True
     ############################
 
     # Parse arguments
@@ -47,11 +49,17 @@ if __name__ == "__main__":
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
     parser.add_argument('-d', "--data_set", default=data_set, type=DataSet.from_string, choices=list(DataSet),
                         help="The data set to use")
+    parser.add_argument('-a', "--raw_traces", default=raw_traces, type=bool,
+                        help="Load raw traces", action=BoolAction)
     args = parser.parse_args()
     print(args)
 
+    def get_raw_input_size(the_data_set):
+        switcher = {DataSet.RANDOM_DELAY: 3500,
+                    DataSet.DPA_V4: -1}
+        return switcher[the_data_set]
     # Change input shape according to the selected data set
-    input_shape = 700 if args.data_set == DataSet.ASCAD else 50
+    input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_input_size(args.data_set) if args.raw_traces else 50
 
     if not os.path.isdir(args.model_save_path):
         print("Model save path ({}) does not exist.".format(args.model_save_path))
@@ -71,4 +79,5 @@ if __name__ == "__main__":
                 unmask=args.unmask,
                 traces_path=args.traces_path,
                 model_save_path=args.model_save_path,
-                data_set=args.data_set)
+                data_set=args.data_set,
+                raw_traces=raw_traces)

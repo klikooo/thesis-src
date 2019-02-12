@@ -1,4 +1,5 @@
 import argparse
+import itertools
 
 import numpy as np
 import sys
@@ -8,7 +9,6 @@ import torch
 from enum import Enum
 
 device = torch.device('cuda:0')
-
 
 SBOX = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -163,7 +163,7 @@ def rank_hw(predictions, metadata, real_key, min_trace_idx, max_trace_idx, last_
         # Go back from the class to the key byte. '2' is the index of the byte (third byte) of interest.
         plaintext = metadata[min_trace_idx + p]['plaintext'][sub_key_index]
         if unmask:
-            mask = metadata[min_trace_idx + p]['masks'][sub_key_index-2]
+            mask = metadata[min_trace_idx + p]['masks'][sub_key_index - 2]
             # real_key = real_key ^ mask
         else:
             mask = 0
@@ -207,18 +207,6 @@ def save_model(network, model_save_file):
     os.makedirs(os.path.dirname(model_save_file), exist_ok=True)
     network.save(model_save_file)
 
-    # # Save the model
-    # if isinstance(network, SpreadNet):
-    #     network.save(model_save_file)
-    # elif isinstance(network, DenseSpreadNet):
-    #     network.save(model_save_file)
-    # elif isinstance(network, DenseNet):
-    #     network.save(model_save_file)
-    # elif isinstance(network, CosNet):
-    #     network.save(model_save_file)
-    # else:
-    #     torch.save(network.state_dict(), model_save_file)
-
 
 class BoolAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
@@ -228,14 +216,23 @@ class BoolAction(argparse.Action):
             raise ValueError("nargs not allowed")
 
     def __call__(self, parser, namespace, values, option_string=None):
-        if not(values in ['True', 'true', '1'] or values in ['False', 'false', '0']):
+        if not (values in ['True', 'true', '1'] or values in ['False', 'false', '0']):
             print("aaaaaaaaaaaaaaaaaaaaaa")
             raise ValueError("arg should be either true or false")
         setattr(namespace, self.dest, values in ['True', 'true', '1'])
 
 
-def load_csv(file, delimiter=',', dtype=np.float):
-    return np.genfromtxt(file, delimiter=delimiter, dtype=dtype)
+def load_csv(file, delimiter=',', dtype=np.float, start=None, size=None):
+    if size is None:
+        return np.genfromtxt(file, delimiter=delimiter, dtype=dtype)
+    elif start is None and size is not None:
+        with open(file) as t_in:
+            return np.genfromtxt(itertools.islice(t_in, size), delimiter=delimiter, dtype=dtype)
+    elif start is not None and size is not None:
+        with open(file) as t_in:
+            return np.genfromtxt(itertools.islice(t_in, start, start+size), delimiter=delimiter, dtype=dtype)
+    else:
+        raise ValueError('Error loading data set')
 
 
 def load_ascad_train_traces(args):
@@ -244,7 +241,7 @@ def load_ascad_train_traces(args):
     (x_train, y_train), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
     if args['unmask']:
         y_train = np.array(
-            [y_train[i] ^ metadata_profiling[i]['masks'][args['sub_key_index']-2] for i in range(len(y_train))])
+            [y_train[i] ^ metadata_profiling[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_train))])
         # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
 
     # Convert values to hamming weight if asked for
@@ -257,27 +254,51 @@ def load_ascad_train_traces(args):
 def load_aes_hd(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
-    x_train = load_csv('{}/AES_HD/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
-    y_train = load_csv('{}/AES_HD/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
-
+    x_train = load_csv('{}/AES_HD/traces/traces_50_{}.csv'.format(args['traces_path'], hw),
+                       delimiter=' ',
+                       start=args.get('start'),
+                       size=args.get('size'))
+    y_train = load_csv('{}/AES_HD/{}/model.csv'.format(args['traces_path'], hw),
+                       delimiter=' ',
+                       dtype=np.long,
+                       start=args.get('start'),
+                       size=args.get('size'))
     return x_train, y_train
 
 
 def load_dpav4(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
-    x_train = load_csv('{}/DPAv4/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
-    y_train = load_csv('{}/DPAv4/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
-
+    x_train = load_csv('{}/DPAv4/traces/traces_50_{}.csv'.format(args['traces_path'], hw),
+                       delimiter=' ',
+                       start=args.get('start'),
+                       size=args.get('size'))
+    y_train = load_csv('{}/DPAv4/{}/model.csv'.format(args['traces_path'], hw),
+                       delimiter=' ',
+                       dtype=np.long,
+                       start=args.get('start'),
+                       size=args.get('size'))
     return x_train, y_train
 
 
 def load_random_delay(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
-    x_train = load_csv('{}/Random_Delay/traces/traces_50_{}.csv'.format(args['traces_path'], hw), delimiter=' ')
-    y_train = load_csv('{}/Random_Delay/{}/model.csv'.format(args['traces_path'], hw), delimiter=' ', dtype=np.long)
+    if args['raw_traces']:
+        x_train = load_csv('{}/Random_Delay/traces/traces_complete.csv'.format(args['traces_path']),
+                           delimiter=' ',
+                           start=args.get('start'),
+                           size=args.get('size'))
+    else:
+        x_train = load_csv('{}/Random_Delay/traces/traces_50_{}.csv'.format(args['traces_path'], hw),
+                           delimiter=' ',
+                           start=args.get('start'),
+                           size=args.get('size'))
 
+    y_train = load_csv('{}/Random_Delay/{}/model.csv'.format(args['traces_path'], hw),
+                       delimiter=' ',
+                       dtype=np.long,
+                       size=args.get('size'))
     return x_train, y_train
 
 
@@ -313,5 +334,3 @@ def load_data_set(data_set):
              DataSet.DPA_V4: load_dpav4,
              DataSet.RANDOM_DELAY: load_random_delay}
     return table[data_set]
-
-

@@ -12,7 +12,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         traces_path,
         model_save_path,
         data_set,
-        unmask=False):
+        raw_traces,
+        unmask=False,):
 
     sub_key_index = subkey_index
 
@@ -35,7 +36,10 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     load_args = {"unmask": unmask,
                  "use_hw": use_hw,
                  "traces_path": traces_path,
-                 "sub_key_index": sub_key_index}
+                 "sub_key_index": sub_key_index,
+                 "raw_traces": raw_traces,
+                 "size": train_size}
+
     # Load data
     load_function = load_data_set(data_set)
     print(load_args)
