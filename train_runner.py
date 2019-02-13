@@ -3,7 +3,7 @@ from decimal import Decimal
 from models.SpreadNet import SpreadNet
 
 from util import save_model, load_data_set
-from train import train
+from train import train, train_dk
 
 import numpy as np
 
@@ -13,8 +13,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         model_save_path,
         data_set,
         raw_traces,
-        unmask=False,):
-
+        unmask=False,
+        domain_knowledge=False):
     sub_key_index = subkey_index
 
     # Select the number of classes to use depending on hw
@@ -38,12 +38,13 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                  "traces_path": traces_path,
                  "sub_key_index": sub_key_index,
                  "raw_traces": raw_traces,
-                 "size": train_size}
+                 "size": train_size,
+                 "domain_knowledge": True}
 
     # Load data
     load_function = load_data_set(data_set)
     print(load_args)
-    x_train, y_train = load_function(load_args)
+    x_train, y_train, plain = load_function(load_args)
 
     print('Shape x: {}'.format(np.shape(x_train)))
 
@@ -61,15 +62,27 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         # Where the file is stored
         model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, network.name())
 
-        network = train(x_train, y_train,
-                        train_size=train_size,
-                        network=network,
-                        epochs=epochs,
-                        batch_size=batch_size,
-                        lr=lr,
-                        checkpoints=checkpoints,
-                        save_path=model_save_file
-                        )
+        if domain_knowledge:
+            network = train_dk(x_train, y_train,
+                               train_size=train_size,
+                               network=network,
+                               epochs=epochs,
+                               batch_size=batch_size,
+                               lr=lr,
+                               checkpoints=checkpoints,
+                               save_path=model_save_file,
+                               plain=plain
+                               )
+        else:
+            network = train(x_train, y_train,
+                            train_size=train_size,
+                            network=network,
+                            epochs=epochs,
+                            batch_size=batch_size,
+                            lr=lr,
+                            checkpoints=checkpoints,
+                            save_path=model_save_file
+                            )
 
         # Make sure don't mess with our min/max of the spread network
         if isinstance(network, SpreadNet):
@@ -77,4 +90,3 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
 
         # Save the final model
         save_model(network, model_save_file)
-

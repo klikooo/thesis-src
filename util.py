@@ -230,7 +230,7 @@ def load_csv(file, delimiter=',', dtype=np.float, start=None, size=None):
             return np.genfromtxt(itertools.islice(t_in, size), delimiter=delimiter, dtype=dtype)
     elif start is not None and size is not None:
         with open(file) as t_in:
-            return np.genfromtxt(itertools.islice(t_in, start, start+size), delimiter=delimiter, dtype=dtype)
+            return np.genfromtxt(itertools.islice(t_in, start, start + size), delimiter=delimiter, dtype=dtype)
     else:
         raise ValueError('Error loading data set')
 
@@ -263,7 +263,7 @@ def load_aes_hd(args):
                        dtype=np.long,
                        start=args.get('start'),
                        size=args.get('size'))
-    return x_train, y_train
+    return x_train, y_train, []
 
 
 def load_dpav4(args):
@@ -278,7 +278,7 @@ def load_dpav4(args):
                        dtype=np.long,
                        start=args.get('start'),
                        size=args.get('size'))
-    return x_train, y_train
+    return x_train, y_train, []
 
 
 def load_random_delay(args):
@@ -298,8 +298,18 @@ def load_random_delay(args):
     y_train = load_csv('{}/Random_Delay/{}/model.csv'.format(args['traces_path'], hw),
                        delimiter=' ',
                        dtype=np.long,
+                       start=args.get('start'),
                        size=args.get('size'))
-    return x_train, y_train
+    if args['domain_knowledge']:
+        plain = load_csv('{}/Random_Delay/{}/plain_0.csv'.format(args['traces_path'], hw),
+                         delimiter=' ',
+                         dtype=np.int,
+                         start=args.get('start'),
+                         size=args.get('size'))
+        plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+    else:
+        plain = None
+    return x_train, y_train, plain
 
 
 class DataSet(Enum):
@@ -334,3 +344,14 @@ def load_data_set(data_set):
              DataSet.DPA_V4: load_dpav4,
              DataSet.RANDOM_DELAY: load_random_delay}
     return table[data_set]
+
+
+def hot_encode(vector, num_classes, dtype=np.int):
+    return np.eye(num_classes)[vector].astype(dtype)
+
+
+def func_in_list(func, l):
+    for f in l:
+        if f == func:
+            return True
+    return False

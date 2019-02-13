@@ -5,7 +5,8 @@ import numpy as np
 n_features = 4
 batch_size = 2
 a = torch.randn(batch_size, n_features)
-# print('a: {}'.format(a))
+print(a)
+print(torch.cat([a, a], 1))
 
 size = (batch_size, 1, n_features)
 a = torch.arange(1.0, batch_size*n_features+1).view(size)

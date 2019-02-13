@@ -42,9 +42,12 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
             return None, None
 
 
-def accuracy(network, x_test, y_test):
+def accuracy(network, x_test, y_test, plain=None):
     data = torch.from_numpy(x_test.astype(np.float32)).to(device)
-    predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+    if plain is None:
+        predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+    else:
+        predictions = F.softmax(network(data, plain).to(device), dim=-1).to(device)
 
     _, pred = predictions.max(1)
     z = pred == torch.from_numpy(y_test).to(device)
@@ -54,16 +57,22 @@ def accuracy(network, x_test, y_test):
 
 
 def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_key,
-                        attack_size=10000):
+                        attack_size=10000,
+                        plain=None):
 
     # Test the model
     with torch.no_grad():
         data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
         print('x_test size: {}'.format(data.cpu().size()))
+        data_plain = None
 
-        predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+        if plain is None:
+            predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+        else:
+            data_plain = torch.from_numpy(plain.astype(np.float32)).to(device)
+            predictions = F.softmax(network(data, data_plain).to(device), dim=-1).to(device)
         # d = predictions[0].cpu().numpy()
-        accuracy(network, x_attack, y_attack)
+        accuracy(network, x_attack, y_attack, plain=data_plain)
 
     ranks = np.zeros(attack_size)
     predictions = predictions.cpu().numpy()

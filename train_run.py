@@ -1,4 +1,5 @@
 from models.ConvNet import ConvNet
+from models.ConvNetDK import ConvNetDK
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
@@ -8,7 +9,7 @@ from train_runner import run
 import os
 import argparse
 
-from util import BoolAction, DataSet
+from util import BoolAction, DataSet, func_in_list
 
 if __name__ == "__main__":
 
@@ -17,10 +18,10 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [ConvNet.init]
+    init_funcs = [ConvNet.init, ConvNetDK.init]
     use_hw = False
     spread_factor = 1
-    runs = 2
+    runs = 1
     train_sizes = [5000]
     epochs = 80
     batch_size = 100
@@ -31,6 +32,8 @@ if __name__ == "__main__":
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
     ############################
+
+    req_dk = [ConvNetDK.init]
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -80,4 +83,5 @@ if __name__ == "__main__":
                 traces_path=args.traces_path,
                 model_save_path=args.model_save_path,
                 data_set=args.data_set,
-                raw_traces=raw_traces)
+                raw_traces=raw_traces,
+                domain_knowledge=func_in_list(init_func, req_dk))

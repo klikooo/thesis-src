@@ -6,9 +6,9 @@ import torch.nn.functional as F
 from util import device
 
 
-class ConvNet(nn.Module):
+class ConvNetDK(nn.Module):
     def __init__(self, input_shape, out_shape):
-        super(ConvNet, self).__init__()
+        super(ConvNetDK, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
@@ -30,11 +30,11 @@ class ConvNet(nn.Module):
         self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp4 = nn.MaxPool1d(5).to(device)
 
-        self.fc4 = torch.nn.Linear(512, 400).to(device)
+        self.fc4 = torch.nn.Linear(512+256, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
         self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
 
-    def forward(self, x):
+    def forward(self, x, plaintext):
         # print('Inputs original size {}'.format(x.size()))
         batch_size = x.size()[0]
         # print('Batch size: {}'.format(batch_size))
@@ -48,8 +48,9 @@ class ConvNet(nn.Module):
         x = self.mp3(F.relu(self.bn3(self.conv3(x))))
         x = self.mp4(F.relu(self.bn4(self.conv4(x))))
 
-        # Reshape data for classification
+        # Reshape data for classification and add the plaintext
         x = x.view(batch_size, -1)
+        x = torch.cat([plaintext.float(), x], 1)
 
         # Perform MLP
         x = self.fc4(x).to(device)
@@ -62,7 +63,7 @@ class ConvNet(nn.Module):
         return x
 
     def name(self):
-        return "ConvNet"
+        return "ConvNetDK"
 
     def save(self, path):
         torch.save({
@@ -75,11 +76,11 @@ class ConvNet(nn.Module):
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = ConvNet(input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
+        model = ConvNetDK(input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
         model.load_state_dict(checkpoint['model_state_dict'])
         model.hidden_size = 100
         return model
 
     @staticmethod
     def init(args):
-        return ConvNet(out_shape=args['n_classes'], input_shape=args['input_shape'])
+        return ConvNetDK(out_shape=args['n_classes'], input_shape=args['input_shape'])
