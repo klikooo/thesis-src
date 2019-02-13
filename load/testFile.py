@@ -32,10 +32,14 @@ print('Conv out:\n{}'.format(conv))
 max1 = nn.functional.max_pool1d(conv,  1)
 print('Max pool out:\n{}'.format(max1))
 
-weights2 = torch.tensor([[
-    [1., 1., 1.],
-    [.5, .0, .0],
-    [.0, .5, .0]],
+weights2 = torch.tensor([
+    [[1., 1., 1.],
+     [.5, .0, .0],
+     [.0, .5, .0]],
+
+    [[0., 1., 1.],
+     [.5, .0, .0],
+     [.0, .5, .0]],
     ])
 conv2 = nn.functional.conv1d(max1, weights2)
 print('Conv2:\n{}'.format(conv2))

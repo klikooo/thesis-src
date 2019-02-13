@@ -19,9 +19,9 @@ if __name__ == "__main__":
     data_set = DataSet.RANDOM_DELAY
     init_funcs = [ConvNet.init]
     use_hw = False
-    spread_factor = 6
+    spread_factor = 1
     runs = 2
-    train_sizes = [10000]
+    train_sizes = [5000]
     epochs = 80
     batch_size = 100
     lr = 0.0001

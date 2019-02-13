@@ -15,13 +15,19 @@ class ConvNet(nn.Module):
         self.hidden_size = 100
 
         self.conv1 = nn.Conv1d(1, 32, kernel_size=11, padding=3).to(device)
+        self.bn1 = nn.BatchNorm1d(num_features=32).to(device)
         self.mp1 = nn.MaxPool1d(5).to(device)
+
         self.conv2 = nn.Conv1d(32, 64, kernel_size=11, padding=3).to(device)
+        self.bn2 = nn.BatchNorm1d(num_features=64).to(device)
         self.mp2 = nn.MaxPool1d(5).to(device)
 
         self.conv3 = nn.Conv1d(64, 128, kernel_size=11, padding=3).to(device)
+        self.bn3 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp3 = nn.MaxPool1d(5).to(device)
+
         self.conv4 = nn.Conv1d(128, 128, kernel_size=11, padding=3).to(device)
+        self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp4 = nn.MaxPool1d(5).to(device)
 
         # self.features = torch.nn.Sequential(
@@ -53,37 +59,21 @@ class ConvNet(nn.Module):
         # print('Inputs size: {}'.format(inputs.size()))
 
         # print('Inputs size {}'.format(inputs.size()))
-        x = self.conv1(inputs)
-        x = F.relu(x)
-        x = self.mp1(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = self.mp2(x)
+        x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
+        x = self.mp2(F.relu(self.bn2(self.conv2(x))))
+        x = self.mp3(F.relu(self.bn3(self.conv3(x))))
+        x = self.mp4(F.relu(self.bn4(self.conv4(x))))
 
-        x = self.conv3(x)
-        x = F.relu(x)
-        x = self.mp3(x)
-        x = self.conv4(x)
-        x = F.relu(x)
-        x = self.mp4(x)
-
-        # x = self.features(inputs)
-        # exit()
-        # print('Shape x {}'.format(x.size()))
+        # Reshape data for classification
         x = x.view(batch_size, -1)
-        # print('Shape x {}'.format(x.size()))
-        # exit()
 
-        # print('Conv1 size: {}'.format(test.size()))
-        # exit()
-
-        # x = self.features(inputs)
-
+        # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
         x = self.fc5(x).to(device)
         x = F.relu(x).to(device)
 
+        # Final layer without ReLU
         x = self.fc6(x).to(device)
         return x
 

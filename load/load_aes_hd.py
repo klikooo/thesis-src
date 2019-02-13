@@ -18,9 +18,9 @@ path = '/media/rico/Data/TU/thesis'
 # Parameters
 use_hw = False
 n_classes = 9 if use_hw else 256
-spread_factor = 6
+spread_factor = 1
 runs = [x for x in range(2)]
-train_size = 10000
+train_size = 5000
 epochs = 80
 batch_size = 100
 lr = 0.0001
