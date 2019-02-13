@@ -14,15 +14,15 @@ class ConvNet(nn.Module):
 
         self.hidden_size = 100
 
-        self.conv1 = nn.Conv1d(1, 5, kernel_size=10, padding=3).to(device)
-        self.mp1 = nn.MaxPool1d(2).to(device)
-        self.conv2 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
-        self.mp2 = nn.MaxPool1d(2).to(device)
+        self.conv1 = nn.Conv1d(1, 32, kernel_size=11, padding=3).to(device)
+        self.mp1 = nn.MaxPool1d(5).to(device)
+        self.conv2 = nn.Conv1d(32, 64, kernel_size=11, padding=3).to(device)
+        self.mp2 = nn.MaxPool1d(5).to(device)
 
-        self.conv3 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
-        self.mp3 = nn.MaxPool1d(2).to(device)
-        self.conv4 = nn.Conv1d(5, 5, kernel_size=10, padding=3).to(device)
-        self.mp4 = nn.MaxPool1d(2).to(device)
+        self.conv3 = nn.Conv1d(64, 128, kernel_size=11, padding=3).to(device)
+        self.mp3 = nn.MaxPool1d(5).to(device)
+        self.conv4 = nn.Conv1d(128, 128, kernel_size=11, padding=3).to(device)
+        self.mp4 = nn.MaxPool1d(5).to(device)
 
         # self.features = torch.nn.Sequential(
         #     nn.Conv1d(self.input_shape, 50, kernel_size=2, padding=1).to(device),
@@ -37,7 +37,7 @@ class ConvNet(nn.Module):
         #     nn.MaxPool1d(2).to(device),
         # )
 
-        self.fc4 = torch.nn.Linear(1075, 400).to(device)
+        self.fc4 = torch.nn.Linear(512, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
         self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
         # torch.nn.init.xavier_uniform_(self.fc1.weight)
@@ -70,7 +70,7 @@ class ConvNet(nn.Module):
         # x = self.features(inputs)
         # exit()
         # print('Shape x {}'.format(x.size()))
-        x = x.view(batch_size, 1075)
+        x = x.view(batch_size, -1)
         # print('Shape x {}'.format(x.size()))
         # exit()
 

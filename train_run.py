@@ -21,7 +21,7 @@ if __name__ == "__main__":
     use_hw = False
     spread_factor = 6
     runs = 2
-    train_sizes = [25000]
+    train_sizes = [10000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
