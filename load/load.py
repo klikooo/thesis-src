@@ -25,13 +25,13 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
+runs = [x for x in range(5)]
 train_size = 25000
 epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 1000
+attack_size = 200
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False  # False if sub_key_index < 2 else True
@@ -60,10 +60,11 @@ def get_ranks(use_hw, runs, train_size,
     (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
             str(data_set),
             sub_key_index,
             '' if unmask else 'masked/',
+            '' if desync is 0 else 'desync{}/'.format(desync),
             type_network,
             spread_factor,
             epochs,

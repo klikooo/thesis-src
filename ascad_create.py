@@ -148,7 +148,9 @@ if __name__ == "__main__":
     #                target_points=[n for n in range(14350, 14560)] +
     #                              [n for n in range(15000, 15250)] +
     #                              [n for n in range(53700, 54200)])
-    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_{}_desync.h5".format(subkey_index),
+    desync = 50
+    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_{}_desync{}.h5".format(
+        subkey_index, desync),
                    sub_key_index=subkey_index,
-                   attack_desync=100)
+                   attack_desync=desync)
     # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_desync100.h5", attack_desync=100)

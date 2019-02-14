@@ -31,7 +31,7 @@ if __name__ == "__main__":
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
-    desync = 100
+    desync = 50
     ############################
 
     req_dk = [ConvNetDK.init]

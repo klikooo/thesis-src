@@ -22,10 +22,11 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     n_classes = 9 if use_hw else 256
 
     # Save the models to this folder
-    dir_name = '{}/subkey_{}/{}{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
+    dir_name = '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
         str(data_set),
         sub_key_index,
         '' if unmask else 'masked/',
+        '' if desync is 0 else 'desync{}/'.format(desync),
         'HW' if use_hw else 'ID',
         spread_factor,
         epochs,
