@@ -13,6 +13,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         model_save_path,
         data_set,
         raw_traces,
+        desync,
         unmask=False,
         domain_knowledge=False):
     sub_key_index = subkey_index
@@ -40,7 +41,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                  "sub_key_index": sub_key_index,
                  "raw_traces": raw_traces,
                  "size": train_size,
-                 "domain_knowledge": True}
+                 "domain_knowledge": True,
+                 "desync": desync}
 
     # Load data
     load_function = load_data_set(data_set)

@@ -31,6 +31,7 @@ if __name__ == "__main__":
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
+    desync = 100
     ############################
 
     req_dk = [ConvNetDK.init]
@@ -54,6 +55,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-a', "--raw_traces", default=raw_traces, type=bool,
                         help="Load raw traces", action=BoolAction)
+    parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
     args = parser.parse_args()
     print(args)
 
@@ -84,4 +86,5 @@ if __name__ == "__main__":
                 model_save_path=args.model_save_path,
                 data_set=args.data_set,
                 raw_traces=raw_traces,
-                domain_knowledge=func_in_list(init_func, req_dk))
+                domain_knowledge=func_in_list(init_func, req_dk),
+                desync=args.desync)

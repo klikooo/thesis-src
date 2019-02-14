@@ -41,6 +41,7 @@ data_set = DataSet.ASCAD
 network_names = ['ConvNetDK', 'ConvNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
+desync = 100
 
 #####################################################################################
 
@@ -48,7 +49,7 @@ if len(plt_titles) != len(network_names):
     plt_titles = network_names
 
 
-trace_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
+trace_file = '{}/data/ASCAD/ASCAD_{}_desync{}.h5'.format(path, sub_key_index, desync)
 device = torch.device("cuda")
 
 

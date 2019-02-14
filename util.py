@@ -239,7 +239,8 @@ def load_csv(file, delimiter=',', dtype=np.float, start=None, size=None):
 
 def load_ascad_train_traces(args):
     print(args)
-    traces_file = '{}/ASCAD/ASCAD_{}_desync.h5'.format(args['traces_path'], args['sub_key_index'])
+    traces_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args['traces_path'], args['sub_key_index'], args['desync'])
+    print('Loading {}'.format(traces_file))
     (x_train, y_train), (_, _), (metadata_profiling, metadata_attack) = load_ascad(traces_file, load_metadata=True)
 
     plain = None
