@@ -17,12 +17,12 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    init_funcs = [ConvNet.init, ConvNetDK.init]
+    data_set = DataSet.ASCAD
+    init_funcs = [ConvNetDK.init, ConvNet.init]
     use_hw = False
     spread_factor = 1
-    runs = 1
-    train_sizes = [5000]
+    runs = 2
+    train_sizes = [3000]
     epochs = 80
     batch_size = 100
     lr = 0.0001

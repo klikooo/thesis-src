@@ -7,14 +7,15 @@ from util import HW, test_model, device
 
 def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=True, attack_size=10000, rank_step=10,
          unmask=False,
-         only_accuracy=False):
+         only_accuracy=False,
+         plain=None):
     # Cut to the correct attack size
     x_attack = x_attack[0:attack_size]
     y_attack = y_attack[0:attack_size]
 
     metadata_attack = metadata_attack[0:attack_size]
     if unmask:
-        y_attack = np.array([y_attack[i] ^ metadata_attack[i]['masks'][15] for i in range(attack_size)])
+        y_attack = np.array([y_attack[i] ^ metadata_attack[i]['masks'][sub_key_index-2] for i in range(attack_size)])
 
     # Convert values to hamming weight if asked for
     if use_hw:
@@ -25,12 +26,14 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
         data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
         print('x_test size: {}'.format(data.cpu().size()))
 
-        predictions = F.softmax(network(data).to(device), dim=-1).to(device)
-        # d = predictions[0].cpu().numpy()
-        # print('Sum predictions: {}'.format(np.sum(d)))
+        if plain is None:
+            predictions = F.softmax(network(data).to(device), dim=-1).to(device)
+        else:
+            plain = torch.from_numpy(plain.astype(np.float32)).to(device)
+            predictions = F.softmax(network(data, plain).to(device), dim=-1).to(device)
 
         # Print accuracy
-        accuracy(network, x_attack, y_attack)
+        accuracy(network, x_attack, y_attack, plain=plain)
 
         if not only_accuracy:
             # Calculate num of traces needed

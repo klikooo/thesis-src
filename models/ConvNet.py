@@ -46,7 +46,7 @@ class ConvNet(nn.Module):
         x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
         x = self.mp2(F.relu(self.bn2(self.conv2(x))))
         x = self.mp3(F.relu(self.bn3(self.conv3(x))))
-        x = self.mp4(F.relu(self.bn4(self.conv4(x))))
+        # x = self.mp4(F.relu(self.bn4(self.conv4(x))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)

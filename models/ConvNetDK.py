@@ -26,9 +26,9 @@ class ConvNetDK(nn.Module):
         self.bn3 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp3 = nn.MaxPool1d(5).to(device)
 
-        self.conv4 = nn.Conv1d(128, 128, kernel_size=11, padding=3).to(device)
-        self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
-        self.mp4 = nn.MaxPool1d(5).to(device)
+        # self.conv4 = nn.Conv1d(128, 128, kernel_size=11, padding=3).to(device)
+        # self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
+        # self.mp4 = nn.MaxPool1d(5).to(device)
 
         self.fc4 = torch.nn.Linear(512+256, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
@@ -46,10 +46,12 @@ class ConvNetDK(nn.Module):
         x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
         x = self.mp2(F.relu(self.bn2(self.conv2(x))))
         x = self.mp3(F.relu(self.bn3(self.conv3(x))))
-        x = self.mp4(F.relu(self.bn4(self.conv4(x))))
+        # x = self.mp4(F.relu(self.bn4(self.conv4(x))))
 
         # Reshape data for classification and add the plaintext
         x = x.view(batch_size, -1)
+        print('x: {}'.format(x.size()))
+        print('plain {}'.format(plaintext.size()))
         x = torch.cat([plaintext.float(), x], 1)
 
         # Perform MLP

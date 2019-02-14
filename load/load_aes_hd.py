@@ -19,13 +19,13 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
-train_size = 5000
+runs = [x for x in range(10)]
+train_size = 20000
 epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 1000
+attack_size = 300
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
@@ -37,8 +37,6 @@ plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
 raw_traces = True
-
-req_dk = ['ConvNetDK']
 #####################################################################################
 
 data_set_name = str(data_set)
@@ -76,7 +74,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/' \
+        model_path = '/media/rico/Data/TU/thesis/runs2/' \
                      '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
                         data_set_name,
                         sub_key_index,
@@ -102,7 +100,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
 
         # Check if we need domain knowledge
         dk_plain = None
-        if network_name in req_dk:
+        if network_name in util.req_dk:
             dk_plain = plain
 
         x, y = test_with_key_guess(x_attack, y_attack, key_guesses, model,

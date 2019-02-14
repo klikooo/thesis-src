@@ -15,39 +15,38 @@ import matplotlib.pyplot as plt
 
 from models.SpreadV2 import SpreadV2
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, DataSet
+from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode
 from test import test
 
 path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = True
+use_hw = False
 n_classes = 9 if use_hw else 256
-spread_factor = 6
+spread_factor = 1
 runs = [x for x in range(2)]
-train_size = 50000
+train_size = 3000
 epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 5000
+attack_size = 2000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNet']
-# network_names = ['SpreadV2', 'SpreadNet']
+network_names = ['ConvNetDK', 'ConvNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
-if len(plt_titles) != len(network_names):
-    plt_titles = network_names
-# network_names = ['CosNet']
-# network_names = ['MLPBEST']
 only_accuracy = False
 
 #####################################################################################
+
+if len(plt_titles) != len(network_names):
+    plt_titles = network_names
+
 
 trace_file = '{}/data/ASCAD_{}.h5'.format(path, sub_key_index)
 device = torch.device("cuda")
@@ -75,20 +74,6 @@ def get_ranks(use_hw, runs, train_size,
         print('path={}'.format(model_path))
 
         model = load_model(network_name, model_path)
-        # if "DenseSpreadNet" in network_name:
-        #     model = DenseSpreadNet.DenseSpreadNet.load_model(model_path)
-        # elif "MLP" in network_name:
-        #     model = DenseNet.load_model(model_path)
-        # elif "SpreadV2" in network_name:
-        #     model = SpreadV2.load_spread(model_path)
-        # # elif "SpreadNet" in network_name:
-        # #     model = SpreadNetIn.load_spread(model_path)
-        # elif "SpreadNet" in network_name:
-        #     model = SpreadNet.load_spread(model_path)
-        # elif "CosNet" in network_name:
-        #     model = CosNet.load_model(model_path)
-        # else:
-        #     raise Exception("Unknown model")
         print("Using {}".format(model))
         model.to(device)
 
@@ -97,6 +82,13 @@ def get_ranks(use_hw, runs, train_size,
         y_attack = shuffle_permutation(permutation, np.array(y_attack))
         metadata_attack = shuffle_permutation(permutation, np.array(metadata_attack))
 
+        dk_plain = None
+        if network_name in req_dk:
+            dk_plain = metadata_attack[:]['plaintext'][:, sub_key_index]
+            dk_plain = hot_encode(dk_plain, 9 if use_hw else 256, dtype=np.float)
+            dk_plain = shuffle_permutation(permutation, np.array(dk_plain))
+            dk_plain = dk_plain[:attack_size]
+
         x, y = test(x_attack, y_attack, metadata_attack,
                     network=model,
                     sub_key_index=sub_key_index,
@@ -104,7 +96,8 @@ def get_ranks(use_hw, runs, train_size,
                     attack_size=attack_size,
                     rank_step=rank_step,
                     unmask=unmask,
-                    only_accuracy=only_accuracy)
+                    only_accuracy=only_accuracy,
+                    plain=dk_plain)
 
         if isinstance(model, SpreadNetIn):
             # Get the intermediate values right after the first fully connected layer

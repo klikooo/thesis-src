@@ -9,6 +9,8 @@ import torch
 from enum import Enum
 
 device = torch.device('cuda:0')
+req_dk = ['ConvNetDK']
+
 
 SBOX = np.array([
     0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -238,7 +240,15 @@ def load_csv(file, delimiter=',', dtype=np.float, start=None, size=None):
 def load_ascad_train_traces(args):
     print(args)
     traces_file = '{}/ASCAD_{}.h5'.format(args['traces_path'], args['sub_key_index'])
-    (x_train, y_train), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
+    (x_train, y_train), (_, _), (metadata_profiling, metadata_attack) = load_ascad(traces_file, load_metadata=True)
+
+    plain = None
+    if args['domain_knowledge']:
+        plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
+        # print(np.shape(plain))
+        # exit()
+        plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+
     if args['unmask']:
         y_train = np.array(
             [y_train[i] ^ metadata_profiling[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_train))])
@@ -248,7 +258,7 @@ def load_ascad_train_traces(args):
     if args['use_hw']:
         y_train = np.array([HW[val] for val in y_train])
 
-    return x_train, y_train
+    return x_train, y_train, plain
 
 
 def load_aes_hd(args):
