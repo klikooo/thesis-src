@@ -9,7 +9,7 @@ from train_runner import run
 import os
 import argparse
 
-from util import BoolAction, DataSet, func_in_list, req_dk
+from util import BoolAction, DataSet, func_in_list
 
 if __name__ == "__main__":
 
@@ -32,6 +32,8 @@ if __name__ == "__main__":
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
     ############################
+
+    req_dk = [ConvNetDK.init]
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
