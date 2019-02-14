@@ -239,7 +239,7 @@ def load_csv(file, delimiter=',', dtype=np.float, start=None, size=None):
 
 def load_ascad_train_traces(args):
     print(args)
-    traces_file = '{}/ASCAD_{}.h5'.format(args['traces_path'], args['sub_key_index'])
+    traces_file = '{}/ASCAD/ASCAD_{}.h5'.format(args['traces_path'], args['sub_key_index'])
     (x_train, y_train), (_, _), (metadata_profiling, metadata_attack) = load_ascad(traces_file, load_metadata=True)
 
     plain = None

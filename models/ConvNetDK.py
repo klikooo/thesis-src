@@ -50,8 +50,8 @@ class ConvNetDK(nn.Module):
 
         # Reshape data for classification and add the plaintext
         x = x.view(batch_size, -1)
-        print('x: {}'.format(x.size()))
-        print('plain {}'.format(plaintext.size()))
+        # print('x: {}'.format(x.size()))
+        # print('plain {}'.format(plaintext.size()))
         x = torch.cat([plaintext.float(), x], 1)
 
         # Perform MLP

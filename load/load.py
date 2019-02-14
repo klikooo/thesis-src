@@ -174,11 +174,6 @@ def get_ranks(use_hw, runs, train_size,
 
         ranks_x.append(x)
         ranks_y.append(y)
-
-        # accuracy()
-        # data = torch.from_numpy(x_attack.astype(np.float32)).to(device)
-        # print('x_test size: {}'.format(data.cpu().size()))
-        # predictions = F.softmax(model(data).to(device), dim=-1).to(device)
     return ranks_x, ranks_y
 
 
