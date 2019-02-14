@@ -244,7 +244,7 @@ def load_ascad_train_traces(args):
 
     plain = None
     if args['domain_knowledge']:
-        plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
+        plain = metadata_profiling[:]['plaintext'][:, args['sub_key_index']]
         # print(np.shape(plain))
         # exit()
         plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
