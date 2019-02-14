@@ -142,12 +142,13 @@ if __name__ == "__main__":
     # target_points = [n for n in range(14350, 14560)] + [n for n in range(15000, 15250)] + [n for n in range(53700, 54200)]
     #
     # print('Size of target points: {}'.format(len(target_points)))
-    subkey_index = 5
+    subkey_index = 2
 
     # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_3.h5", sub_key_index=3,
     #                target_points=[n for n in range(14350, 14560)] +
     #                              [n for n in range(15000, 15250)] +
     #                              [n for n in range(53700, 54200)])
-    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_{}.h5".format(subkey_index),
-                   sub_key_index=subkey_index)
+    extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_{}_desync.h5".format(subkey_index),
+                   sub_key_index=subkey_index,
+                   attack_desync=100)
     # extract_traces(original_raw_traces_file, ascad_databases_folder + "ASCAD_desync100.h5", attack_desync=100)

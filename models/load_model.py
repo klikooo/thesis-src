@@ -10,7 +10,7 @@ from models.SpreadV2 import SpreadV2
 def load_model(network_name, model_path):
     loader = {
         "DenseSpreadNet": DenseSpreadNet.load_model,
-        "MLP": DenseNet.load_model,
+        "MLPBEST": DenseNet.load_model,
         "SpreadV2": SpreadV2.load_spread,
         "SpreadNet": SpreadNet.load_spread,
         "CosNet": CosNet.load_model,

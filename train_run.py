@@ -9,7 +9,7 @@ from train_runner import run
 import os
 import argparse
 
-from util import BoolAction, DataSet, func_in_list
+from util import BoolAction, DataSet, func_in_list, req_dk
 
 if __name__ == "__main__":
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     init_funcs = [ConvNetDK.init, ConvNet.init]
     use_hw = False
     spread_factor = 1
-    runs = 2
+    runs = 1
     train_sizes = [3000]
     epochs = 80
     batch_size = 100
@@ -32,8 +32,6 @@ if __name__ == "__main__":
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
     ############################
-
-    req_dk = [ConvNetDK.init]
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')

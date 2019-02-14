@@ -34,7 +34,6 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
 
         # Print accuracy
         accuracy(network, x_attack, y_attack, plain=plain)
-
         if not only_accuracy:
             # Calculate num of traces needed
             return test_model(predictions.cpu().numpy(), metadata_attack, sub_key_index,

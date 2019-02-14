@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from models.SpreadV2 import SpreadV2
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode
+from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode, SBOX
 from test import test
 
 path = '/media/rico/Data/TU/thesis'
@@ -25,13 +25,13 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(2)]
-train_size = 3000
+runs = [x for x in range(1)]
+train_size = 25000
 epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 2000
+attack_size = 1000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False  # False if sub_key_index < 2 else True
@@ -39,7 +39,7 @@ data_set = DataSet.ASCAD
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetDK', 'ConvNet']
-plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
+plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 
 #####################################################################################
@@ -59,9 +59,10 @@ def get_ranks(use_hw, runs, train_size,
     (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
             str(data_set),
             sub_key_index,
+            '' if unmask else 'masked/',
             type_network,
             spread_factor,
             epochs,
@@ -77,15 +78,18 @@ def get_ranks(use_hw, runs, train_size,
         print("Using {}".format(model))
         model.to(device)
 
-        permutation = np.random.permutation(x_attack.shape[0])
-        x_attack = shuffle_permutation(permutation, np.array(x_attack))
-        y_attack = shuffle_permutation(permutation, np.array(y_attack))
-        metadata_attack = shuffle_permutation(permutation, np.array(metadata_attack))
-
+        # Load additional plaintexts
         dk_plain = None
         if network_name in req_dk:
             dk_plain = metadata_attack[:]['plaintext'][:, sub_key_index]
             dk_plain = hot_encode(dk_plain, 9 if use_hw else 256, dtype=np.float)
+
+        # Shuffle data
+        permutation = np.random.permutation(x_attack.shape[0])
+        x_attack = shuffle_permutation(permutation, np.array(x_attack))
+        y_attack = shuffle_permutation(permutation, np.array(y_attack))
+        metadata_attack = shuffle_permutation(permutation, np.array(metadata_attack))
+        if dk_plain is not None:
             dk_plain = shuffle_permutation(permutation, np.array(dk_plain))
             dk_plain = dk_plain[:attack_size]
 
