@@ -18,12 +18,12 @@ path = '/media/rico/Data/TU/thesis'
 # Parameters
 use_hw = False
 n_classes = 9 if use_hw else 256
-spread_factor = 1
-runs = [x for x in range(10)]
-train_size = 20000
+spread_factor = 6
+runs = [x for x in range(2)]
+train_size = 500
 epochs = 80
 batch_size = 100
-lr = 0.0001
+lr = 0.001
 sub_key_index = 2
 attack_size = 300
 rank_step = 1
@@ -31,8 +31,8 @@ type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
-# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNet', 'ConvNetDK']
+network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+# network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
@@ -67,6 +67,9 @@ real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.fo
 x_attack = total_x_attack
 y_attack = total_y_attack
 
+permutation = np.random.permutation(x_attack.shape[0])
+# permutation = np.arange(0, x_attack.shape[0])
+
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
               epochs, lr, sub_key_index, attack_size, rank_step, unmask, network_name):
@@ -74,7 +77,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs2/' \
+        model_path = '/media/rico/Data/TU/thesis/runs/' \
                      '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
                         data_set_name,
                         sub_key_index,
@@ -94,14 +97,15 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
         print("Using {}".format(model))
         model.to(device)
 
-        # permutation = np.random.permutation(x_attack.shape[0])
-        # x_attack = shuffle_permutation(permutation, np.array(x_attack))
-        # y_attack = shuffle_permutation(permutation, np.array(y_attack))
+        x_attack = util.shuffle_permutation(permutation, np.array(x_attack))
+        y_attack = util.shuffle_permutation(permutation, np.array(y_attack))
+        key_guesses = util.shuffle_permutation(permutation, key_guesses)
 
         # Check if we need domain knowledge
         dk_plain = None
         if network_name in util.req_dk:
             dk_plain = plain
+            dk_plain = util.shuffle_permutation(permutation, dk_plain)
 
         x, y = test_with_key_guess(x_attack, y_attack, key_guesses, model,
                                    attack_size=attack_size,

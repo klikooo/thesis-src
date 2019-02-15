@@ -2,15 +2,9 @@ import math
 from decimal import Decimal
 
 import torch
-
-from models import DenseSpreadNet
-from models.CosNet import CosNet
-from models.DenseNet import DenseNet
-from models.SpreadNet import SpreadNet
 from models.SpreadNetIn import SpreadNetIn
 import numpy as np
 
-import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
 from models.SpreadV2 import SpreadV2
@@ -26,22 +20,22 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 25000
+train_size = 6000
 epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 200
+attack_size = 3000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNetDK', 'ConvNet']
+network_names = ['ConvNet', 'ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 100
+desync = 50
 
 #####################################################################################
 
@@ -51,6 +45,7 @@ if len(plt_titles) != len(network_names):
 
 trace_file = '{}/data/ASCAD/ASCAD_{}_desync{}.h5'.format(path, sub_key_index, desync)
 device = torch.device("cuda")
+permutation = np.random.permutation(attack_size)
 
 
 def get_ranks(use_hw, runs, train_size,
@@ -87,7 +82,6 @@ def get_ranks(use_hw, runs, train_size,
             dk_plain = hot_encode(dk_plain, 9 if use_hw else 256, dtype=np.float)
 
         # Shuffle data
-        permutation = np.random.permutation(x_attack.shape[0])
         x_attack = shuffle_permutation(permutation, np.array(x_attack))
         y_attack = shuffle_permutation(permutation, np.array(y_attack))
         metadata_attack = shuffle_permutation(permutation, np.array(metadata_attack))

@@ -1,5 +1,7 @@
 from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
+from models.ConvNetDPA import ConvNetDPA
+from models.ConvNetKernel import ConvNetKernel
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
@@ -17,12 +19,12 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD
-    init_funcs = [ConvNetDK.init, ConvNet.init]
+    data_set = DataSet.RANDOM_DELAY
+    init_funcs = [ConvNetKernel.init]
     use_hw = False
     spread_factor = 1
-    runs = 1
-    train_sizes = [3000]
+    runs = 5
+    train_sizes = [6000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
@@ -34,7 +36,7 @@ if __name__ == "__main__":
     desync = 50
     ############################
 
-    req_dk = [ConvNetDK.init]
+    req_dk = [ConvNetDK.init, ConvNetDPA.init]
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -61,7 +63,7 @@ if __name__ == "__main__":
 
     def get_raw_input_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
-                    DataSet.DPA_V4: -1}
+                    DataSet.DPA_V4: 3000}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_input_size(args.data_set) if args.raw_traces else 50

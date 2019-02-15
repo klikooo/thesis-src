@@ -9,7 +9,7 @@ import torch
 from enum import Enum
 
 device = torch.device('cuda:0')
-req_dk = ['ConvNetDK']
+req_dk = ['ConvNetDK', 'ConvNetDPA']
 
 
 SBOX = np.array([
@@ -246,8 +246,6 @@ def load_ascad_train_traces(args):
     plain = None
     if args['domain_knowledge']:
         plain = metadata_profiling[:]['plaintext'][:, args['sub_key_index']]
-        # print(np.shape(plain))
-        # exit()
         plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
 
     if args['unmask']:
@@ -280,16 +278,33 @@ def load_aes_hd(args):
 def load_dpav4(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
-    x_train = load_csv('{}/DPAv4/traces/traces_50_{}.csv'.format(args['traces_path'], hw),
-                       delimiter=' ',
-                       start=args.get('start'),
-                       size=args.get('size'))
+    if args['raw_traces']:
+        x_train = load_csv('{}/DPAv4/traces/traces_complete.csv'.format(args['traces_path']),
+                           delimiter=' ',
+                           start=args.get('start'),
+                           size=args.get('size'))
+    else:
+        x_train = load_csv('{}/DPAv4/traces/traces_50_{}.csv'.format(args['traces_path'], hw),
+                           delimiter=' ',
+                           start=args.get('start'),
+                           size=args.get('size'))
+
     y_train = load_csv('{}/DPAv4/{}/model.csv'.format(args['traces_path'], hw),
                        delimiter=' ',
                        dtype=np.long,
                        start=args.get('start'),
                        size=args.get('size'))
-    return x_train, y_train, []
+    if args['domain_knowledge']:
+        plain = load_csv('{}/DPAv4/{}/plain_0.csv'.format(args['traces_path'], hw),
+                         delimiter=' ',
+                         dtype=np.int,
+                         start=args.get('start'),
+                         size=args.get('size'))
+        plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+    else:
+        plain = None
+    return x_train, y_train, plain
+
 
 
 def load_random_delay(args):
