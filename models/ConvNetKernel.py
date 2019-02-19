@@ -14,23 +14,23 @@ class ConvNetKernel(nn.Module):
 
         self.hidden_size = 100
 
-        self.conv1 = nn.Conv1d(1, 32, kernel_size=30, padding=6).to(device)
+        self.conv1 = nn.Conv1d(1, 32, kernel_size=40, padding=15).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=32).to(device)
         self.mp1 = nn.MaxPool1d(5).to(device)
 
-        self.conv2 = nn.Conv1d(32, 64, kernel_size=30, padding=6).to(device)
+        self.conv2 = nn.Conv1d(32, 64, kernel_size=40, padding=15).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=64).to(device)
         self.mp2 = nn.MaxPool1d(5).to(device)
 
-        self.conv3 = nn.Conv1d(64, 128, kernel_size=30, padding=6).to(device)
+        self.conv3 = nn.Conv1d(64, 128, kernel_size=40, padding=15).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp3 = nn.MaxPool1d(5).to(device)
 
-        self.conv4 = nn.Conv1d(128, 128, kernel_size=30, padding=6).to(device)
+        self.conv4 = nn.Conv1d(128, 128, kernel_size=40, padding=15).to(device)
         self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp4 = nn.MaxPool1d(5).to(device)
 
-        self.fc4 = torch.nn.Linear(128, 400).to(device)
+        self.fc4 = torch.nn.Linear(384, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
         self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
 

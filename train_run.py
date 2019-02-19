@@ -23,7 +23,7 @@ if __name__ == "__main__":
     init_funcs = [ConvNetKernel.init]
     use_hw = False
     spread_factor = 1
-    runs = 5
+    runs = 2
     train_sizes = [6000]
     epochs = 80
     batch_size = 100

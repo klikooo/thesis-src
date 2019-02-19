@@ -18,20 +18,20 @@ path = '/media/rico/Data/TU/thesis'
 # Parameters
 use_hw = False
 n_classes = 9 if use_hw else 256
-spread_factor = 6
+spread_factor = 1
 runs = [x for x in range(2)]
-train_size = 500
+train_size = 6000
 epochs = 80
 batch_size = 100
-lr = 0.001
+lr = 0.0001
 sub_key_index = 2
-attack_size = 300
+attack_size = 2000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
-network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_names = [ 'ConvNetKernel']
 # network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False

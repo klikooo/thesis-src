@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from models.SpreadNet import SpreadNet
 
-from util import save_model, load_data_set
+from util import save_model, load_data_set, DataSet
 from train import train, train_dk
 
 import numpy as np
@@ -25,7 +25,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     dir_name = '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
         str(data_set),
         sub_key_index,
-        '' if unmask else 'masked/',
+        '' if unmask or data_set is not DataSet.ASCAD else 'masked/',
         '' if desync is 0 else 'desync{}/'.format(desync),
         'HW' if use_hw else 'ID',
         spread_factor,

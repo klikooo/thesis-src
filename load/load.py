@@ -32,7 +32,7 @@ unmask = False  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNet', 'ConvNetKernel']
+network_names = ['ConvNet']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 50
