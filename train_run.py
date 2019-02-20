@@ -1,3 +1,4 @@
+from models.CNN.NIN import NIN
 from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
@@ -20,10 +21,10 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [ConvNetKernel.init]
+    init_funcs = [NIN.init]
     use_hw = False
     spread_factor = 1
-    runs = 2
+    runs = 1
     train_sizes = [6000]
     epochs = 80
     batch_size = 100
@@ -33,9 +34,10 @@ if __name__ == "__main__":
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
-    desync = 50
+    desync = 0
     ############################
 
+    # Don't touch
     req_dk = [ConvNetDK.init, ConvNetDPA.init]
 
     # Parse arguments

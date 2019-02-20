@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import numpy as np
 
-n_features = 4
+n_features = 6
 batch_size = 2
 a = torch.randn(batch_size, n_features)
 print(a)
@@ -30,7 +30,7 @@ print('Weights size {}, dimension: {}'.format(weights.size(), weights.dim()))
 conv = nn.functional.conv1d(a, weights, bias=biases, padding=1)
 print('Conv out:\n{}'.format(conv))
 
-max1 = nn.functional.max_pool1d(conv,  1)
+max1 = nn.functional.max_pool1d(conv,  3)
 print('Max pool out:\n{}'.format(max1))
 
 weights2 = torch.tensor([

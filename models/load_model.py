@@ -1,3 +1,4 @@
+from models.CNN.NIN import NIN
 from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
@@ -19,6 +20,7 @@ def load_model(network_name, model_path):
         "ConvNet": ConvNet.load_model,
         "ConvNetDK": ConvNetDK.load_model,
         "ConvNetDPA": ConvNetDPA.load_model,
-        "ConvNetKernel": ConvNetKernel.load_model
+        "ConvNetKernel": ConvNetKernel.load_model,
+        "NIN": NIN.load_model
     }
     return loader[network_name](model_path)

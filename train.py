@@ -8,7 +8,7 @@ from DataLoaders.DataDK import DataDK
 from util import HW, device, save_model
 
 
-def train(x_profiling, y_profiling, train_size, network, epochs=700, batch_size=1000, lr=0.00001,
+def train(x_profiling, y_profiling, train_size, network, epochs=80, batch_size=1000, lr=0.00001,
           checkpoints=None, save_path=None):
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]

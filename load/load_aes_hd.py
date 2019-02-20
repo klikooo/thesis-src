@@ -19,7 +19,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(2)]
+runs = [x for x in range(1)]
 train_size = 6000
 epochs = 80
 batch_size = 100
@@ -31,7 +31,7 @@ type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
-network_names = [ 'ConvNetKernel']
+network_names = [ 'NIN']
 # network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
@@ -67,8 +67,8 @@ real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.fo
 x_attack = total_x_attack
 y_attack = total_y_attack
 
-permutation = np.random.permutation(x_attack.shape[0])
-# permutation = np.arange(0, x_attack.shape[0])
+# permutation = np.random.permutation(x_attack.shape[0])
+permutation = np.arange(0, x_attack.shape[0])
 
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
