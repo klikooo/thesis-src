@@ -7,12 +7,12 @@ from util import device
 
 
 class ConvNetKernel(nn.Module):
-    def __init__(self, input_shape, out_shape):
+    def __init__(self, input_shape, out_shape, kernel_size):
         super(ConvNetKernel, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
-        self.kernel_size = 12
+        self.kernel_size = kernel_size
         self.padding = int(self.kernel_size / 2)
         self.max_pool = 2
 
@@ -79,24 +79,28 @@ class ConvNetKernel(nn.Module):
         return x
 
     def name(self):
-        return "ConvNetKernel"
+        return "ConvNetKernel_k{}".format(self.kernel_size)
 
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),
             'out_shape': self.out_shape,
-            'input_shape': self.input_shape
+            'input_shape': self.input_shape,
+            'kernel_size': self.kernel_size
         }, path)
 
     @staticmethod
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = ConvNetKernel(input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
+        model = ConvNetKernel(input_shape=checkpoint['input_shape'],
+                              out_shape=checkpoint['out_shape'],
+                              kernel_size=checkpoint['kernel_size'])
         model.load_state_dict(checkpoint['model_state_dict'])
-        model.hidden_size = 100
         return model
 
     @staticmethod
     def init(args):
-        return ConvNetKernel(out_shape=args['n_classes'], input_shape=args['input_shape'])
+        return ConvNetKernel(out_shape=args['n_classes'],
+                             input_shape=args['input_shape'],
+                             kernel_size=args['kernel_size'])

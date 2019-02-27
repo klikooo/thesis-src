@@ -19,25 +19,27 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
-train_size = 10000
-epochs = 80
+runs = [x for x in range(3)]
+train_size = 5000
+epochs = 10
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 2000
+attack_size = 1500
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
 network_names = ['ConvNetKernel']
+kernel_sizes = [12, 32]
 # network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
 raw_traces = True
 validation_size = 1000
+
 #####################################################################################
 
 data_set_name = str(data_set)
@@ -63,7 +65,7 @@ key_guesses = util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesse
                             start=train_size+validation_size,
                             size=attack_size)
 
-real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name), dtype=np.int)
+real_key = util.load_csv('/media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name), dtype=np.int)
 
 x_attack = total_x_attack
 y_attack = total_y_attack
@@ -73,13 +75,13 @@ permutation = np.random.permutation(x_attack.shape[0])
 
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
-              epochs, lr, sub_key_index, attack_size, rank_step, unmask, network_name):
+              epochs, lr, sub_key_index, attack_size, rank_step, unmask, network_name, kernel_size_string=""):
     ranks_x = []
     ranks_y = []
 
     for run in runs:
         model_path = '/media/rico/Data/TU/thesis/runs/' \
-                     '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt'.format(
+                     '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}{}.pt'.format(
                         data_set_name,
                         sub_key_index,
                         type_network,
@@ -89,7 +91,8 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
                         '%.2E' % Decimal(lr),
                         train_size,
                         run,
-                        network_name
+                        network_name,
+                        kernel_size_string
         )
         print('path={}'.format(model_path))
 
@@ -122,16 +125,30 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
 ranks_x = []
 ranks_y = []
 rank_mean_y = []
+name_models = []
 for network_name in network_names:
-    x, y = get_ranks(x_attack, y_attack, key_guesses, runs, train_size, epochs, lr, sub_key_index,
-                     attack_size, rank_step, unmask, network_name)
-    mean_y = np.mean(y, axis=0)
-    ranks_x.append(x)
-    ranks_y.append(y)
-    rank_mean_y.append(mean_y)
+    if network_name in util.req_kernel_size:
+        for kernel_size in kernel_sizes:
+            kernel_string = "_k{}".format(kernel_size)
+
+            x, y = get_ranks(x_attack, y_attack, key_guesses, runs, train_size, epochs, lr, sub_key_index,
+                             attack_size, rank_step, unmask, network_name, kernel_string)
+            mean_y = np.mean(y, axis=0)
+            ranks_x.append(x)
+            ranks_y.append(y)
+            rank_mean_y.append(mean_y)
+            name_models.append("{} K{}".format(network_name, kernel_size))
+    else:
+        x, y = get_ranks(x_attack, y_attack, key_guesses, runs, train_size, epochs, lr, sub_key_index,
+                         attack_size, rank_step, unmask, network_name)
+        mean_y = np.mean(y, axis=0)
+        ranks_x.append(x)
+        ranks_y.append(y)
+        rank_mean_y.append(mean_y)
+        name_models.append(network_name)
 
 for i in range(len(rank_mean_y)):
-    plt.title('Performance of {}'.format(plt_titles[i]))
+    plt.title('Performance of {}'.format(name_models[i]))
     plt.xlabel('number of traces')
     plt.ylabel('rank')
     plt.grid(True)
@@ -141,14 +158,14 @@ for i in range(len(rank_mean_y)):
         plt.plot(x, y)
     figure = plt.gcf()
     plt.figure()
-    figure.savefig('/home/rico/Pictures/{}.png'.format(network_names[i]), dpi=100)
+    figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
 
 # plt.title('Comparison of networks')
 plt.xlabel('Number of traces')
 plt.ylabel('Mean rank')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=plt_titles[i])
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i])
     plt.legend()
 
     # plt.figure()

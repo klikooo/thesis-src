@@ -20,22 +20,23 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.DPA_V4
-    init_funcs = [DenseNet.init]
+    data_set = DataSet.RANDOM_DELAY
+    init_funcs = [ConvNetKernel.init]
     use_hw = False
-    spread_factor = 1
-    runs = 1
+    runs = 3
     train_sizes = [5000]
-    epochs = 80
+    epochs = 10
     batch_size = 100
     lr = 0.0001
     # lr = 0.001
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
-    raw_traces = False
+    raw_traces = True
     desync = 0
     validation_size = 1000
+    kernel_size = 32
+    spread_factor = 1
     ############################
 
     # Don't touch
@@ -94,4 +95,5 @@ if __name__ == "__main__":
                 raw_traces=raw_traces,
                 domain_knowledge=func_in_list(init_func, req_dk),
                 desync=args.desync,
-                validation_size=validation_size)
+                validation_size=validation_size,
+                kernel_size=kernel_size)

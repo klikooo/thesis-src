@@ -16,7 +16,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         desync,
         validation_size,
         unmask=False,
-        domain_knowledge=False):
+        domain_knowledge=False,
+        kernel_size=None):
     sub_key_index = subkey_index
 
     # Select the number of classes to use depending on hw
@@ -60,7 +61,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     # Arguments for initializing the model
     init_args = {"sf": spread_factor,
                  "input_shape": input_shape,
-                 "n_classes": n_classes
+                 "n_classes": n_classes,
+                 "kernel_size": kernel_size
                  }
 
     # Do the runs

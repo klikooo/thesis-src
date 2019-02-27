@@ -82,10 +82,10 @@ def train(x_profiling, y_profiling, train_size,
 
         train_loss = train_running_loss / total_batches
         vali_loss = validation_loss / validation_batches
-        print("Epoch {}, train loss {}, train acc {}, validation loss {}, vali acc {}".format(
+        print("Epoch {}, train loss {}, train acc {}%, validation loss {}, vali acc {}%".format(
             epoch,
-            train_loss, train_correct/train_size,
-            vali_loss, validation_correct/validation_size))
+            train_loss, train_correct/train_size * 100.0,
+            vali_loss, validation_correct/validation_size * 100.0))
     return network
 
 
