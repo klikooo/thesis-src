@@ -35,7 +35,7 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 32
+    kernel_size = 64
     spread_factor = 1
     ############################
 
@@ -63,6 +63,7 @@ if __name__ == "__main__":
                         help="Load raw traces", action=BoolAction)
     parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
+    parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     args = parser.parse_args()
     print(args)
 
@@ -95,5 +96,5 @@ if __name__ == "__main__":
                 raw_traces=raw_traces,
                 domain_knowledge=func_in_list(init_func, req_dk),
                 desync=args.desync,
-                validation_size=validation_size,
-                kernel_size=kernel_size)
+                validation_size=args.validation_size,
+                kernel_size=args.kernel_size)
