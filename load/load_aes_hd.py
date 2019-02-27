@@ -20,7 +20,7 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(1)]
-train_size = 6000
+train_size = 10000
 epochs = 80
 batch_size = 100
 lr = 0.0001
@@ -31,12 +31,13 @@ type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
-network_names = [ 'NIN']
+network_names = ['ConvNetKernel']
 # network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
 data_set = util.DataSet.RANDOM_DELAY
 raw_traces = True
+validation_size = 1000
 #####################################################################################
 
 data_set_name = str(data_set)
@@ -51,7 +52,7 @@ print('Loading data set')
 total_x_attack, total_y_attack, plain = loader({'use_hw': use_hw,
                                                 'traces_path': '/media/rico/Data/TU/thesis/data',
                                                 'raw_traces': raw_traces,
-                                                'start': train_size,
+                                                'start': train_size+validation_size,
                                                 'size': attack_size,
                                                 'domain_knowledge': True})
 print('Loading key guesses')
@@ -59,7 +60,7 @@ key_guesses = util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesse
     data_set_name),
                             delimiter=' ',
                             dtype=np.int,
-                            start=train_size,
+                            start=train_size+validation_size,
                             size=attack_size)
 
 real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name), dtype=np.int)
@@ -67,8 +68,8 @@ real_key = util.load_csv('//media/rico/Data/TU/thesis/data/{}/secret_key.csv'.fo
 x_attack = total_x_attack
 y_attack = total_y_attack
 
-# permutation = np.random.permutation(x_attack.shape[0])
-permutation = np.arange(0, x_attack.shape[0])
+permutation = np.random.permutation(x_attack.shape[0])
+# permutation = np.arange(0, x_attack.shape[0])
 
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,

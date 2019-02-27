@@ -14,6 +14,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         data_set,
         raw_traces,
         desync,
+        validation_size,
         unmask=False,
         domain_knowledge=False):
     sub_key_index = subkey_index
@@ -41,14 +42,18 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                  "traces_path": traces_path,
                  "sub_key_index": sub_key_index,
                  "raw_traces": raw_traces,
-                 "size": train_size,
+                 "size": train_size + validation_size,
                  "domain_knowledge": True,
                  "desync": desync}
 
-    # Load data
+    # Load data and chop into the desired sizes
     load_function = load_data_set(data_set)
     print(load_args)
     x_train, y_train, plain = load_function(load_args)
+    x_validation = x_train[train_size:train_size+validation_size]
+    y_validation = y_train[train_size:train_size + validation_size]
+    x_train = x_train[0:train_size]
+    y_train = y_train[0:train_size]
 
     print('Shape x: {}'.format(np.shape(x_train)))
 
@@ -80,6 +85,9 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         else:
             network = train(x_train, y_train,
                             train_size=train_size,
+                            x_validation=x_validation,
+                            y_validation=y_validation,
+                            validation_size=validation_size,
                             network=network,
                             epochs=epochs,
                             batch_size=batch_size,

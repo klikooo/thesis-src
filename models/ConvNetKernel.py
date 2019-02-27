@@ -12,7 +12,7 @@ class ConvNetKernel(nn.Module):
         self.out_shape = out_shape
         self.input_shape = input_shape
 
-        self.kernel_size = 30
+        self.kernel_size = 12
         self.padding = int(self.kernel_size / 2)
         self.max_pool = 2
 

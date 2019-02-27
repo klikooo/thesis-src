@@ -2,3 +2,4 @@ __pycache__
 .idea/
 _model_subkey_2
 *.csv
+/chipwhisperer

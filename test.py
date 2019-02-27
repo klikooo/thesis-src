@@ -56,6 +56,7 @@ def accuracy(network, x_test, y_test, plain=None):
     num_correct = z.sum().item()
     print('Correct: {}'.format(num_correct))
     print('Accuracy: {}'.format(num_correct / len(y_test)))
+    return predictions
 
 
 def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_key,

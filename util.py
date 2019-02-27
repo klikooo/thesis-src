@@ -295,16 +295,19 @@ def load_dpav4(args):
                        start=args.get('start'),
                        size=args.get('size'))
     if args['domain_knowledge']:
-        plain = load_csv('{}/DPAv4/{}/plain_0.csv'.format(args['traces_path'], hw),
-                         delimiter=' ',
-                         dtype=np.int,
-                         start=args.get('start'),
-                         size=args.get('size'))
-        plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+        #TODO : add plain 0
+        if True:
+            plain = []
+        else:
+            plain = load_csv('{}/DPAv4/{}/plain_0.csv'.format(args['traces_path'], hw),
+                             delimiter=' ',
+                             dtype=np.int,
+                             start=args.get('start'),
+                             size=args.get('size'))
+            plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
     else:
         plain = None
     return x_train, y_train, plain
-
 
 
 def load_random_delay(args):

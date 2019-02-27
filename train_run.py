@@ -20,12 +20,12 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    init_funcs = [NIN.init]
+    data_set = DataSet.DPA_V4
+    init_funcs = [DenseNet.init]
     use_hw = False
     spread_factor = 1
     runs = 1
-    train_sizes = [6000]
+    train_sizes = [5000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
@@ -33,8 +33,9 @@ if __name__ == "__main__":
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
-    raw_traces = True
+    raw_traces = False
     desync = 0
+    validation_size = 1000
     ############################
 
     # Don't touch
@@ -60,6 +61,7 @@ if __name__ == "__main__":
     parser.add_argument('-a', "--raw_traces", default=raw_traces, type=bool,
                         help="Load raw traces", action=BoolAction)
     parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
+    parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     args = parser.parse_args()
     print(args)
 
@@ -91,4 +93,5 @@ if __name__ == "__main__":
                 data_set=args.data_set,
                 raw_traces=raw_traces,
                 domain_knowledge=func_in_list(init_func, req_dk),
-                desync=args.desync)
+                desync=args.desync,
+                validation_size=validation_size)
