@@ -35,6 +35,8 @@ class ConvNetKernel(nn.Module):
         self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
         self.mp4 = nn.MaxPool1d(5).to(device)
 
+        self.drop_out  = nn.Dropout(p=0.5)
+
         # self.drop1 = nn.Dropout(p=0.03)
         size = int(size / 5)
         print("Output size {}".format(size))
@@ -64,6 +66,9 @@ class ConvNetKernel(nn.Module):
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
+
+        # Perform dropout
+        x = self.drop_out(x)
 
         # Perform dropout
         # x = self.drop1(x)

@@ -21,11 +21,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [ConvNetKernel.init]
+    init_funcs = [NIN.init]
     use_hw = False
-    runs = 3
-    train_sizes = [5000]
-    epochs = 10
+    runs = 1
+    train_sizes = [10000]
+    epochs = 30
     batch_size = 100
     lr = 0.0001
     # lr = 0.001

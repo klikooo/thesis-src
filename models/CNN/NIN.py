@@ -14,7 +14,7 @@ class NIN(nn.Module):
 
         self.hidden_size = 100
 
-        self.kernel_size = 12
+        self.kernel_size = 64
         self.padding = int(self.kernel_size / 2)
         self.max_pool = 2
 
@@ -30,6 +30,8 @@ class NIN(nn.Module):
         self.fc4 = torch.nn.Linear(128, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
         self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
+
+        self.drop_out = torch.nn.Dropout(p=0.5)
 
     def mlpconv(self, in_channels, out_channels, kernel_size):
         padding = int(kernel_size / 2)
@@ -59,6 +61,7 @@ class NIN(nn.Module):
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
+        x = self.drop_out(x)
 
         # Perform MLP
         x = self.fc4(x).to(device)

@@ -19,20 +19,20 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(3)]
-train_size = 5000
-epochs = 10
+runs = [x for x in range(2)]
+train_size = 20000
+epochs = 50
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 1500
+attack_size = 500
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = False if sub_key_index < 2 else True
 
 # network_names = ['SpreadV2', 'SpreadNet']
 network_names = ['ConvNetKernel']
-kernel_sizes = [12, 32]
+kernel_sizes = [16, 32, 64]
 # network_names = ['ConvNet', 'ConvNetDK']
 plt_titles = ['$Spread_{V2}$', '$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$']
 only_accuracy = False
@@ -80,7 +80,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
     ranks_y = []
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/' \
+        model_path = '/media/rico/Data/TU/thesis/runs2/' \
                      '{}/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}{}.pt'.format(
                         data_set_name,
                         sub_key_index,
@@ -98,6 +98,7 @@ def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
 
         # Load the model
         model = load_model(network_name=network_name, model_path=model_path)
+        model.eval()
         print("Using {}".format(model))
         model.to(device)
 
