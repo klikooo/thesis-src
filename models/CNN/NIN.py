@@ -27,9 +27,9 @@ class NIN(nn.Module):
         size = int(input_shape/25)
         print('Size: {}'.format(size))
 
-        self.fc4 = torch.nn.Linear(128, 400).to(device)
-        self.fc5 = torch.nn.Linear(400, 400).to(device)
-        self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
+        self.fc4 = torch.nn.Linear(128, 500).to(device)
+        self.fc5 = torch.nn.Linear(500, 500).to(device)
+        self.fc6 = torch.nn.Linear(500, self.out_shape).to(device)
 
         self.drop_out = torch.nn.Dropout(p=0.5)
 
@@ -66,6 +66,8 @@ class NIN(nn.Module):
         # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
+        x = self.drop_out(x)
+
         x = self.fc5(x).to(device)
         x = F.relu(x).to(device)
 

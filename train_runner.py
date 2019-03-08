@@ -15,6 +15,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         raw_traces,
         desync,
         validation_size,
+        loss_function,
         unmask=False,
         domain_knowledge=False,
         kernel_size=None):
@@ -95,7 +96,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                             batch_size=batch_size,
                             lr=lr,
                             checkpoints=checkpoints,
-                            save_path=model_save_file
+                            save_path=model_save_file,
+                            loss_function=loss_function
                             )
 
         # Make sure don't mess with our min/max of the spread network

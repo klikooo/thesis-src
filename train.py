@@ -10,7 +10,7 @@ from util import HW, device, save_model
 
 def train(x_profiling, y_profiling, train_size,
           x_validation, y_validation, validation_size,
-          network, epochs=80, batch_size=1000, lr=0.00001,
+          network, loss_function, epochs=80, batch_size=1000, lr=0.00001,
           checkpoints=None, save_path=None):
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]
@@ -28,7 +28,8 @@ def train(x_profiling, y_profiling, train_size,
     optimizer = torch.optim.Adam(network.parameters(), lr=lr)
 
     # Loss function
-    criterion = nn.CrossEntropyLoss().to(device)
+    # criterion = nn.CrossEntropyLoss().to(device)
+    loss_function = loss_function.to(device)
 
     # Perform training
     for epoch in range(epochs):
@@ -53,7 +54,7 @@ def train(x_profiling, y_profiling, train_size,
 
             # Calculate the batch and do a backward pass
             net_out = network(batch_x)
-            loss = criterion(net_out, batch_y)
+            loss = loss_function(net_out, batch_y)
             loss.backward()
             optimizer.step()
 
@@ -73,7 +74,7 @@ def train(x_profiling, y_profiling, train_size,
                 batch_x, batch_y = validation_iter.next()
 
                 net_out = network(batch_x)
-                loss = criterion(net_out, batch_y)
+                loss = loss_function(net_out, batch_y)
                 validation_loss += loss.item()
 
                 _, pred = net_out.max(1)

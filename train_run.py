@@ -11,6 +11,8 @@ from models.SpreadV2 import SpreadV2
 from train_runner import run
 import os
 import argparse
+import torch.nn as nn
+
 
 from util import BoolAction, DataSet, func_in_list
 
@@ -21,13 +23,13 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [NIN.init]
+    init_funcs = [ConvNetKernel.init]
     use_hw = False
     runs = 1
-    train_sizes = [10000]
-    epochs = 30
+    train_sizes = [3000]
+    epochs = 80
     batch_size = 100
-    lr = 0.0001
+    lr = 0.0005
     # lr = 0.001
     subkey_index = 2
     checkpoints = None
@@ -35,8 +37,9 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 64
+    kernel_size = 3
     spread_factor = 1
+    loss_function = nn.CrossEntropyLoss()
     ############################
 
     # Don't touch
@@ -67,12 +70,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
-    def get_raw_input_size(the_data_set):
+    def get_raw_feature_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
                     DataSet.DPA_V4: 3000}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
-    input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_input_size(args.data_set) if args.raw_traces else 50
+    input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50
 
     if not os.path.isdir(args.model_save_path):
         print("Model save path ({}) does not exist.".format(args.model_save_path))
@@ -97,4 +100,5 @@ if __name__ == "__main__":
                 domain_knowledge=func_in_list(init_func, req_dk),
                 desync=args.desync,
                 validation_size=args.validation_size,
-                kernel_size=args.kernel_size)
+                kernel_size=args.kernel_size,
+                loss_function=loss_function)
