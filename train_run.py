@@ -26,11 +26,10 @@ if __name__ == "__main__":
     init_funcs = [ConvNetKernel.init]
     use_hw = False
     runs = 1
-    train_sizes = [3000]
+    train_sizes = [6000]
     epochs = 80
     batch_size = 100
     lr = 0.0005
-    # lr = 0.001
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
