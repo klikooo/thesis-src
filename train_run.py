@@ -42,7 +42,7 @@ if __name__ == "__main__":
     ############################
 
     # DO NOT TOUCH #########################
-    req_dk = [ConvNetDK.init, ConvNetDPA.ini1t]
+    req_dk = [ConvNetDK.init, ConvNetDPA.init]
     ########################################
 
     # Parse arguments
