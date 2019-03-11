@@ -97,13 +97,13 @@ def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_k
             ranks[trace_num] = res
 
     print('Key guess: {}'.format(np.argmax(probabilities)))
-    print(np.sort(probabilities))
-    print(probabilities[real_key])
+    # print(np.sort(probabilities))
+    # print(probabilities[real_key])
 
     # sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
     # real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
 
-    return np.array(range(1,attack_size+1)), ranks
+    return np.array(range(1, attack_size+1)), ranks
 
 
 
