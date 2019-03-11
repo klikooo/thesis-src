@@ -74,6 +74,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         # Where the file is stored
         model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, network.name())
 
+        print('Training with learning rate: {}'.format(lr))
+
         if domain_knowledge:
             network = train_dk(x_train, y_train,
                                train_size=train_size,

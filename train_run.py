@@ -27,8 +27,8 @@ if __name__ == "__main__":
     use_hw = False
     runs = 1
     train_sizes = [6000]
-    epochs = 80
-    batch_size = 100
+    epochs = 100
+    batch_size = 200
     lr = 0.0005
     subkey_index = 2
     checkpoints = None
@@ -41,8 +41,9 @@ if __name__ == "__main__":
     loss_function = nn.CrossEntropyLoss()
     ############################
 
-    # Don't touch
-    req_dk = [ConvNetDK.init, ConvNetDPA.init]
+    # DO NOT TOUCH #########################
+    req_dk = [ConvNetDK.init, ConvNetDPA.ini1t]
+    ########################################
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
