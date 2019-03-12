@@ -10,7 +10,7 @@ from enum import Enum
 
 device = torch.device('cuda:0')
 req_dk = ['ConvNetDK', 'ConvNetDPA']
-req_kernel_size = ['ConvNetKernel']
+req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad']
 
 
 SBOX = np.array([

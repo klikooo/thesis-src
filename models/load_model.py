@@ -3,6 +3,7 @@ from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
 from models.ConvNetKernel import ConvNetKernel
+from models.ConvNetKernelAscad import ConvNetKernelAscad
 from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
@@ -21,6 +22,7 @@ def load_model(network_name, model_path):
         "ConvNetDK": ConvNetDK.load_model,
         "ConvNetDPA": ConvNetDPA.load_model,
         "ConvNetKernel": ConvNetKernel.load_model,
+        "ConvNetKernelAscad": ConvNetKernelAscad.load_model,
         "NIN": NIN.load_model
     }
     return loader[network_name](model_path)
