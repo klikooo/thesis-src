@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from models.SpreadV2 import SpreadV2
 from models.load_model import load_model
 from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode, SBOX
-from test import test
+from test import test, test_with_key_guess, accuracy, test_with_key_guess_p
 
 path = '/media/rico/Data/TU/thesis'
 
@@ -21,24 +21,25 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
-train_size = 6000
-epochs = 300
+runs = [x for x in range(5)]
+train_size = 40000
+epochs = 150
 batch_size = 100
-lr = 0.0005
+lr = 0.0001
 sub_key_index = 2
-attack_size = 6000
+attack_size = 500
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
-kernel_sizes = [3]
+kernel_sizes = [3, 7, 11, 15]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetKernelAscad']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 100
+num_exps = 50
 #####################################################################################
 
 if len(plt_titles) != len(network_names):
@@ -46,7 +47,9 @@ if len(plt_titles) != len(network_names):
 
 trace_file = '{}/data/ASCAD/ASCAD_{}_desync{}.h5'.format(path, sub_key_index, desync)
 device = torch.device("cuda")
-permutation = np.random.permutation(attack_size)
+
+
+permutations = util.generate_permutations(num_exps, attack_size)
 
 
 def get_ranks(use_hw, runs, train_size,
@@ -55,10 +58,23 @@ def get_ranks(use_hw, runs, train_size,
     ranks_x = []
     ranks_y = []
     (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(trace_file, load_metadata=True)
+    key_guesses = util.load_csv('/media/rico/Data/TU/thesis/data/ASCAD/key_guesses.csv',
+                                delimiter=' ',
+                                dtype=np.int,
+                                start=0,
+                                size=attack_size)
+    x_attack = x_attack[:attack_size]
+    y_attack = y_attack[:attack_size]
+    if unmask:
+        if use_hw:
+            y_attack = np.array([y_attack[i] ^ metadata_attack[i]['masks'][0] for i in range(len(y_attack))])
+        else:
+            y_attack = np.array([util.HW[y_attack[i] ^ metadata_attack[i]['masks'][0]] for i in range(len(y_attack))])
+    real_key = metadata_attack[0]['key'][sub_key_index]
 
     for run in runs:
-        model_path = '/media/rico/Data/TU/thesis/runs/{}/subkey_{}/{}{}{}_SF{}_' \
-                     'E{}_BZ{}_LR{}/train{}/model_r{}_{}{}.pt'.format(
+        folder = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}{}_SF{}_' \
+                     'E{}_BZ{}_LR{}/train{}/'.format(
                         str(data_set),
                         sub_key_index,
                         '' if unmask else 'masked/',
@@ -68,7 +84,9 @@ def get_ranks(use_hw, runs, train_size,
                         epochs,
                         batch_size,
                         '%.2E' % Decimal(lr),
-                        train_size,
+                        train_size)
+        model_path = '{}/model_r{}_{}{}.pt'.format(
+                        folder,
                         run,
                         network_name,
                         kernel_size_string)
@@ -81,27 +99,43 @@ def get_ranks(use_hw, runs, train_size,
 
         # Load additional plaintexts
         dk_plain = None
+        dk_plain_shuffled = None
         if network_name in req_dk:
             dk_plain = metadata_attack[:]['plaintext'][:, sub_key_index]
             dk_plain = hot_encode(dk_plain, 9 if use_hw else 256, dtype=np.float)
 
-        # Shuffle data
-        x_attack = shuffle_permutation(permutation, np.array(x_attack))
-        y_attack = shuffle_permutation(permutation, np.array(y_attack))
-        metadata_attack = shuffle_permutation(permutation, np.array(metadata_attack))
-        if dk_plain is not None:
-            dk_plain = shuffle_permutation(permutation, np.array(dk_plain))
-            dk_plain = dk_plain[:attack_size]
+        # Calculate predictions
+        predictions = accuracy(model, x_attack, y_attack)
+        predictions = predictions.cpu().numpy()
 
-        x, y = test(x_attack, y_attack, metadata_attack,
-                    network=model,
-                    sub_key_index=sub_key_index,
-                    use_hw=use_hw,
-                    attack_size=attack_size,
-                    rank_step=rank_step,
-                    unmask=unmask,
-                    only_accuracy=only_accuracy,
-                    plain=dk_plain)
+        x, y = [], []
+        for exp_i in range(num_exps):
+            permutation = permutations[exp_i]  # np.random.permutation(attack_size)
+            # permutation = np.arange(0, attack_size)
+
+            # Shuffle data
+            predictions_shuffled = shuffle_permutation(permutation, np.array(predictions))
+            x_attack_shuffled = shuffle_permutation(permutation, np.array(x_attack))
+            y_attack_shuffled = shuffle_permutation(permutation, np.array(y_attack))
+            if dk_plain is not None:
+                dk_plain_shuffled = shuffle_permutation(permutation, np.array(dk_plain))
+                dk_plain_shuffled = dk_plain_shuffled[:attack_size]
+
+            key_guesses_shuffled = shuffle_permutation(permutation, key_guesses)
+
+            # Test the data
+            x_exp, y_exp = test_with_key_guess_p(x_attack_shuffled, y_attack_shuffled,
+                                                 key_guesses_shuffled, predictions_shuffled,
+                                                 attack_size=attack_size,
+                                                 real_key=real_key,
+                                                 use_hw=use_hw,
+                                                 plain=dk_plain_shuffled)
+            x = x_exp
+            y.append(y_exp)
+
+        # Calculate the mean over the experiments
+        y = np.mean(y, axis=0)
+        util.save_np('{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string), y)
 
         if isinstance(model, SpreadNetIn):
             # Get the intermediate values right after the first fully connected layer

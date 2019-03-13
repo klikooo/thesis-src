@@ -70,9 +70,6 @@ x_attack = total_x_attack
 y_attack = total_y_attack
 
 
-# permutation = np.random.permutation(x_attack.shape[0])
-# permutation = np.arange(0, x_attack.shape[0])
-
 
 def get_ranks(x_attack, y_attack, key_guesses, runs, train_size,
               epochs, lr, sub_key_index, attack_size, rank_step, unmask, network_name, kernel_size_string=""):

@@ -4,6 +4,7 @@ from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
 from models.ConvNetKernel import ConvNetKernel
 from models.ConvNetKernelAscad import ConvNetKernelAscad
+from models.ConvNetKernelMasked import ConvNetKernelMasked
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
@@ -27,17 +28,17 @@ if __name__ == "__main__":
     init_funcs = [ConvNetKernelAscad.init]
     use_hw = False
     runs = 1
-    train_sizes = [6000]
-    epochs = 300
+    train_sizes = [15000]
+    epochs = 150
     batch_size = 100
-    lr = 0.0005
+    lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False  # False if subkey_index < 2 else True
+    unmask = True  # False if subkey_index < 2 else True
     raw_traces = True
     desync = 100
     validation_size = 1000
-    kernel_size = 3
+    kernel_size = 7
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################

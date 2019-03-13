@@ -10,7 +10,7 @@ from enum import Enum
 
 device = torch.device('cuda:0')
 req_dk = ['ConvNetDK', 'ConvNetDPA']
-req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad']
+req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad', 'ConvNetKernelMasked']
 
 
 SBOX = np.array([
@@ -247,6 +247,8 @@ def load_ascad_train_traces(args):
     plain = None
     if args['domain_knowledge']:
         plain = metadata_profiling[:]['plaintext'][:, args['sub_key_index']]
+        if args['use_hw']:
+            plain = np.array([HW[val] for val in plain])
         plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
 
     if args['unmask']:
@@ -385,3 +387,14 @@ def func_in_list(func, l):
         if f == func:
             return True
     return False
+
+
+def save_np(path, data):
+    np.savetxt(path, data, delimiter=' ', fmt='%i')
+
+
+def generate_permutations(n, size):
+    permutations = []
+    for i in range(n):
+        permutations.append(np.random.permutation(size))
+    return permutations
