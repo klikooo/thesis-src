@@ -4,6 +4,7 @@ from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
 from models.ConvNetKernel import ConvNetKernel
 from models.ConvNetKernelAscad import ConvNetKernelAscad
+from models.ConvNetKernelAscad2 import ConvNetKernelAscad2
 from models.ConvNetKernelMasked import ConvNetKernelMasked
 from models.CosNet import CosNet
 from models.DenseNet import DenseNet
@@ -24,6 +25,7 @@ def load_model(network_name, model_path):
         "ConvNetDPA": ConvNetDPA.load_model,
         "ConvNetKernel": ConvNetKernel.load_model,
         "ConvNetKernelAscad": ConvNetKernelAscad.load_model,
+        "ConvNetKernelAscad2": ConvNetKernelAscad2.load_model,
         "ConvNetKernelMasked": ConvNetKernelMasked.load_model,
         "NIN": NIN.load_model
     }

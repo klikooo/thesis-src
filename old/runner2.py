@@ -1,4 +1,3 @@
-from models.DenseNet import DenseNet
 from models.SpreadNet import SpreadNet
 from models.DenseSpreadNet import DenseSpreadNet
 import matplotlib.pyplot as plt
@@ -7,8 +6,7 @@ import pickle
 import os
 import torch
 
-from models.TestNet import TestNet
-from ascad import load_ascad
+from old.ascad import load_ascad
 from test import test
 from train import train
 

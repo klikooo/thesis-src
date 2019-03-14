@@ -1,4 +1,4 @@
-from ascad import HW
+from old.ascad import HW
 
 p = [x for x in range(256)]
 r = [x for x in range(256)]

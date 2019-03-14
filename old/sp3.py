@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from keras.utils import to_categorical
-from ascad import test_model, load_ascad
+from old.ascad import test_model, load_ascad
 from old.spread import Spread
 
 SBOX = np.array([

@@ -10,7 +10,7 @@ from enum import Enum
 
 device = torch.device('cuda:0')
 req_dk = ['ConvNetDK', 'ConvNetDPA']
-req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad', 'ConvNetKernelMasked']
+req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad', 'ConvNetKernelMasked', 'ConvNetKernelAscad2']
 
 
 SBOX = np.array([
@@ -389,8 +389,8 @@ def func_in_list(func, l):
     return False
 
 
-def save_np(path, data):
-    np.savetxt(path, data, delimiter=' ', fmt='%i')
+def save_np(path, data, f="%i"):
+    np.savetxt(path, data, delimiter=' ', fmt=f)
 
 
 def generate_permutations(n, size):

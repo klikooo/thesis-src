@@ -27,18 +27,18 @@ epochs = 150
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
-attack_size = 500
+attack_size = 2000
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
-kernel_sizes = [3, 7, 11, 15]
+kernel_sizes = [3, 5, 7, 9, 11, 13, 15]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetKernelAscad']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 100
+desync = 0
 num_exps = 50
 #####################################################################################
 
@@ -133,9 +133,9 @@ def get_ranks(use_hw, runs, train_size,
             x = x_exp
             y.append(y_exp)
 
-        # Calculate the mean over the experiments
+        # Calculate the mean over the experimentfs
         y = np.mean(y, axis=0)
-        util.save_np('{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string), y)
+        util.save_np('{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string), y, f="%f")
 
         if isinstance(model, SpreadNetIn):
             # Get the intermediate values right after the first fully connected layer

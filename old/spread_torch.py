@@ -1,10 +1,6 @@
 import torch
 from torch.autograd import Variable
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
-
-from ascad import load_ascad, HW, SBOX_INV, SBOX, test_model
 
 device = torch.device('cuda:0')
 
