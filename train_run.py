@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
-    parser.add_argument('-n', "--use_noise_data", default=False, type=BoolAction,
+    parser.add_argument('-n', "--use_noise_data", default=False, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
     args = parser.parse_args()
     print(args)
