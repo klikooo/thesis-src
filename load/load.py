@@ -99,37 +99,27 @@ def get_ranks(use_hw, runs, train_size,
 
         # Load additional plaintexts
         dk_plain = None
-        dk_plain_shuffled = None
         if network_name in req_dk:
             dk_plain = metadata_attack[:]['plaintext'][:, sub_key_index]
             dk_plain = hot_encode(dk_plain, 9 if use_hw else 256, dtype=np.float)
 
         # Calculate predictions
-        predictions = accuracy(model, x_attack, y_attack)
+        predictions = accuracy(model, x_attack, y_attack, dk_plain)
         predictions = predictions.cpu().numpy()
 
         x, y = [], []
         for exp_i in range(num_exps):
-            permutation = permutations[exp_i]  # np.random.permutation(attack_size)
-            # permutation = np.arange(0, attack_size)
+            permutation = permutations[exp_i]
 
             # Shuffle data
             predictions_shuffled = shuffle_permutation(permutation, np.array(predictions))
-            x_attack_shuffled = shuffle_permutation(permutation, np.array(x_attack))
-            y_attack_shuffled = shuffle_permutation(permutation, np.array(y_attack))
-            if dk_plain is not None:
-                dk_plain_shuffled = shuffle_permutation(permutation, np.array(dk_plain))
-                dk_plain_shuffled = dk_plain_shuffled[:attack_size]
-
             key_guesses_shuffled = shuffle_permutation(permutation, key_guesses)
 
             # Test the data
-            x_exp, y_exp = test_with_key_guess_p(x_attack_shuffled, y_attack_shuffled,
-                                                 key_guesses_shuffled, predictions_shuffled,
+            x_exp, y_exp = test_with_key_guess_p(key_guesses_shuffled, predictions_shuffled,
                                                  attack_size=attack_size,
                                                  real_key=real_key,
-                                                 use_hw=use_hw,
-                                                 plain=dk_plain_shuffled)
+                                                 use_hw=use_hw)
             x = x_exp
             y.append(y_exp)
 

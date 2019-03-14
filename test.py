@@ -107,9 +107,9 @@ def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_k
     return np.array(range(1, attack_size+1)), ranks
 
 
-def test_with_key_guess_p(x_attack, y_attack, key_guesses, predictions, use_hw, real_key,
+def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
                           attack_size=10000,
-                          plain=None):
+                          ):
     ranks = np.zeros(attack_size)
     # predictions = predictions.cpu().numpy()
     probabilities = np.zeros(256)
