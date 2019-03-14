@@ -318,7 +318,7 @@ def load_random_delay(args):
     hw = 'HW' if args['use_hw'] else 'Value'
     if args['raw_traces']:
         f = "traces_complete"
-        if args['use_noise_data']:
+        if 'use_noise_data' in args and args['use_noise_data']:
             f = "test"
         x_train = load_csv('{}/Random_Delay/traces/{}.csv'.format(args['traces_path'], f),
                            delimiter=' ',

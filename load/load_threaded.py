@@ -12,29 +12,9 @@ from test import accuracy, test_with_key_guess_p
 
 
 def get_ranks(args, network_name, kernel_size_string=""):
-    global x_attack, y_attack, metadata_profiling, metadata_attack, dk_plain, key_guesses
-    (_, _), (x_attack, y_attack), (metadata_profiling, metadata_attack) = load_ascad(
-        args.trace_file, load_metadata=True)
-    key_guesses = util.load_csv('{}/ASCAD/key_guesses.csv'.format(args.traces_path),
-                                delimiter=' ',
-                                dtype=np.int,
-                                start=0,
-                                size=args.attack_size)
-    # Manipulate the data
-    x_attack = x_attack[:args.attack_size]
-    y_attack = y_attack[:args.attack_size]
-    if args.unmask:
-        if args.use_hw:
-            y_attack = np.array([y_attack[i] ^ metadata_attack[i]['masks'][0] for i in range(len(y_attack))])
-        else:
-            y_attack = np.array([util.HW[y_attack[i] ^ metadata_attack[i]['masks'][0]] for i in range(len(y_attack))])
-    real_key = metadata_attack[0]['key'][args.subkey_index]
-
-    # Load additional plaintexts
-    dk_plain = None
-    if network_name in req_dk:
-        dk_plain = metadata_attack[:]['plaintext'][:, args.subkey_index]
-        dk_plain = hot_encode(dk_plain, 9 if args.use_hw else 256, dtype=np.float)
+    # Load the data and make it global
+    global x_attack, y_attack, dk_plain, key_guesses
+    x_attack, y_attack, key_guesses, real_key, dk_plain = load_data(args, network_name)
 
     folder = '{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
@@ -82,6 +62,57 @@ def get_ranks(args, network_name, kernel_size_string=""):
         print('Joined process')
 
 
+def load_data(args, network_name):
+    _x_attack, _y_attack, _real_key, _dk_plain, _key_guesses = None, None, None, None, None
+    if args.data_set == util.DataSet.ASCAD:
+        args.trace_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args.traces_path, args.subkey_index, args.desync)
+        (_, _), (_x_attack, _y_attack), (_metadata_profiling, _metadata_attack) = load_ascad(
+            args.trace_file, load_metadata=True)
+        _key_guesses = util.load_csv('{}/ASCAD/key_guesses.csv'.format(args.traces_path),
+                                     delimiter=' ',
+                                     dtype=np.int,
+                                     start=0,
+                                     size=args.attack_size)
+        # Manipulate the data
+        _x_attack = _x_attack[:args.attack_size]
+        _y_attack = _y_attack[:args.attack_size]
+        if args.unmask:
+            if args.use_hw:
+                _y_attack = np.array([_y_attack[i] ^ _metadata_attack[i]['masks'][0] for i in range(len(_y_attack))])
+            else:
+                _y_attack = np.array(
+                    [util.HW[_y_attack[i] ^ _metadata_attack[i]['masks'][0]] for i in range(len(_y_attack))])
+        _real_key = _metadata_attack[0]['key'][args.subkey_index]
+
+        # Load additional plaintexts
+        if network_name in req_dk:
+            _dk_plain = _metadata_attack[:]['plaintext'][:, args.subkey_index]
+            _dk_plain = hot_encode(_dk_plain, 9 if args.use_hw else 256, dtype=np.float)
+    else:
+        loader = util.load_data_set(args.data_set)
+        total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
+                                                        'traces_path': '/media/rico/Data/TU/thesis/data',
+                                                        'raw_traces': args.raw_traces,
+                                                        'start': args.train_size + args.validation_size,
+                                                        'size': args.attack_size,
+                                                        'domain_knowledge': True})
+        print('Loading key guesses')
+        data_set_name = str(args.data_set)
+        _key_guesses = util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesses_ALL_transposed.csv'.format(
+            data_set_name),
+            delimiter=' ',
+            dtype=np.int,
+            start=args.train_size + args.validation_size,
+            size=args.attack_size)
+        _real_key = util.load_csv('/media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name),
+                                  dtype=np.int)
+
+        _x_attack = total_x_attack
+        _y_attack = total_y_attack
+
+    return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
+
+
 def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_string, real_key):
     # Shuffle the data using same permutation  for n_exp and calculate mean for GE of the model
     y = []
@@ -106,14 +137,8 @@ def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_s
 
 
 def run_load(args):
-    # traces_path = '/media/rico/Data/TU/thesis/data/'
-    # models_path = '/media/rico/Data/TU/thesis/runs2/'
-    # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
-    # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
-
     args.type_network = 'HW' if args.use_hw else 'ID'
 
-    args.trace_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args.traces_path, args.subkey_index, args.desync)
     args.device = torch.device("cuda")
 
     args.permutations = util.generate_permutations(args.num_exps, args.attack_size)

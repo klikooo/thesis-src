@@ -15,22 +15,24 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(5)]
-    train_size = 40000
-    epochs = 150
+    train_size = 20000
+    epochs = 120
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 3000
+    attack_size = 300
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.ASCAD
-    kernel_sizes = [17, 19, 21]
+    data_set = DataSet.RANDOM_DELAY
+    kernel_sizes = [3, 5]
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['ConvNetKernelAscad']
-    desync = 50
+    network_names = ['ConvNetKernel']
+    desync = 0
     num_exps = 100
+    raw_traces = True
+    validation_size = 1000
     #####################################################################################
 
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -54,7 +56,9 @@ if __name__ == "__main__":
     parser.add_argument('-x', "--num_exps", default=num_exps, type=int, help="Number of experiments for GE")
     parser.add_argument('-a', "--attack_size", default=attack_size, type=int, help="Attack size")
     parser.add_argument('-n', '--network_names', nargs='+', help='List of networks', default=network_names)
-
+    parser.add_argument('-w', "--raw_traces", default=raw_traces, type=bool,
+                        help="Use raw traces", action=BoolAction)
+    parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size used")
     args = parser.parse_args()
     print(args)
 
