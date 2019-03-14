@@ -23,7 +23,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.ASCAD
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15]
+kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetKernelAscad']

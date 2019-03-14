@@ -111,7 +111,6 @@ def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
                           attack_size=10000,
                           ):
     ranks = np.zeros(attack_size)
-    # predictions = predictions.cpu().numpy()
     probabilities = np.zeros(256)
     if not use_hw:
         for trace_num in range(attack_size):
@@ -130,11 +129,6 @@ def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
             ranks[trace_num] = res
 
     print('Key guess: {}'.format(np.argmax(probabilities)))
-    # print(np.sort(probabilities))
-    # print(probabilities[real_key])
-
-    # sorted_proba = np.array(list(map(lambda a: key_bytes_proba[a], key_bytes_proba.argsort()[::-1])))
-    # real_key_rank = np.where(sorted_proba == key_bytes_proba[real_key])[0][0]
 
     return np.array(range(1, attack_size+1)), ranks
 
