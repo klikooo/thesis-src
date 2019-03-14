@@ -10,10 +10,10 @@ from models.load_model import load_model
 from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode
 from test import accuracy, test_with_key_guess_p
 
-traces_path = '/media/rico/Data/TU/thesis/data/'
-models_path = '/media/rico/Data/TU/thesis/runs2/'
-# traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
-# models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
+# traces_path = '/media/rico/Data/TU/thesis/data/'
+# models_path = '/media/rico/Data/TU/thesis/runs2/'
+traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
+models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
 #####################################################################################
 # Parameters
@@ -31,7 +31,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = DataSet.ASCAD
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15]
+kernel_sizes = [17, 19, 21]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetKernelAscad']
