@@ -29,7 +29,7 @@ kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
 network_names = ['ConvNetKernelAscad']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 100
+desync = 0
 #####################################################################################
 
 

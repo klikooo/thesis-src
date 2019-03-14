@@ -24,19 +24,19 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD
-    init_funcs = [ConvNetKernelAscad.init]
+    data_set = DataSet.RANDOM_DELAY
+    init_funcs = [ConvNetKernel.init]
     use_hw = False
     runs = 1
-    train_sizes = [15000]
+    train_sizes = [6000]
     epochs = 150
     batch_size = 100
-    lr = 0.0001
+    lr = 0.0005
     subkey_index = 2
     checkpoints = None
-    unmask = True  # False if subkey_index < 2 else True
+    unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
-    desync = 100
+    desync = 0
     validation_size = 1000
     kernel_size = 7
     spread_factor = 1
@@ -69,6 +69,8 @@ if __name__ == "__main__":
     parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
+    parser.add_argument('-n', "--use_noise_data", default=False, type=BoolAction,
+                        help="Use noise in the data set for RD")
     args = parser.parse_args()
     print(args)
 
@@ -103,4 +105,5 @@ if __name__ == "__main__":
                 desync=args.desync,
                 validation_size=args.validation_size,
                 kernel_size=args.kernel_size,
-                loss_function=loss_function)
+                loss_function=loss_function,
+                use_noise_data=args.use_noise_data)

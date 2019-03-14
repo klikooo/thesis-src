@@ -18,7 +18,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         loss_function,
         unmask=False,
         domain_knowledge=False,
-        kernel_size=None):
+        kernel_size=None,
+        use_noise_data=False):
     sub_key_index = subkey_index
 
     # Select the number of classes to use depending on hw
@@ -46,7 +47,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                  "raw_traces": raw_traces,
                  "size": train_size + validation_size,
                  "domain_knowledge": True,
-                 "desync": desync}
+                 "desync": desync,
+                 "use_noise_data": use_noise_data}
 
     # Load data and chop into the desired sizes
     load_function = load_data_set(data_set)
