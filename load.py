@@ -25,7 +25,7 @@ if __name__ == "__main__":
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [7]
+    kernel_sizes = [5, 7, 9]
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['ConvNetKernel']

@@ -23,7 +23,7 @@ for i in range(0, 50000, step):
                             size=args.get('size'))
     mean = np.mean(x_train, axis=0)
 
-    noise = np.random.normal(0, 7, 3500 * args['size']).reshape((args['size'], 3500))
+    noise = np.random.normal(0, 15, 3500 * args['size']).reshape((args['size'], 3500))
     print(np.shape(noise))
 
     result = x_train + noise

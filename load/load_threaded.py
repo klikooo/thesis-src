@@ -134,7 +134,9 @@ def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_s
 
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)
-    util.save_np('{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string), y, f="%f")
+    save_path = '{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string)
+    print("Save path {}".format(save_path))
+    util.save_np(save_path, y, f="%f")
 
 
 def run_load(args):
