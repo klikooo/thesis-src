@@ -98,13 +98,14 @@ def load_data(args, network_name):
                                                         'domain_knowledge': True})
         print('Loading key guesses')
         data_set_name = str(args.data_set)
-        _key_guesses = util.load_csv('/media/rico/Data/TU/thesis/data/{}/Value/key_guesses_ALL_transposed.csv'.format(
+        _key_guesses = util.load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
+            args.traces_path,
             data_set_name),
             delimiter=' ',
             dtype=np.int,
             start=args.train_size + args.validation_size,
             size=args.attack_size)
-        _real_key = util.load_csv('/media/rico/Data/TU/thesis/data/{}/secret_key.csv'.format(data_set_name),
+        _real_key = util.load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
                                   dtype=np.int)
 
         _x_attack = total_x_attack
