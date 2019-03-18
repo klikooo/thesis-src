@@ -23,7 +23,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5]  # , 7, 9, 11, 13, 15, 17, 19, 21]
+kernel_sizes = [5, 7]  # , 7, 9, 11, 13, 15, 17, 19, 21]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetKernel']
@@ -49,7 +49,7 @@ def get_ge(net_name, kernel_size_string=""):
 
     ge_x, ge_y = [], []
     for run in runs:
-        ge_path = '{}/model_r{}_{}{}.exp1'.format(
+        ge_path = '{}/model_r{}_{}{}.exp'.format(
             folder,
             run,
             net_name,

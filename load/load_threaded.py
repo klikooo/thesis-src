@@ -91,7 +91,7 @@ def load_data(args, network_name):
     else:
         loader = util.load_data_set(args.data_set)
         total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
-                                                        'traces_path': '/media/rico/Data/TU/thesis/data',
+                                                        'traces_path': args.traces_path,
                                                         'raw_traces': args.raw_traces,
                                                         'start': args.train_size + args.validation_size,
                                                         'size': args.attack_size,
