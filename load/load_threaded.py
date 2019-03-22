@@ -95,7 +95,8 @@ def load_data(args, network_name):
                                                         'raw_traces': args.raw_traces,
                                                         'start': args.train_size + args.validation_size,
                                                         'size': args.attack_size,
-                                                        'domain_knowledge': True})
+                                                        'domain_knowledge': True,
+                                                        'use_noise_data': args.use_noise_data})
         print('Loading key guesses')
         data_set_name = str(args.data_set)
         _key_guesses = util.load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
@@ -134,7 +135,7 @@ def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_s
 
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)
-    save_path = '{}/model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string)
+    save_path = '{}model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string)
     print("Save path {}".format(save_path))
     util.save_np(save_path, y, f="%f")
 

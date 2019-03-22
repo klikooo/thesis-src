@@ -33,6 +33,7 @@ if __name__ == "__main__":
     num_exps = 100
     raw_traces = True
     validation_size = 1000
+    use_noise_data = False
     #####################################################################################
 
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -59,6 +60,8 @@ if __name__ == "__main__":
     parser.add_argument('-w', "--raw_traces", default=raw_traces, type=bool,
                         help="Use raw traces", action=BoolAction)
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size used")
+    parser.add_argument('-o', "--use_noise_data", default=use_noise_data, type=bool,
+                        help="Use noise data for RD", action=BoolAction)
     args = parser.parse_args()
     print(args)
 

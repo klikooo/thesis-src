@@ -38,9 +38,10 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 7
+    kernel_size = 5
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
+    use_noise_data = True
     ############################
 
     # DO NOT TOUCH #########################
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
-    parser.add_argument('-n', "--use_noise_data", default=False, action=BoolAction, type=bool,
+    parser.add_argument('-n', "--use_noise_data", default=use_noise_data, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
     args = parser.parse_args()
     print(args)
