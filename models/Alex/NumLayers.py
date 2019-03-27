@@ -71,6 +71,10 @@ class NumLayers(nn.Module):
     def name(self):
         return "NumLayers_k{}_c{}_l{}".format(self.kernel_size, self.channel_size, self.num_layers)
 
+    @staticmethod
+    def filename():
+        return "NumLayers"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

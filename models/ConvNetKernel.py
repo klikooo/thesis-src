@@ -86,6 +86,10 @@ class ConvNetKernel(nn.Module):
     def name(self):
         return "ConvNetKernel_k{}".format(self.kernel_size)
 
+    @staticmethod
+    def filename():
+        return "ConvNetKernel"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

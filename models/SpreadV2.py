@@ -115,6 +115,10 @@ class SpreadV2(nn.Module):
         return "SpreadV2"
 
     @staticmethod
+    def filename():
+        return "SpreadV2"
+
+    @staticmethod
     def init(args):
         return SpreadV2(spread_factor=args['sf'], out_shape=args['n_classes'], input_shape=args['input_shape'])
 

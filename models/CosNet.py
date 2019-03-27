@@ -30,6 +30,10 @@ class CosNet(nn.Module):
     def name(self):
         return self.network_name
 
+    @staticmethod
+    def filename():
+        return "CosNet"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

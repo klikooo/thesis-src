@@ -70,6 +70,10 @@ class ConvNetKernelAscad(nn.Module):
     def name(self):
         return "ConvNetKernelAscad_k{}".format(self.kernel_size)
 
+    @staticmethod
+    def filename():
+        return "ConvNetKernelAscad"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

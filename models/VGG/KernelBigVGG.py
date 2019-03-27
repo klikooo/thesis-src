@@ -101,7 +101,11 @@ class KernelBigVGG(nn.Module):
         return x
 
     def name(self):
-        return "KernelBig{}_c{}".format(self.kernel_size, self.channel_size)
+        return "KernelBigVGG{}_c{}".format(self.kernel_size, self.channel_size)
+
+    @staticmethod
+    def filename():
+        return "KernelBigVGG"
 
     def save(self, path):
         torch.save({

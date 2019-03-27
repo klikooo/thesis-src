@@ -78,6 +78,10 @@ class NIN(nn.Module):
     def name(self):
         return "NIN"
 
+    @staticmethod
+    def filename():
+        return "NIN"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

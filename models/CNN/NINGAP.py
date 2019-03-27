@@ -73,6 +73,10 @@ class NINGAP(nn.Module):
     def name(self):
         return "NINGAP"
 
+    @staticmethod
+    def filename():
+        return "NINGAP"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

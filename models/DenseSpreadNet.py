@@ -35,6 +35,10 @@ class DenseSpreadNet(nn.Module):
     def name(self):
         return "DenseSpreadNet"
 
+    @staticmethod
+    def filename():
+        return "DenseSpreadNet"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

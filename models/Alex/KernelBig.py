@@ -71,6 +71,10 @@ class KernelBig(nn.Module):
     def name(self):
         return "KernelBig{}_c{}".format(self.kernel_size, self.channel_size)
 
+    @staticmethod
+    def filename():
+        return "KernelBig"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),
