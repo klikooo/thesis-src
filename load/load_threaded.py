@@ -19,17 +19,17 @@ def get_ranks(args, network_name, model_params):
 
     folder = '{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
-        args.models_path,
-        str(args.data_set),
-        args.subkey_index,
-        '' if args.unmask else 'masked/',
-        '' if args.desync is 0 else 'desync{}/'.format(args.desync),
-        args.type_network,
-        args.spread_factor,
-        args.epochs,
-        args.batch_size,
-        '%.2E' % Decimal(args.lr),
-        args.train_size)
+                args.models_path,
+                str(args.data_set),
+                args.subkey_index,
+                '' if args.unmask else 'masked/',
+                '' if args.desync is 0 else 'desync{}/'.format(args.desync),
+                args.type_network,
+                args.spread_factor,
+                args.epochs,
+                args.batch_size,
+                '%.2E' % Decimal(args.lr),
+                args.train_size)
 
     # Calculate the predictions before hand
     predictions = []
@@ -161,5 +161,3 @@ def run_load(args):
                 get_ranks(args, net_name, model_params))
                                     )
         ))
-        # for kernel_size in args.kernel_sizes:
-        #     model_params.update({"kernel_size": kernel_size})
