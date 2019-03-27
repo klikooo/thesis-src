@@ -1,15 +1,5 @@
-from models.CNN.NIN import NIN
-from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
-from models.ConvNetKernel import ConvNetKernel
-from models.ConvNetKernelAscad import ConvNetKernelAscad
-from models.ConvNetKernelMasked import ConvNetKernelMasked
-from models.DenseNet import DenseNet
-from models.DenseSpreadNet import DenseSpreadNet
-from models.SpreadNet import SpreadNet
-from models.CosNet import CosNet
-from models.SpreadV2 import SpreadV2
 from train_runner import run
 import os
 import argparse
@@ -17,6 +7,7 @@ import torch.nn as nn
 
 
 from util import BoolAction, DataSet, func_in_list
+from util_classes import get_init_func
 
 if __name__ == "__main__":
 
@@ -25,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    init_funcs = [ConvNetKernel.init]
+    network_names = ["ConvNetKernel"]
     use_hw = False
     runs = 1
     train_sizes = [6000]
@@ -72,6 +63,8 @@ if __name__ == "__main__":
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     parser.add_argument('-n', "--use_noise_data", default=use_noise_data, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
+    parser.add_argument('-w', '--network_names', nargs='+', help='List of networks', default=network_names)
+
     args = parser.parse_args()
     print(args)
 
@@ -90,7 +83,8 @@ if __name__ == "__main__":
     print('Using model save path: {}'.format(args.model_save_path))
 
     for train_size in args.train_sizes:
-        for init_func in init_funcs:
+        for network_name in args.network_names:
+            init_func = get_init_func(network_name)
             run(use_hw=args.use_hw, spread_factor=args.spread_factor, runs=args.runs,
                 train_size=train_size, epochs=args.epochs, lr=args.lr,
                 subkey_index=args.subkey_index, batch_size=args.batch_size,
