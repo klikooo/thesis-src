@@ -9,35 +9,35 @@ import numpy as np
 from models.load_model import load_model
 from util import load_ascad, shuffle_permutation, req_dk, hot_encode
 from test import accuracy, test_with_key_guess_p
+from util_classes import get_save_name
 
 
-def get_ranks(args, network_name, kernel_size_string=""):
+def get_ranks(args, network_name, model_params):
     # Load the data and make it global
     global x_attack, y_attack, dk_plain, key_guesses
     x_attack, y_attack, key_guesses, real_key, dk_plain = load_data(args, network_name)
 
     folder = '{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
-                args.models_path,
-                str(args.data_set),
-                args.subkey_index,
-                '' if args.unmask else 'masked/',
-                '' if args.desync is 0 else 'desync{}/'.format(args.desync),
-                args.type_network,
-                args.spread_factor,
-                args.epochs,
-                args.batch_size,
-                '%.2E' % Decimal(args.lr),
-                args.train_size)
+        args.models_path,
+        str(args.data_set),
+        args.subkey_index,
+        '' if args.unmask else 'masked/',
+        '' if args.desync is 0 else 'desync{}/'.format(args.desync),
+        args.type_network,
+        args.spread_factor,
+        args.epochs,
+        args.batch_size,
+        '%.2E' % Decimal(args.lr),
+        args.train_size)
 
     # Calculate the predictions before hand
     predictions = []
     for run in args.runs:
-        model_path = '{}/model_r{}_{}{}.pt'.format(
+        model_path = '{}/model_r{}_{}.pt'.format(
             folder,
             run,
-            network_name,
-            kernel_size_string)
+            get_save_name(network_name, model_params))
         print('path={}'.format(model_path))
 
         model = load_model(network_name, model_path)
@@ -53,7 +53,7 @@ def get_ranks(args, network_name, kernel_size_string=""):
     processes = []
     for i, run in enumerate(args.runs):
         p = Process(target=threaded_run_test, args=(args, predictions[i], folder, run,
-                                                    network_name, kernel_size_string, real_key))
+                                                    network_name, model_params, real_key))
         processes.append(p)
         p.start()
     # Wait for them to finish
@@ -115,7 +115,7 @@ def load_data(args, network_name):
     return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
 
 
-def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_string, real_key):
+def threaded_run_test(args, prediction, folder, run, network_name, model_params, real_key):
     # Shuffle the data using same permutation  for n_exp and calculate mean for GE of the model
     y = []
     for exp_i in range(args.num_exps):
@@ -135,7 +135,7 @@ def threaded_run_test(args, prediction, folder, run, network_name, kernel_size_s
 
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)
-    save_path = '{}model_r{}_{}{}.exp'.format(folder, run, network_name, kernel_size_string)
+    save_path = '{}model_r{}_{}.exp'.format(folder, run, get_save_name(network_name, model_params))
     print("Save path {}".format(save_path))
     util.save_np(save_path, y, f="%f")
 
@@ -147,11 +147,19 @@ def run_load(args):
 
     args.permutations = util.generate_permutations(args.num_exps, args.attack_size)
 
+    model_params = {}
+
     # Test the networks that were specified
     for net_name in args.network_names:
-        if net_name in util.req_kernel_size:
-            for kernel_size in args.kernel_sizes:
-                kernel_string = "_k{}".format(kernel_size)
-                get_ranks(args, net_name, kernel_string)
-        else:
-            get_ranks(args, net_name)
+        def kernel_lambda(x): model_params.update({"kernel_size": x})
+
+        def channel_lambda(x): model_params.update({"channel_size": x})
+
+        util.loop_at_least_once(args.kernel_sizes, kernel_lambda, lambda: (
+            util.loop_at_least_once(args.channel_sizes, channel_lambda, lambda: (
+                print(model_params),
+                get_ranks(args, net_name, model_params))
+                                    )
+        ))
+        # for kernel_size in args.kernel_sizes:
+        #     model_params.update({"kernel_size": kernel_size})

@@ -18,8 +18,12 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           ConvNetKernelAscad, ConvNetKernelAscad2,
           ConvNetKernelMasked, NIN]
 
+MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
+
 
 def get_init_func(basename):
-    for model in MODELS:
-        if model.basename() == basename:
-            return model.init
+    return MODELS_TABLE[basename].init
+
+
+def get_save_name(basename, args):
+    return MODELS_TABLE[basename].save_name(args)

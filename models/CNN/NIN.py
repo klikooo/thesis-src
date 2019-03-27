@@ -82,6 +82,10 @@ class NIN(nn.Module):
     def basename():
         return "NIN"
 
+    @staticmethod
+    def save_name(args):
+        return "{}".format(NIN.basename())
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

@@ -118,6 +118,10 @@ class SpreadNet(nn.Module):
         return "SpreadNet"
 
     @staticmethod
+    def save_name(args):
+        return "{}".format(SpreadNet.basename())
+
+    @staticmethod
     def init(args):
         return SpreadNet(spread_factor=args['sf'], out_shape=args['n_classes'], input_shape=args['input_shape'])
 

@@ -69,7 +69,11 @@ class KernelBig(nn.Module):
         return x
 
     def name(self):
-        return "KernelBig{}_c{}".format(self.kernel_size, self.channel_size)
+        return "KernelBig_k{}_c{}".format(self.kernel_size, self.channel_size)
+
+    @staticmethod
+    def save_name(args):
+        return "{}_k{}_c{}".format(KernelBig.basename(), args['kernel_size'], args['channel_size'])
 
     @staticmethod
     def filename():

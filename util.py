@@ -297,7 +297,7 @@ def load_dpav4(args):
                        start=args.get('start'),
                        size=args.get('size'))
     if args['domain_knowledge']:
-        #TODO : add plain 0
+        # TODO : add plain 0
         if True:
             plain = []
         else:
@@ -400,3 +400,14 @@ def generate_permutations(n, size):
     for i in range(n):
         permutations.append(np.random.permutation(size))
     return permutations
+
+
+def loop_at_least_once(data, func, do):
+    i = 0
+    while True:
+        if len(data) != 0:
+            func(data[i])
+        do()
+        i += 1
+        if i >= len(data):
+            break

@@ -107,6 +107,10 @@ class KernelBigVGG(nn.Module):
     def basename():
         return "KernelBigVGG"
 
+    @staticmethod
+    def save_name(args):
+        return "{}_c{}".format(KernelBigVGG.basename(), args['channel_size'])
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

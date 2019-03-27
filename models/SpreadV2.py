@@ -119,6 +119,10 @@ class SpreadV2(nn.Module):
         return "SpreadV2"
 
     @staticmethod
+    def save_name(args):
+        return "{}".format(SpreadV2.basename())
+
+    @staticmethod
     def init(args):
         return SpreadV2(spread_factor=args['sf'], out_shape=args['n_classes'], input_shape=args['input_shape'])
 

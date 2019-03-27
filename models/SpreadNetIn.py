@@ -117,3 +117,12 @@ class SpreadNetIn(nn.Module):
     def name(self):
         return "SpreadNetIn"
 
+    @staticmethod
+    def basename():
+        return "SpreadNetIn"
+
+    @staticmethod
+    def save_name(args):
+        return "{}".format(SpreadNetIn.basename())
+
+

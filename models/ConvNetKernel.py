@@ -84,7 +84,11 @@ class ConvNetKernel(nn.Module):
         return x
 
     def name(self):
-        return "ConvNetKernel_k{}".format(self.kernel_size)
+        return "{}_k{}".format(ConvNetKernel.basename(), self.kernel_size)
+
+    @staticmethod
+    def save_name(args):
+        return "{}_k{}".format(ConvNetKernel.basename(), args['kernel_size'])
 
     @staticmethod
     def basename():

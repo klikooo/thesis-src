@@ -72,6 +72,11 @@ class NumLayers(nn.Module):
         return "NumLayers_k{}_c{}_l{}".format(self.kernel_size, self.channel_size, self.num_layers)
 
     @staticmethod
+    def save_name(args):
+        return "{}_k{}_c{}_l{}".format(NumLayers.basename(), args['kernel_size'],
+                                       args['channel_size'], args['num_layers'])
+
+    @staticmethod
     def filename():
         return "NumLayers"
 

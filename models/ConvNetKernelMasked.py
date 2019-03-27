@@ -82,6 +82,10 @@ class ConvNetKernelMasked(nn.Module):
     def basename():
         return "ConvNetKernelMasked"
 
+    @staticmethod
+    def save_name(args):
+        return "{}_k{}".format(ConvNetKernelMasked.basename(), args['kernel_size'])
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),

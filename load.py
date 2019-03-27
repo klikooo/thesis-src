@@ -26,6 +26,7 @@ if __name__ == "__main__":
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
     kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
+    channel_sizes = []
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['ConvNetKernel']
@@ -62,6 +63,8 @@ if __name__ == "__main__":
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size used")
     parser.add_argument('-o', "--use_noise_data", default=use_noise_data, type=bool,
                         help="Use noise data for RD", action=BoolAction)
+    parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int, help='List of kernel sizes')
+
     args = parser.parse_args()
     print(args)
 
