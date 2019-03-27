@@ -26,8 +26,8 @@ if __name__ == "__main__":
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
     kernel_sizes = [5]
-    channel_sizes = [10]
-    num_layers = [3, 4]
+    channel_sizes = []
+    num_layers = []
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['NumLayers']
