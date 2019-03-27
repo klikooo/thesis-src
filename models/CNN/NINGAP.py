@@ -74,7 +74,7 @@ class NINGAP(nn.Module):
         return "NINGAP"
 
     @staticmethod
-    def filename():
+    def basename():
         return "NINGAP"
 
     def save(self, path):

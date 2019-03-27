@@ -114,7 +114,7 @@ class SpreadNet(nn.Module):
         return "SpreadNet"
 
     @staticmethod
-    def filename():
+    def basename():
         return "SpreadNet"
 
     @staticmethod

@@ -115,7 +115,7 @@ class SpreadV2(nn.Module):
         return "SpreadV2"
 
     @staticmethod
-    def filename():
+    def basename():
         return "SpreadV2"
 
     @staticmethod

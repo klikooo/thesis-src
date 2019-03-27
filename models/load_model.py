@@ -20,7 +20,7 @@ def load_model(network_name, model_path):
                ConvNetKernelAscad, ConvNetKernelAscad2,
                ConvNetKernelMasked, NIN]
     for clazz in classes:
-        if clazz.filename() == network_name:
+        if clazz.basename() == network_name:
             return clazz.load_model(model_path)
     # loader = {
     #     "DenseSpreadNet": DenseSpreadNet.load_model,

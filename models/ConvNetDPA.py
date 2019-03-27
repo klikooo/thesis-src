@@ -58,7 +58,7 @@ class ConvNetDPA(nn.Module):
         return "ConvNetDPA"
 
     @staticmethod
-    def filename():
+    def basename():
         return "ConvNetDPA"
 
     def save(self, path):

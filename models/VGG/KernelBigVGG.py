@@ -104,7 +104,7 @@ class KernelBigVGG(nn.Module):
         return "KernelBigVGG{}_c{}".format(self.kernel_size, self.channel_size)
 
     @staticmethod
-    def filename():
+    def basename():
         return "KernelBigVGG"
 
     def save(self, path):

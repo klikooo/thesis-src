@@ -79,7 +79,7 @@ class ConvNetKernelAscad2(nn.Module):
         return "ConvNetKernelAscad2_k{}".format(self.kernel_size)
 
     @staticmethod
-    def filename():
+    def basename():
         return "ConvNetKernelAscad2"
 
     def save(self, path):

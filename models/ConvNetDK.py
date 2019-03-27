@@ -68,7 +68,7 @@ class ConvNetDK(nn.Module):
         return "ConvNetDK"
 
     @staticmethod
-    def filename():
+    def basename():
         return "ConvNetDK"
 
     def save(self, path):

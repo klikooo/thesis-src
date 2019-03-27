@@ -31,7 +31,7 @@ class CosNet(nn.Module):
         return self.network_name
 
     @staticmethod
-    def filename():
+    def basename():
         return "CosNet"
 
     def save(self, path):

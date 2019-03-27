@@ -41,7 +41,7 @@ class DenseNet(nn.Module):
         return "DenseNet"
 
     @staticmethod
-    def filename():
+    def basename():
         return "DenseNet"
 
     def save(self, path):

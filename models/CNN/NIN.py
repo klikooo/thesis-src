@@ -79,7 +79,7 @@ class NIN(nn.Module):
         return "NIN"
 
     @staticmethod
-    def filename():
+    def basename():
         return "NIN"
 
     def save(self, path):

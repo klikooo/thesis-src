@@ -79,7 +79,7 @@ class ConvNetKernelMasked(nn.Module):
         return "ConvNetKernelMasked_k{}".format(self.kernel_size)
 
     @staticmethod
-    def filename():
+    def basename():
         return "ConvNetKernelMasked"
 
     def save(self, path):
