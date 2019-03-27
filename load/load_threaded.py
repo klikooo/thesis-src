@@ -155,9 +155,13 @@ def run_load(args):
 
         def channel_lambda(x): model_params.update({"channel_size": x})
 
+        def layers_lambda(x): model_params.update({"num_layers": x})
+
         util.loop_at_least_once(args.kernel_sizes, kernel_lambda, lambda: (
             util.loop_at_least_once(args.channel_sizes, channel_lambda, lambda: (
-                print(model_params),
-                get_ranks(args, net_name, model_params))
+                util.loop_at_least_once(args.num_layers, layers_lambda, lambda: (
+                    print(model_params),
+                    get_ranks(args, net_name, model_params))
+                                    ))
                                     )
         ))

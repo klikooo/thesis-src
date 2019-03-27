@@ -15,21 +15,22 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
-train_size = 20000
-epochs = 120
+runs = [x for x in range(1)]
+train_size = 100
+epochs = 20
 batch_size = 100
-lr = 0.001
+lr = 0.0005
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
-channel_sizes = []
+kernel_sizes = [5]
+channel_sizes = [10]
+num_layers = [3, 4]
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNetKernel']
+network_names = ['NumLayers']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -39,7 +40,7 @@ desync = 0
 
 
 def get_ge(net_name, model_parameters):
-    folder = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}{}_SF{}_' \
+    folder = '/media/rico/Data/TU/thesis/runs/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
                                     str(data_set),
                                     sub_key_index,
@@ -79,6 +80,7 @@ for network_name in network_names:
 
     def lambda_channel(x): model_params.update({"channel_size": x})
 
+    def lambda_layers(x): model_params.update({"num_layers": x})
 
     def retrieve_ge():
         print(model_params)
@@ -90,7 +92,10 @@ for network_name in network_names:
         name_models.append(get_save_name(network_name, model_params))
 
     util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
-        util.loop_at_least_once(channel_sizes, lambda_channel, retrieve_ge)))
+        util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
+            util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)
+        ))
+    ))
 
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
 for i in range(len(rank_mean_y)):
