@@ -7,18 +7,18 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs/'
+    models_path = '/media/rico/Data/TU/thesis/runs2/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
     use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(1)]
-    train_size = 100
-    epochs = 20
+    runs = [x for x in range(5)]
+    train_size = 20000
+    epochs = 120
     batch_size = 100
-    lr = 0.0005
+    lr = 0.001
     sub_key_index = 2
     attack_size = 200
     rank_step = 1
@@ -26,11 +26,11 @@ if __name__ == "__main__":
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
     kernel_sizes = [5]
-    channel_sizes = []
-    num_layers = []
+    channel_sizes = [10]
+    num_layers = [3]
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['NumLayers']
+    network_names = ['ConvNetKernel']
     desync = 0
     num_exps = 100
     raw_traces = True
