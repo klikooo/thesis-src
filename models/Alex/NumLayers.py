@@ -6,7 +6,7 @@ from util import device
 
 
 class NumLayers(nn.Module):
-    def __init__(self, input_shape, out_shape, num_layers, kernel_size=3, channel_size=8):
+    def __init__(self, input_shape, out_shape, num_layers, kernel_size, channel_size):
         super(NumLayers, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
@@ -25,20 +25,20 @@ class NumLayers(nn.Module):
         out_channels = channel_size
         num_features = input_shape
 
-        for i in range(num_layers):
+        for i in range(self.num_layers):
             self.conv_layers.append(
                 nn.Conv1d(in_channels, out_channels, kernel_size=self.kernel_size, padding=self.padding).to(device))
             self.bn_layers.append(
                 nn.BatchNorm1d(num_features=out_channels).to(device))
             self.mp_layers.append(
                 nn.MaxPool1d(self.max_pool).to(device))
-            num_features = int(input_shape / 2)
+            num_features = int(num_features / 2)
             in_channels = out_channels
             out_channels = 2 * in_channels
 
         self.drop_out = nn.Dropout(p=0.5)
 
-        self.fc4 = torch.nn.Linear(int(self.conv3_channels * num_features), 300).to(device)
+        self.fc4 = torch.nn.Linear(int(in_channels * num_features), 300).to(device)
         self.fc5 = torch.nn.Linear(300, 300).to(device)
         self.fc6 = torch.nn.Linear(300, self.out_shape).to(device)
 
@@ -46,9 +46,11 @@ class NumLayers(nn.Module):
         batch_size = x.size()[0]
         inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
-        x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
-        x = self.mp2(F.relu(self.bn2(self.conv2(x))))
-        x = self.mp3(F.relu(self.bn3(self.conv3(x))))
+        x = inputs
+        for i in range(self.num_layers):
+                x = self.mp_layers[i](F.relu(
+                    self.bn_layers[i](self.conv_layers[i](x))
+                ))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
@@ -77,7 +79,7 @@ class NumLayers(nn.Module):
                                        args['channel_size'], args['num_layers'])
 
     @staticmethod
-    def filename():
+    def basename():
         return "NumLayers"
 
     def save(self, path):
@@ -107,4 +109,5 @@ class NumLayers(nn.Module):
         return NumLayers(out_shape=args['n_classes'],
                          input_shape=args['input_shape'],
                          kernel_size=args['kernel_size'],
-                         num_layers=args['num_layers'])
+                         num_layers=args['num_layers'],
+                         channel_size=args['channel_size'])

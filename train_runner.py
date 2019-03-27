@@ -16,6 +16,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         desync,
         validation_size,
         loss_function,
+        channel_size,
+        num_layers,
         unmask=False,
         domain_knowledge=False,
         kernel_size=None,
@@ -65,7 +67,9 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     init_args = {"sf": spread_factor,
                  "input_shape": input_shape,
                  "n_classes": n_classes,
-                 "kernel_size": kernel_size
+                 "kernel_size": kernel_size,
+                 "channel_size": channel_size,
+                 "num_layers": num_layers
                  }
 
     # Do the runs

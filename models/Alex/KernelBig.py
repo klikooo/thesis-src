@@ -6,7 +6,7 @@ from util import device
 
 
 class KernelBig(nn.Module):
-    def __init__(self, input_shape, out_shape, kernel_size, channel_size=8):
+    def __init__(self, input_shape, out_shape, kernel_size, channel_size):
         super(KernelBig, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
@@ -76,7 +76,7 @@ class KernelBig(nn.Module):
         return "{}_k{}_c{}".format(KernelBig.basename(), args['kernel_size'], args['channel_size'])
 
     @staticmethod
-    def filename():
+    def basename():
         return "KernelBig"
 
     def save(self, path):
@@ -103,4 +103,5 @@ class KernelBig(nn.Module):
     def init(args):
         return KernelBig(out_shape=args['n_classes'],
                          input_shape=args['input_shape'],
-                         kernel_size=args['kernel_size'])
+                         kernel_size=args['kernel_size'],
+                         channel_size=args['channel_size'])

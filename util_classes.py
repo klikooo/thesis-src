@@ -1,3 +1,5 @@
+from models.Alex.KernelBig import KernelBig
+from models.Alex.NumLayers import NumLayers
 from models.CNN.NIN import NIN
 from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
@@ -11,13 +13,14 @@ from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
 from models.SpreadV2 import SpreadV2
+from models.VGG.KernelBigVGG import KernelBigVGG
 
 MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           SpreadNet, CosNet, ConvNet, ConvNetDK,
           ConvNetDK, ConvNetDPA, ConvNetKernel,
           ConvNetKernelAscad, ConvNetKernelAscad2,
-          ConvNetKernelMasked, NIN]
-
+          ConvNetKernelMasked, NIN, KernelBig, NumLayers,
+          KernelBigVGG]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
@@ -27,3 +30,4 @@ def get_init_func(basename):
 
 def get_save_name(basename, args):
     return MODELS_TABLE[basename].save_name(args)
+

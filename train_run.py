@@ -16,11 +16,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["ConvNetKernel"]
+    network_names = ["NumLayers"]
     use_hw = False
     runs = 1
-    train_sizes = [6000]
-    epochs = 150
+    train_sizes = [100]
+    epochs = 20
     batch_size = 100
     lr = 0.0005
     subkey_index = 2
@@ -30,6 +30,8 @@ if __name__ == "__main__":
     desync = 0
     validation_size = 1000
     kernel_size = 5
+    channel_size = 10
+    num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     use_noise_data = True
@@ -41,29 +43,36 @@ if __name__ == "__main__":
 
     # Parse arguments
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
-    parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
-    parser.add_argument('-r', "--runs", default=runs, type=int, help='Number of runs')
-    parser.add_argument('-t', "--train_sizes", nargs='+', default=train_sizes, type=int, help='List of train sizes')
-    parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
-    parser.add_argument('-b', "--batch_size", default=batch_size, type=int, help="Batch size")
-    parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
-    parser.add_argument('-s', "--subkey_index", default=subkey_index, type=int, help="The subkey index")
-    parser.add_argument('-u', "--unmask", default=unmask, type=bool,
-                        help="Mask the data with a the mask r[-s]", action=BoolAction)
-    parser.add_argument('-p', "--traces_path", default=traces_path, type=str, help="Path to the traces")
-    parser.add_argument('-m', "--model_save_path", default=model_save_path, type=str,
-                        help="Path were the models are saved")
-    parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-d', "--data_set", default=data_set, type=DataSet.from_string, choices=list(DataSet),
-                        help="The data set to use")
     parser.add_argument('-a', "--raw_traces", default=raw_traces, type=bool,
                         help="Load raw traces", action=BoolAction)
-    parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
-    parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
+    parser.add_argument('-b', "--batch_size", default=batch_size, type=int, help="Batch size")
+    parser.add_argument('-c', "--num_layers", default=num_layers, type=int, help="Number of layers for some networks")
+    parser.add_argument('-d', "--data_set", default=data_set, type=DataSet.from_string, choices=list(DataSet),
+                        help="The data set to use")
+    parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
+    parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
+    parser.add_argument('-g', "--channel_size", default=channel_size, type=int, help="Channel size for a CNN")
+
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
+    parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
+    parser.add_argument('-m', "--model_save_path", default=model_save_path, type=str,
+                        help="Path were the models are saved")
     parser.add_argument('-n', "--use_noise_data", default=use_noise_data, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
+
+    parser.add_argument('-p', "--traces_path", default=traces_path, type=str, help="Path to the traces")
+
+    parser.add_argument('-q', "--desync", default=desync, type=int, help="Desync for ASCAD db")
+
+    parser.add_argument('-r', "--runs", default=runs, type=int, help='Number of runs')
+    parser.add_argument('-s', "--subkey_index", default=subkey_index, type=int, help="The subkey index")
+    parser.add_argument('-t', "--train_sizes", nargs='+', default=train_sizes, type=int, help='List of train sizes')
+    parser.add_argument('-u', "--unmask", default=unmask, type=bool,
+                        help="Mask the data with a the mask r[-s]", action=BoolAction)
+    parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     parser.add_argument('-w', '--network_names', nargs='+', help='List of networks', default=network_names)
+
+    parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
 
     args = parser.parse_args()
     print(args)
@@ -101,4 +110,6 @@ if __name__ == "__main__":
                 validation_size=args.validation_size,
                 kernel_size=args.kernel_size,
                 loss_function=loss_function,
-                use_noise_data=args.use_noise_data)
+                use_noise_data=args.use_noise_data,
+                channel_size=args.channel_size,
+                num_layers=num_layers)

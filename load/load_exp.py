@@ -82,15 +82,15 @@ for network_name in network_names:
 
     def retrieve_ge():
         print(model_params)
-        x, y = get_ge(network_name, model_params)
-        mean_y = np.mean(y, axis=0)
-        ranks_x.append(x)
-        ranks_y.append(y)
+        ge_x, ge_y = get_ge(network_name, model_params)
+        mean_y = np.mean(ge_y, axis=0)
+        ranks_x.append(ge_x)
+        ranks_y.append(ge_y)
         rank_mean_y.append(mean_y)
         name_models.append(get_save_name(network_name, model_params))
 
-    util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda:
-        util.loop_at_least_once(channel_sizes, lambda_channel, retrieve_ge))
+    util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
+        util.loop_at_least_once(channel_sizes, lambda_channel, retrieve_ge)))
 
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
 for i in range(len(rank_mean_y)):
