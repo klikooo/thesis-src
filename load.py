@@ -18,14 +18,14 @@ if __name__ == "__main__":
     train_size = 20000
     epochs = 120
     batch_size = 100
-    lr = 0.0001
+    lr = 0.001
     sub_key_index = 2
-    attack_size = 500
+    attack_size = 200
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [5, 7, 9]
+    kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['ConvNetKernel']

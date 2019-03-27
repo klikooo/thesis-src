@@ -64,6 +64,10 @@ class ConvNet(nn.Module):
     def name(self):
         return "ConvNet"
 
+    @staticmethod
+    def filename():
+        return "ConvNet"
+
     def save(self, path):
         torch.save({
             'model_state_dict': self.state_dict(),
