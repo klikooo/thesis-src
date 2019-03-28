@@ -74,9 +74,9 @@ class KernelBigVGG(nn.Module):
         # Dropout
         self.drop_out = nn.Dropout(p=0.5)
 
-        self.fc4 = torch.nn.Linear(int(self.conv6_channels * num_features), 1024).to(device)
-        self.fc5 = torch.nn.Linear(1024, 1024).to(device)
-        self.fc6 = torch.nn.Linear(1024, self.out_shape).to(device)
+        self.fc4 = torch.nn.Linear(int(self.conv6_channels * num_features), 256).to(device)
+        self.fc5 = torch.nn.Linear(256, 256).to(device)
+        self.fc6 = torch.nn.Linear(256, self.out_shape).to(device)
 
     def forward(self, x):
         batch_size = x.size()[0]
