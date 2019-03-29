@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KernelBigAvg"]
+    network_names = ["KernelBigSmallVGG"]
     use_hw = False
     runs = 1
     train_sizes = [100]
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     desync = 0
     validation_size = 1000
     kernel_size = 5
-    channel_size = 10
+    channel_size = 8
     num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()

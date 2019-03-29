@@ -80,7 +80,7 @@ class KernelBigVGG(nn.Module):
 
         x = self.bn0(inputs)
 
-        x = self.bn1(F.relu(self.conv1(x)))
+        x = self.bn1(self.mp1(F.relu(self.conv1(x))))
         x = self.bn2(F.relu(self.conv2_2(F.relu(self.conv2_1(x)))))
         x = self.bn3(F.relu(self.conv3_2(F.relu(self.conv3_1(x)))))
 
