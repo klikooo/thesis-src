@@ -25,7 +25,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 11, 13]
+kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
 channel_sizes = [8]
 num_layers = []
 

@@ -67,11 +67,9 @@ class KernelBigSmallVGG(nn.Module):
 
         x = self.bn0(inputs)
         # x = inputs
-        x = self.mp1(self.bn1(self.conv1_2(self.conv1_1(x))))
-        x = self.bn2(self.conv2_2(self.conv2_1(x)))
-        x = self.bn3(
-            self.conv3_2(
-                self.conv3_1(x)))
+        x = self.mp1(F.relu(self.bn1(self.conv1_2(self.conv1_1(x)))))
+        x = self.bn2(F.relu(self.conv2_2(self.conv2_1(x))))
+        x = self.bn3(F.relu(self.conv3_2(self.conv3_1(x))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
@@ -82,9 +80,7 @@ class KernelBigSmallVGG(nn.Module):
         # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
-        x = self.drop_out(x)
         x = self.fc5(x).to(device)
-        x = self.drop_out(x)
         x = F.relu(x).to(device)
 
         # Final layer without ReLU

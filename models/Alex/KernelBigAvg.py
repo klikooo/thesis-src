@@ -59,9 +59,7 @@ class KernelBigAvg(nn.Module):
         # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
-        x = self.drop_out(x)
         x = self.fc5(x).to(device)
-        x = self.drop_out(x)
         x = F.relu(x).to(device)
 
         # Final layer without ReLU

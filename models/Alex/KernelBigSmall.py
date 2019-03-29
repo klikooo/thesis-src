@@ -17,19 +17,20 @@ class KernelBigSmall(nn.Module):
         self.channel_size = channel_size
 
         self.conv1_channels = self.channel_size
+        self.conv2_channels = self.conv1_channels * 2
+        self.conv3_channels = self.conv2_channels * 2
+
         self.conv1 = nn.Conv1d(1, self.conv1_channels, kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
         self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
         num_features = int(input_shape / 2)
 
-        self.conv2_channels = self.conv1_channels * 2
         self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels, kernel_size=3,
                                padding=1).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv2_channels).to(device)
         self.mp2 = nn.MaxPool1d(2).to(device)
         num_features = int(num_features / 2)
 
-        self.conv3_channels = self.conv2_channels * 2
         self.conv3 = nn.Conv1d(self.conv2_channels, self.conv3_channels, kernel_size=3,
                                padding=1).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
@@ -59,9 +60,7 @@ class KernelBigSmall(nn.Module):
         # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
-        x = self.drop_out(x)
         x = self.fc5(x).to(device)
-        x = self.drop_out(x)
         x = F.relu(x).to(device)
 
         # Final layer without ReLU
