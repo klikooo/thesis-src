@@ -46,9 +46,9 @@ class KernelBigSmallAvg(nn.Module):
         batch_size = x.size()[0]
         inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
-        x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
-        x = self.mp2(F.relu(self.bn2(self.conv2(x))))
-        x = self.mp3(F.relu(self.bn3(self.conv3(x))))
+        x = self.mp1(self.bn1(F.relu(self.conv1(inputs))))
+        x = self.mp2(self.bn2(F.relu(self.conv2(x))))
+        x = self.mp3(self.bn3(F.relu(self.conv3(x))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)

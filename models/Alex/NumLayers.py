@@ -48,8 +48,8 @@ class NumLayers(nn.Module):
 
         x = inputs
         for i in range(self.num_layers):
-                x = self.mp_layers[i](F.relu(
-                    self.bn_layers[i](self.conv_layers[i](x))
+                x = self.mp_layers[i](self.bn_layers[i](
+                    F.relu(self.conv_layers[i](x))
                 ))
 
         # Reshape data for classification
