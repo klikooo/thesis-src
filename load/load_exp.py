@@ -15,7 +15,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
+runs = [x for x in range(5)]
 train_size = 40000
 epochs = 75
 batch_size = 100
@@ -25,7 +25,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3]
+kernel_sizes = [3, 5, 7, 9, 11, 13]
 channel_sizes = [8]
 num_layers = []
 
