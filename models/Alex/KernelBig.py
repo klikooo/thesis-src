@@ -37,10 +37,10 @@ class KernelBig(nn.Module):
         num_features = int(num_features / 2)
 
         self.drop_out = nn.Dropout(p=0.5)
+        self.drop_out2 = nn.Dropout(p=0.5)
 
-        self.fc4 = torch.nn.Linear(int(self.conv3_channels * num_features), 300).to(device)
-        self.fc5 = torch.nn.Linear(300, 300).to(device)
-        self.fc6 = torch.nn.Linear(300, self.out_shape).to(device)
+        self.fc4 = torch.nn.Linear(int(self.conv3_channels * num_features), 256).to(device)
+        self.fc5 = torch.nn.Linear(256, self.out_shape).to(device)
 
     def forward(self, x):
         batch_size = x.size()[0]
@@ -59,11 +59,10 @@ class KernelBig(nn.Module):
         # Perform MLP
         x = self.fc4(x).to(device)
         x = F.relu(x).to(device)
-        x = self.fc5(x).to(device)
-        x = F.relu(x).to(device)
+        x = self.drop_out2(x)
 
         # Final layer without ReLU
-        x = self.fc6(x).to(device)
+        x = self.fc5(x).to(device)
         return x
 
     def name(self):

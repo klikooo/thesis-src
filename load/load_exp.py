@@ -19,7 +19,7 @@ runs = [x for x in range(5)]
 train_size = 40000
 epochs = 75
 batch_size = 100
-lr = 0.0001
+lr = 0.00001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
@@ -116,7 +116,7 @@ plt.xlabel('Number of traces')
 plt.ylabel('Mean rank')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i])#, marker=next(line_marker))
     plt.legend()
 
     # plt.figure()

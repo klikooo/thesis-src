@@ -66,10 +66,10 @@ class MakeSomeNoise(nn.Module):
 
         # Dropout
         self.drop_out = nn.Dropout(p=0.5)
+        self.drop_out2 = nn.Dropout(p=0.5)
 
         self.fc4 = torch.nn.Linear(int(self.conv10_channels * num_features), 256).to(device)
-        self.fc5 = torch.nn.Linear(256, 256).to(device)
-        self.fc6 = torch.nn.Linear(256, self.out_shape).to(device)
+        self.fc5 = torch.nn.Linear(256, self.out_shape).to(device)
 
     def forward(self, x):
         batch_size = x.size()[0]
@@ -92,10 +92,9 @@ class MakeSomeNoise(nn.Module):
 
         # Perform MLP
         x = F.relu(self.fc4(x)).to(device)
-        x = F.relu(self.fc5(x)).to(device)
-
+        x = self.drop_out2(x)
         # Final layer without ReLU
-        x = self.fc6(x).to(device)
+        x = self.fc5(x).to(device)
         return x
 
     def name(self):
