@@ -5,9 +5,9 @@ import torch.nn.functional as F
 from util import device
 
 
-class KernelBig(nn.Module):
+class KernelBigSmall(nn.Module):
     def __init__(self, input_shape, out_shape, kernel_size, channel_size):
-        super(KernelBig, self).__init__()
+        super(KernelBigSmall, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
@@ -23,15 +23,15 @@ class KernelBig(nn.Module):
         num_features = int(input_shape / 2)
 
         self.conv2_channels = self.conv1_channels * 2
-        self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels, self.kernel_size,
-                               padding=self.padding).to(device)
+        self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels, kernel_size=3,
+                               padding=1).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv2_channels).to(device)
         self.mp2 = nn.MaxPool1d(2).to(device)
         num_features = int(num_features / 2)
 
         self.conv3_channels = self.conv2_channels * 2
-        self.conv3 = nn.Conv1d(self.conv2_channels, self.conv3_channels, self.kernel_size,
-                               padding=self.padding).to(device)
+        self.conv3 = nn.Conv1d(self.conv2_channels, self.conv3_channels, kernel_size=3,
+                               padding=1).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
         self.mp3 = nn.MaxPool1d(2).to(device)
         num_features = int(num_features / 2)
@@ -69,11 +69,11 @@ class KernelBig(nn.Module):
         return x
 
     def name(self):
-        return "KernelBig_k{}_c{}".format(self.kernel_size, self.channel_size)
+        return "{}_k{}_c{}".format(KernelBigSmall.basename(), self.kernel_size, self.channel_size)
 
     @staticmethod
     def save_name(args):
-        return "{}_k{}_c{}".format(KernelBig.basename(), args['kernel_size'], args['channel_size'])
+        return "{}_k{}_c{}".format(KernelBigSmall.basename(), args['kernel_size'], args['channel_size'])
 
     @staticmethod
     def basename():
@@ -92,16 +92,16 @@ class KernelBig(nn.Module):
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = KernelBig(input_shape=checkpoint['input_shape'],
-                          out_shape=checkpoint['out_shape'],
-                          kernel_size=checkpoint['kernel_size'],
-                          channel_size=checkpoint['channel_size'])
+        model = KernelBigSmall(input_shape=checkpoint['input_shape'],
+                               out_shape=checkpoint['out_shape'],
+                               kernel_size=checkpoint['kernel_size'],
+                               channel_size=checkpoint['channel_size'])
         model.load_state_dict(checkpoint['model_state_dict'])
         return model
 
     @staticmethod
     def init(args):
-        return KernelBig(out_shape=args['n_classes'],
-                         input_shape=args['input_shape'],
-                         kernel_size=args['kernel_size'],
-                         channel_size=args['channel_size'])
+        return KernelBigSmall(out_shape=args['n_classes'],
+                              input_shape=args['input_shape'],
+                              kernel_size=args['kernel_size'],
+                              channel_size=args['channel_size'])

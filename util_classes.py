@@ -1,4 +1,5 @@
 from models.Alex.KernelBig import KernelBig
+from models.Alex.KernelBigSmall import KernelBigSmall
 from models.Alex.NumLayers import NumLayers
 from models.CNN.NIN import NIN
 from models.ConvNet import ConvNet
@@ -13,6 +14,7 @@ from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
 from models.SpreadNet import SpreadNet
 from models.SpreadV2 import SpreadV2
+from models.VGG.KernelBigSmallVGG import KernelBigSmallVGG
 from models.VGG.KernelBigVGG import KernelBigVGG
 
 MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
@@ -20,7 +22,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           ConvNetDK, ConvNetDPA, ConvNetKernel,
           ConvNetKernelAscad, ConvNetKernelAscad2,
           ConvNetKernelMasked, NIN, KernelBig, NumLayers,
-          KernelBigVGG]
+          KernelBigVGG, KernelBigSmallVGG, KernelBigSmall]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
