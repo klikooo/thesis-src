@@ -19,7 +19,7 @@ runs = [x for x in range(5)]
 train_size = 40000
 epochs = 75
 batch_size = 100
-lr = 0.00001
+lr = 0.000001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
@@ -30,7 +30,7 @@ channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigVGG']
+network_names = ['KernelBigSmallVGG']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
