@@ -1,5 +1,7 @@
 from models.Alex.KB import KB
+from models.Alex.KB2 import KB2
 from models.Alex.KBS import KBS
+from models.Alex.KBS2 import KBS2
 from models.Alex.KernelBig import KernelBig
 from models.Alex.KernelBigAvg import KernelBigAvg
 from models.Alex.KernelBigSmall import KernelBigSmall
@@ -29,7 +31,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           ConvNetKernelMasked, NIN, KernelBig, NumLayers,
           KernelBigVGG, KernelBigSmallVGG, KernelBigSmall,
           KernelBigAvg, KernelBigSmallAvg, MakeSomeNoise,
-          KB, KBS]
+          KB, KBS, KB2, KBS2]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
