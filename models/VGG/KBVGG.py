@@ -38,8 +38,8 @@ class KBVGG(nn.Module):
         self.conv1_channels = self.channel_size
         self.conv2_channels = self.conv1_channels * 2
         self.conv3_channels = self.conv2_channels * 2
-        self.conv4_channels = self.conv3_channels * 2
-        self.conv5_channels = self.conv4_channels * 2
+        # self.conv4_channels = self.conv3_channels * 2
+        # self.conv5_channels = self.conv4_channels * 2
         num_features = input_shape
 
         # First BN
@@ -54,7 +54,7 @@ class KBVGG(nn.Module):
         self.conv2_1 = nn.Conv1d(self.conv1_channels, self.conv2_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(num_features / 2)
+        num_features = int(num_features / self.max_pool)
         self.conv2_2 = nn.Conv1d(self.conv2_channels, self.conv3_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
