@@ -18,7 +18,6 @@ class KBS(nn.Module):
 
         self.conv1_channels = self.channel_size
         self.conv2_channels = self.conv1_channels * 2
-        self.conv3_channels = self.conv2_channels * 2
 
         self.conv1 = nn.Conv1d(1, self.conv1_channels, kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
@@ -34,7 +33,7 @@ class KBS(nn.Module):
         self.drop_out = nn.Dropout(p=0.5)
         self.drop_out2 = nn.Dropout(p=0.5)
 
-        self.fc4 = torch.nn.Linear(int(self.conv3_channels * num_features), 300).to(device)
+        self.fc4 = torch.nn.Linear(int(self.conv2_channels * num_features), 300).to(device)
         self.fc5 = torch.nn.Linear(300, self.out_shape).to(device)
 
     def forward(self, x):
