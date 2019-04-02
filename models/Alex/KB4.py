@@ -5,9 +5,9 @@ import torch.nn.functional as F
 from util import device
 
 
-class KB3(nn.Module):
+class KB4(nn.Module):
     def __init__(self, input_shape, out_shape, kernel_size, channel_size):
-        super(KB3, self).__init__()
+        super(KB4, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
@@ -19,8 +19,8 @@ class KB3(nn.Module):
         self.conv1_channels = self.channel_size
         self.conv1 = nn.Conv1d(1, self.conv1_channels, kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
-        self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(input_shape / self.max_pool)
+        self.mp1 = nn.MaxPool1d(2).to(device)
+        num_features = int(input_shape / 2)
 
         self.conv2_channels = self.conv1_channels * 2
         self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels, self.kernel_size,
@@ -59,15 +59,15 @@ class KB3(nn.Module):
         return x
 
     def name(self):
-        return "{}_k{}_c{}".format(KB3.basename(), self.kernel_size, self.channel_size)
+        return "{}_k{}_c{}".format(KB4.basename(), self.kernel_size, self.channel_size)
 
     @staticmethod
     def save_name(args):
-        return "{}_k{}_c{}".format(KB3.basename(), args['kernel_size'], args['channel_size'])
+        return "{}_k{}_c{}".format(KB4.basename(), args['kernel_size'], args['channel_size'])
 
     @staticmethod
     def basename():
-        return KB3.__name__
+        return KB4.__name__
 
     def save(self, path):
         torch.save({
@@ -82,7 +82,7 @@ class KB3(nn.Module):
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = KB3(input_shape=checkpoint['input_shape'],
+        model = KB4(input_shape=checkpoint['input_shape'],
                     out_shape=checkpoint['out_shape'],
                     kernel_size=checkpoint['kernel_size'],
                     channel_size=checkpoint['channel_size'])
@@ -91,7 +91,7 @@ class KB3(nn.Module):
 
     @staticmethod
     def init(args):
-        return KB3(out_shape=args['n_classes'],
+        return KB4(out_shape=args['n_classes'],
                    input_shape=args['input_shape'],
                    kernel_size=args['kernel_size'],
                    channel_size=args['channel_size'])

@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KBS3"]
+    network_names = ["KB4"]
     use_hw = False
     runs = 1
     train_sizes = [100]
