@@ -425,8 +425,8 @@ def save_loss_acc(path, filename, res):
 
 
 def load_loss_acc(file):
-    ta = np.load("{}.ta".format(file))
-    va = np.load("{}.va".format(file))
-    tl = np.load("{}.tl".format(file))
-    vl = np.load("{}.vl".format(file))
+    ta = np.load("{}.ta.npy".format(file))
+    va = np.load("{}.va.npy".format(file))
+    tl = np.load("{}.tl.npy".format(file))
+    vl = np.load("{}.vl.npy".format(file))
     return ta, va, tl, vl
