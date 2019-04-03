@@ -99,11 +99,11 @@ class KernelBigVGG(nn.Module):
         return x
 
     def name(self):
-        return "KernelBigVGG_k{}_c{}".format(self.kernel_size, self.channel_size)
+        return "{}_k{}_c{}".format(KernelBigVGG.basename(), self.kernel_size, self.channel_size)
 
     @staticmethod
     def basename():
-        return "KernelBigVGG"
+        return KernelBigVGG.__name__
 
     @staticmethod
     def save_name(args):

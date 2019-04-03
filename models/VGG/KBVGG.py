@@ -102,7 +102,7 @@ class KBVGG(nn.Module):
 
     @staticmethod
     def basename():
-        return "KBVGG"
+        return KBVGG.__name__
 
     @staticmethod
     def save_name(args):

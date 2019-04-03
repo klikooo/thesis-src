@@ -59,10 +59,10 @@ class NumLayers(nn.Module):
         x = self.drop_out(x)
 
         # Perform MLP
-        x = self.fc4(x).to(device)
-        x = F.relu(x).to(device)
-        x = self.fc5(x).to(device)
-        x = F.relu(x).to(device)
+        x = F.relu(self.fc4(x).to(device)).to(device)
+        x = self.drop_out(x)
+        x = F.relu(self.fc5(x).to(device)).to(device)
+        x = self.drop_out(x)
 
         # Final layer without ReLU
         x = self.fc6(x).to(device)

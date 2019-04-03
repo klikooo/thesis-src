@@ -1,4 +1,5 @@
 import itertools
+import pdb
 from decimal import Decimal
 
 import util
@@ -15,7 +16,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
+runs = [x for x in range(1)]
 train_size = 20000
 epochs = 120
 batch_size = 100
@@ -25,17 +26,17 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [20, 30, 40, 50, 70, 70, 80, 90, 100, 110]
+kernel_sizes = [60, 110]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = [ 'ConvNetKernelSmall']
+network_names = ['ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
-show_acc = False
+show_acc = True
 experiment = False
 #####################################################################################
 
@@ -139,10 +140,10 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
 
 if show_losses or show_acc:
-    for i in range(len(runs)):
-        (acc_train, acc_vali, loss_train, loss_vali) = all_loss_acc[i]
+    for i in range(len(rank_mean_y)):
+        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
 
-        for run in range(len(runs)):
+        for run in range(len(loss_vali)):
             plt.figure()
             plt.title('Accuracy during training {}'.format(name_models[i]))
             plt.xlabel('Accuracy')
@@ -150,8 +151,9 @@ if show_losses or show_acc:
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(acc_train[run]))], acc_train[run], label="Train")
-            plt.plot([x for x in range(len(acc_train[run]))], acc_vali[run], label="Vali")
+            # pdb.set_trace()
+            plt.plot([x for x in range(len(acc_train[run]))], acc_train[run] * 100, label="Train")
+            plt.plot([x for x in range(len(acc_train[run]))], acc_vali[run] * 100, label="Vali")
             plt.legend()
             plt.plot(acc_vali)
 
