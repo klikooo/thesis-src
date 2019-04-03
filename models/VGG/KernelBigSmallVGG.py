@@ -86,7 +86,7 @@ class KernelBigSmallVGG(nn.Module):
 
     @staticmethod
     def basename():
-        return "KernelBigSmallVGG"
+        return KernelBigSmallVGG.__name__
 
     @staticmethod
     def save_name(args):
