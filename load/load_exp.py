@@ -36,13 +36,14 @@ only_accuracy = False
 desync = 0
 show_losses = False
 show_acc = False
-
+experiment = True
 #####################################################################################
 
 
 def get_ge(net_name, model_parameters):
-    folder = '/media/rico/Data/TU/thesis/runs2/{}/subkey_{}/{}{}{}_SF{}_' \
+    folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
+                                    '2' if not experiment else '',
                                     str(data_set),
                                     sub_key_index,
                                     '' if unmask else 'masked/',
