@@ -78,7 +78,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         network = init(init_args)
 
         # Where the file is stored
-        model_save_file = '{}/{}/model_r{}_{}.pt'.format(model_save_path, dir_name, i, network.name())
+        filename = 'model_r{}_{}'.format(i, network.name())
+        model_save_file = '{}/{}/{}.pt'.format(model_save_path, dir_name, filename)
 
         print('Training with learning rate: {}, desync {}'.format(lr, desync))
 
@@ -108,7 +109,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                                  save_path=model_save_file,
                                  loss_function=loss_function
                                  )
-            save_loss_acc(network, model_save_file, res)
+            save_loss_acc(model_save_file, filename, res)
 
         # Make sure don't mess with our min/max of the spread network
         if isinstance(network, SpreadNet):
