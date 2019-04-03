@@ -84,7 +84,7 @@ ranks_y = []
 rank_mean_y = []
 name_models = []
 model_params = {}
-all_loss_acc = None
+all_loss_acc = []  # ([], [], [], [])
 for network_name in network_names:
     def lambda_kernel(x): model_params.update({"kernel_size": x})
 
@@ -101,6 +101,8 @@ for network_name in network_names:
         ranks_y.append(ge_y)
         rank_mean_y.append(mean_y)
         name_models.append(get_save_name(network_name, model_params))
+
+        all_loss_acc.append(loss_acc)
 
     util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
         util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
@@ -137,6 +139,18 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
 if show_losses or show_acc:
     print("test")
+    for i in range(len(runs)):
+        (acc_train, acc_vali, loss_train, loss_vali) = all_loss_acc[i]
+        plt.title('Accuracy during training {}'.format(name_models[i]))
+        plt.xlabel('Accuracy')
+        plt.ylabel('Epoch')
+        plt.grid(True)
+
+        # Plot the accuracy
+        # for x, y in zip(ranks_x[i], ranks_y[i]):
+        plt.plot(acc_train)
+        plt.plot(acc_vali)
+        plt.figure()
 
 
 plt.show()
