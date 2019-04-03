@@ -31,6 +31,12 @@ def train(x_profiling, y_profiling, train_size,
     # criterion = nn.CrossEntropyLoss().to(device)
     loss_function = loss_function.to(device)
 
+    # Losses and accuracy for saving
+    vali_losses = []
+    train_losses = []
+    vali_acc = []
+    train_acc = []
+
     # Perform training
     for epoch in range(epochs):
 
@@ -87,7 +93,13 @@ def train(x_profiling, y_profiling, train_size,
             epoch,
             train_loss, train_correct/train_size * 100.0,
             vali_loss, validation_correct/validation_size * 100.0))
-    return network
+
+        # Append the results of the epoch
+        vali_losses.append(vali_loss)
+        train_losses.append(train_loss)
+        vali_acc.append(validation_correct/validation_size)
+        train_acc.append(train_correct/train_size)
+    return network, (train_losses, vali_losses, train_acc, vali_acc)
 
 
 def train_dk(x_profiling, y_profiling, plain, train_size, network, epochs=700, batch_size=1000, lr=0.00001,

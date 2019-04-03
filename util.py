@@ -411,3 +411,22 @@ def loop_at_least_once(data, func, do):
         i += 1
         if i >= len(data):
             break
+
+
+def save_loss_acc(network, path, res):
+    path = os.path.dirname(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    filename = "{}".format(network.name())
+    np.save("{}/{}.ta".format(path, filename), res[0])
+    np.save("{}/{}.va".format(path, filename), res[1])
+    np.save("{}/{}.tl".format(path, filename), res[2])
+    np.save("{}/{}.vl".format(path, filename), res[3])
+
+
+def load_loss_acc(file):
+    ta = np.load("{}.ta".format(file))
+    va = np.load("{}.va".format(file))
+    tl = np.load("{}.tl".format(file))
+    vl = np.load("{}.vl".format(file))
+    return ta, va, tl, vl

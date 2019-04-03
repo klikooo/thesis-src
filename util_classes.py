@@ -18,6 +18,7 @@ from models.ConvNetKernel import ConvNetKernel
 from models.ConvNetKernelAscad import ConvNetKernelAscad
 from models.ConvNetKernelAscad2 import ConvNetKernelAscad2
 from models.ConvNetKernelMasked import ConvNetKernelMasked
+from models.ConvNetKernelSmall import ConvNetKernelSmall
 from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
@@ -35,7 +36,8 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           ConvNetKernelMasked, NIN, KernelBig, NumLayers,
           KernelBigVGG, KernelBigSmallVGG, KernelBigSmall,
           KernelBigAvg, KernelBigSmallAvg, MakeSomeNoise,
-          KB, KBS, KB2, KBS2, KBVGG, KBS3, KB3, KB4]
+          KB, KBS, KB2, KBS2, KBVGG, KBS3, KB3, KB4,
+          ConvNetKernelSmall]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
@@ -45,4 +47,3 @@ def get_init_func(basename):
 
 def get_save_name(basename, args):
     return MODELS_TABLE[basename].save_name(args)
-

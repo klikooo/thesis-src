@@ -16,25 +16,26 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 30000
+train_size = 20000
 epochs = 120
 batch_size = 100
-lr = 0.005
+lr = 0.001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
+kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17, 20, 30, 40, 50]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KBS']
+network_names = ['ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-
+show_losses = False
+show_acc = False
 
 #####################################################################################
 
@@ -54,18 +55,27 @@ def get_ge(net_name, model_parameters):
                                     train_size)
 
     ge_x, ge_y = [], []
+    lta, lva, ltl, lvl = [], [], [], []
     for run in runs:
-        ge_path = '{}/model_r{}_{}.exp'.format(
+        filename = '{}/model_r{}_{}'.format(
             folder,
             run,
             get_save_name(net_name, model_parameters))
+        ge_path = '{}.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
         ge_x.append(x_r)
         ge_y.append(y_r)
 
-    return ge_x, ge_y
+        if show_losses or show_acc:
+            ta, va, tl, vl = util.load_loss_acc(filename)
+            lta.append(ta)
+            lva.append(va)
+            ltl.append(tl)
+            lvl.append(vl)
+
+    return ge_x, ge_y, (lta, lva, ltl, lvl)
 
 
 # Test the networks that were specified
@@ -74,6 +84,7 @@ ranks_y = []
 rank_mean_y = []
 name_models = []
 model_params = {}
+all_loss_acc = None
 for network_name in network_names:
     def lambda_kernel(x): model_params.update({"kernel_size": x})
 
@@ -84,7 +95,7 @@ for network_name in network_names:
 
     def retrieve_ge():
         print(model_params)
-        ge_x, ge_y = get_ge(network_name, model_params)
+        ge_x, ge_y, loss_acc = get_ge(network_name, model_params)
         mean_y = np.mean(ge_y, axis=0)
         ranks_x.append(ge_x)
         ranks_y.append(ge_y)
@@ -116,11 +127,16 @@ plt.xlabel('Number of traces')
 plt.ylabel('Mean rank')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i])#, marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
     plt.legend()
 
     # plt.figure()
 figure = plt.gcf()
 figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
+
+
+if show_losses or show_acc:
+    print("test")
+
 
 plt.show()

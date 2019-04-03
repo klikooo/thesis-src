@@ -16,11 +16,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KB4"]
+    network_names = ["ConvNetKernelSmall"]
     use_hw = False
     runs = 1
     train_sizes = [100]
-    epochs = 20
+    epochs = 10
     batch_size = 100
     lr = 0.0005
     subkey_index = 2
