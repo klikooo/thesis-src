@@ -1,4 +1,5 @@
 import itertools
+import pdb
 from decimal import Decimal
 
 import util
@@ -16,8 +17,8 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 40000
-epochs = 75
+train_size = 20000
+epochs = 120
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
@@ -25,37 +26,35 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
+kernel_sizes = [60, 80, 110]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigSmallVGG', 'KernelBigVGG']
+network_names = ['ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
-show_acc = False
+show_acc = True
 experiment = False
-
-
 #####################################################################################
 
 
 def get_ge(net_name, model_parameters):
     folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}/train{}/'.format(
-        '2' if not experiment else '',
-        str(data_set),
-        sub_key_index,
-        '' if unmask else 'masked/',
-        '' if desync is 0 else 'desync{}/'.format(desync),
-        type_network,
-        spread_factor,
-        epochs,
-        batch_size,
-        '%.2E' % Decimal(lr),
-        train_size)
+                                    '2' if not experiment else '',
+                                    str(data_set),
+                                    sub_key_index,
+                                    '' if unmask else 'masked/',
+                                    '' if desync is 0 else 'desync{}/'.format(desync),
+                                    type_network,
+                                    spread_factor,
+                                    epochs,
+                                    batch_size,
+                                    '%.2E' % Decimal(lr),
+                                    train_size)
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -94,9 +93,7 @@ for network_name in network_names:
 
     def lambda_channel(x): model_params.update({"channel_size": x})
 
-
     def lambda_layers(x): model_params.update({"num_layers": x})
-
 
     def retrieve_ge():
         print(model_params)
@@ -108,7 +105,6 @@ for network_name in network_names:
         name_models.append(get_save_name(network_name, model_params))
 
         all_loss_acc.append(loss_acc)
-
 
     util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
         util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
@@ -142,33 +138,44 @@ for i in range(len(rank_mean_y)):
 figure = plt.gcf()
 figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
-if show_losses or show_acc:
-    for i in range(len(runs)):
-        (acc_train, acc_vali, loss_train, loss_vali) = all_loss_acc[i]
 
-        for run in range(len(runs)):
-            plt.figure()
+if show_losses or show_acc:
+    for i in range(len(rank_mean_y)):
+        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+        plt.figure()
+
+        for r in range(len(loss_vali)):
             plt.title('Accuracy during training {}'.format(name_models[i]))
             plt.xlabel('Accuracy')
             plt.ylabel('Epoch')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(acc_train[run]))], acc_train[run], label="Train")
-            plt.plot([x for x in range(len(acc_train[run]))], acc_vali[run], label="Vali")
+            # pdb.set_trace()
+            plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+            plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
             plt.legend()
-            plt.plot(acc_vali)
+        mt = np.mean(acc_train, axis=0) * 100
+        mv = np.mean(acc_vali, axis=0) * 100
+        plt.plot(mt, color='blue')
+        plt.plot(mv, color='red')
 
-            plt.figure()
+    for i in range(len(rank_mean_y)):
+        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+        plt.figure()
+        for r in range(len(loss_vali)):
             plt.title('Loss during training {}'.format(name_models[i]))
             plt.xlabel('Loss')
             plt.ylabel('Epoch')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(loss_train[run]))], loss_train[run], label="Train")
-            plt.plot([x for x in range(len(loss_train[run]))], loss_vali[run], label="Vali")
+            plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+            plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
             plt.legend()
-            plt.plot(acc_vali)
 
+        lt = np.mean(loss_train, axis=0)
+        lv = np.mean(loss_vali, axis=0)
+        plt.plot(lt, color='blue')
+        plt.plot(lv, color='red')
 plt.show()

@@ -16,7 +16,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
+runs = [x for x in range(5)]
 train_size = 20000
 epochs = 120
 batch_size = 100
@@ -26,7 +26,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [60, 110]
+kernel_sizes = [60, 80, 110]
 channel_sizes = [8]
 num_layers = []
 
@@ -142,9 +142,9 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 if show_losses or show_acc:
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+        plt.figure()
 
-        for run in range(len(loss_vali)):
-            plt.figure()
+        for r in range(len(loss_vali)):
             plt.title('Accuracy during training {}'.format(name_models[i]))
             plt.xlabel('Accuracy')
             plt.ylabel('Epoch')
@@ -152,22 +152,30 @@ if show_losses or show_acc:
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
             # pdb.set_trace()
-            plt.plot([x for x in range(len(acc_train[run]))], acc_train[run] * 100, label="Train")
-            plt.plot([x for x in range(len(acc_train[run]))], acc_vali[run] * 100, label="Vali")
+            plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+            plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
             plt.legend()
-            plt.plot(acc_vali)
+        mt = np.mean(acc_train, axis=0) * 100
+        mv = np.mean(acc_vali, axis=0) * 100
+        plt.plot(mt, color='blue')
+        plt.plot(mv, color='red')
 
-            plt.figure()
+    for i in range(len(rank_mean_y)):
+        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+        plt.figure()
+        for r in range(len(loss_vali)):
             plt.title('Loss during training {}'.format(name_models[i]))
             plt.xlabel('Loss')
             plt.ylabel('Epoch')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(loss_train[run]))], loss_train[run], label="Train")
-            plt.plot([x for x in range(len(loss_train[run]))], loss_vali[run], label="Vali")
+            plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+            plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
             plt.legend()
-            plt.plot(acc_vali)
 
-
+        lt = np.mean(loss_train, axis=0)
+        lv = np.mean(loss_vali, axis=0)
+        plt.plot(lt, color='blue')
+        plt.plot(lv, color='red')
 plt.show()
