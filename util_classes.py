@@ -22,6 +22,7 @@ from models.ConvNetKernelSmall import ConvNetKernelSmall
 from models.CosNet import CosNet
 from models.DenseNet import DenseNet
 from models.DenseSpreadNet import DenseSpreadNet
+from models.SingleConv import SingleConv
 from models.SpreadNet import SpreadNet
 from models.SpreadV2 import SpreadV2
 from models.VGG.KBVGG import KBVGG
@@ -39,7 +40,8 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KernelBigVGG, KernelBigSmallVGG, KernelBigSmall,
           KernelBigAvg, KernelBigSmallAvg, MakeSomeNoise,
           KB, KBS, KB2, KBS2, KBVGG, KBS3, KB3, KB4,
-          ConvNetKernelSmall, KernelBigVGGM, KernelBigSmallVGGM]
+          ConvNetKernelSmall, KernelBigVGGM, KernelBigSmallVGGM,
+          SingleConv]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
