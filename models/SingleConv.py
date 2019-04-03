@@ -30,7 +30,7 @@ class SingleConv(nn.Module):
         batch_size = x.size()[0]
         inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
-        x = self.mp1(F.relu(self.bn1(self.conv1(inputs))))
+        x = self.bn1(self.mp1(F.relu(self.conv1(inputs))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
