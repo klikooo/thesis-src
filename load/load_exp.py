@@ -139,19 +139,33 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
 
 if show_losses or show_acc:
-    print("test")
     for i in range(len(runs)):
         (acc_train, acc_vali, loss_train, loss_vali) = all_loss_acc[i]
-        plt.title('Accuracy during training {}'.format(name_models[i]))
-        plt.xlabel('Accuracy')
-        plt.ylabel('Epoch')
-        plt.grid(True)
 
-        # Plot the accuracy
-        # for x, y in zip(ranks_x[i], ranks_y[i]):
-        plt.plot(acc_train)
-        plt.plot(acc_vali)
-        plt.figure()
+        for run in range(len(runs)):
+            plt.figure()
+            plt.title('Accuracy during training {}'.format(name_models[i]))
+            plt.xlabel('Accuracy')
+            plt.ylabel('Epoch')
+            plt.grid(True)
+            # Plot the accuracy
+            # for x, y in zip(ranks_x[i], ranks_y[i]):
+            plt.plot([x for x in range(len(acc_train[run]))], acc_train[run], label="Train")
+            plt.plot([x for x in range(len(acc_train[run]))], acc_vali[run], label="Vali")
+            plt.legend()
+            plt.plot(acc_vali)
+
+            plt.figure()
+            plt.title('Loss during training {}'.format(name_models[i]))
+            plt.xlabel('Loss')
+            plt.ylabel('Epoch')
+            plt.grid(True)
+            # Plot the accuracy
+            # for x, y in zip(ranks_x[i], ranks_y[i]):
+            plt.plot([x for x in range(len(loss_train[run]))], loss_train[run], label="Train")
+            plt.plot([x for x in range(len(loss_train[run]))], loss_vali[run], label="Vali")
+            plt.legend()
+            plt.plot(acc_vali)
 
 
 plt.show()
