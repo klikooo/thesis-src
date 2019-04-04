@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["SingleConv"]
+    network_names = ["ConvNetKernelSmallAvg"]
     use_hw = False
     runs = 1
     train_sizes = [100]

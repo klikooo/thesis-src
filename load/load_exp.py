@@ -27,7 +27,7 @@ type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
 kernel_sizes = [3, 10, 15, 20, 25, 30, 40, 50, 60]
-channel_sizes = [32]
+channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
