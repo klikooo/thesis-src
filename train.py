@@ -11,7 +11,7 @@ from util import HW, device, save_model
 def train(x_profiling, y_profiling, train_size,
           x_validation, y_validation, validation_size,
           network, loss_function, epochs=80, batch_size=1000, lr=0.00001,
-          checkpoints=None, save_path=None):
+          checkpoints=None, save_path=None, l2_penalty=0.0):
     # Cut to the correct training size
     x_profiling = x_profiling[0:train_size]
     y_profiling = y_profiling[0:train_size]
@@ -25,7 +25,7 @@ def train(x_profiling, y_profiling, train_size,
     # optimizer = torch.optim.RMSprop(network.parameters(), lr=lr)
     # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     # optimizer = Nadam(network.parameters(), lr=lr)
-    optimizer = torch.optim.Adam(network.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(network.parameters(), lr=lr, weight_decay=l2_penalty)
 
     # Loss function
     # criterion = nn.CrossEntropyLoss().to(device)

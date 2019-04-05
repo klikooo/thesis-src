@@ -7,27 +7,27 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs2/'
+    models_path = '/media/rico/Data/TU/thesis/runs/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
     use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(5)]
-    train_size = 20000
-    epochs = 120
+    runs = [x for x in range(1)]
+    train_size = 100
+    epochs = 10
     batch_size = 100
     lr = 0.001
     sub_key_index = 2
-    attack_size = 200
+    attack_size = 100
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
     kernel_sizes = [5]
-    channel_sizes = [10]
-    num_layers = [3]
+    channel_sizes = []
+    num_layers = []
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['ConvNetKernel']
@@ -36,6 +36,7 @@ if __name__ == "__main__":
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
+    l2_penalty = 0
     #####################################################################################
 
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -46,6 +47,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
+    parser.add_argument('-g', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')

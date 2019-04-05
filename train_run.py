@@ -16,13 +16,13 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KernelBigVGGC"]
+    network_names = ["ConvNetKernel"]
     use_hw = False
     runs = 1
     train_sizes = [100]
     epochs = 10
     batch_size = 100
-    lr = 0.00
+    lr = 0.001
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
@@ -35,6 +35,7 @@ if __name__ == "__main__":
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     use_noise_data = True
+    l2_penalty = 0
     ############################
 
     # DO NOT TOUCH #########################
@@ -52,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
     parser.add_argument('-g', "--channel_size", default=channel_size, type=int, help="Channel size for a CNN")
+    parser.add_argument('-i', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
 
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
@@ -112,4 +114,5 @@ if __name__ == "__main__":
                 loss_function=loss_function,
                 use_noise_data=args.use_noise_data,
                 channel_size=args.channel_size,
-                num_layers=num_layers)
+                num_layers=args.num_layers,
+                l2_penalty=args.l2_penalty)

@@ -415,9 +415,8 @@ def loop_at_least_once(data, func, do):
 
 def save_loss_acc(path, filename, res):
     path = os.path.dirname(path)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    os.makedirs(path, exist_ok=True)
 
-    filename = "{}".format(filename)
     np.save("{}/{}.ta".format(path, filename), res[0])
     np.save("{}/{}.va".format(path, filename), res[1])
     np.save("{}/{}.tl".format(path, filename), res[2])

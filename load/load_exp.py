@@ -16,9 +16,9 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
-train_size = 20000
-epochs = 120
+runs = [x for x in range(1)]
+train_size = 100
+epochs = 10
 batch_size = 100
 lr = 0.001
 sub_key_index = 2
@@ -26,24 +26,25 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-channel_sizes = [8]
+kernel_sizes = [5]
+channel_sizes = []
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNetKernelSmallAvg']
+network_names = ['ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
 show_acc = False
-experiment = False
+experiment = True
+l2_penalty=0.5
 #####################################################################################
 
 
 def get_ge(net_name, model_parameters):
     folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}/train{}/'.format(
+             'E{}_BZ{}_LR{}{}/train{}/'.format(
                                     '2' if not experiment else '',
                                     str(data_set),
                                     sub_key_index,
@@ -54,6 +55,7 @@ def get_ge(net_name, model_parameters):
                                     epochs,
                                     batch_size,
                                     '%.2E' % Decimal(lr),
+                                    '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
                                     train_size)
 
     ge_x, ge_y = [], []

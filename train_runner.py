@@ -18,6 +18,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         loss_function,
         channel_size,
         num_layers,
+        l2_penalty,
         unmask=False,
         domain_knowledge=False,
         kernel_size=None,
@@ -28,7 +29,7 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     n_classes = 9 if use_hw else 256
 
     # Save the models to this folder
-    dir_name = '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}/train{}'.format(
+    dir_name = '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}{}/train{}'.format(
         str(data_set),
         sub_key_index,
         '' if unmask or data_set is not DataSet.ASCAD else 'masked/',
@@ -38,7 +39,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         epochs,
         batch_size,
         '%.2E' % Decimal(lr),
-        train_size
+        '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
+        train_size,
     )
 
     # Arguments for loading data
@@ -107,7 +109,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                                  lr=lr,
                                  checkpoints=checkpoints,
                                  save_path=model_save_file,
-                                 loss_function=loss_function
+                                 loss_function=loss_function,
+                                 l2_penalty=l2_penalty
                                  )
             save_loss_acc(model_save_file, filename, res)
 

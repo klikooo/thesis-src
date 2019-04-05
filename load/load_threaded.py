@@ -18,7 +18,7 @@ def get_ranks(args, network_name, model_params):
     x_attack, y_attack, key_guesses, real_key, dk_plain = load_data(args, network_name)
 
     folder = '{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}/train{}/'.format(
+             'E{}_BZ{}_LR{}{}/train{}/'.format(
                 args.models_path,
                 str(args.data_set),
                 args.subkey_index,
@@ -29,6 +29,7 @@ def get_ranks(args, network_name, model_params):
                 args.epochs,
                 args.batch_size,
                 '%.2E' % Decimal(args.lr),
+                '' if np.math.ceil(args.l2_penalty) <= 0 else '_L2_{}'.format(args.l2_penalty),
                 args.train_size)
 
     # Calculate the predictions before hand
