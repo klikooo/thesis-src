@@ -35,7 +35,6 @@ if __name__ == "__main__":
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     use_noise_data = True
-    l2_penalty = 0
     ############################
 
     # DO NOT TOUCH #########################
@@ -53,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
     parser.add_argument('-g', "--channel_size", default=channel_size, type=int, help="Channel size for a CNN")
-    parser.add_argument('-i', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
+    parser.add_argument('-i', "--l2_penalty", default=0.0, type=float, help="L2 penalty")
 
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")

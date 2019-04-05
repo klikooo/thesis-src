@@ -38,7 +38,7 @@ desync = 0
 show_losses = False
 show_acc = False
 experiment = True
-l2_penalty=0.5
+l2_penalty = 0
 #####################################################################################
 
 

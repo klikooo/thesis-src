@@ -36,7 +36,6 @@ if __name__ == "__main__":
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    l2_penalty = 0
     #####################################################################################
 
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
@@ -47,7 +46,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-g', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
+    parser.add_argument('-g', "--l2_penalty", default=0.0, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')
