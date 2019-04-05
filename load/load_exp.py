@@ -20,23 +20,23 @@ runs = [x for x in range(5)]
 train_size = 20000
 epochs = 120
 batch_size = 100
-lr = 0.0001
+lr = 0.001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 10, 15, 20, 25, 30, 40, 50, 60]
+kernel_sizes = [3, 5, 7, 9, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['SingleConv']
+network_names = ['ConvNetKernelSmallAvg']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
-show_acc = True
+show_acc = False
 experiment = False
 #####################################################################################
 
@@ -131,7 +131,7 @@ plt.xlabel('Number of traces')
 plt.ylabel('Mean rank')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i])  # , marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
     plt.legend()
 
     # plt.figure()
