@@ -16,12 +16,12 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["ConvNetKernel"]
+    network_names = ["KernelBigSmallVGG"]
     use_hw = False
     runs = 1
-    train_sizes = [100]
+    train_sizes = [10]
     epochs = 10
-    batch_size = 100
+    batch_size = 10
     lr = 0.001
     subkey_index = 2
     checkpoints = None
@@ -29,8 +29,8 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 5
-    channel_size = 16
+    kernel_size = 20
+    channel_size = 8
     num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()

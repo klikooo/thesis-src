@@ -31,23 +31,27 @@ class KernelBigSmallVGG(nn.Module):
         # Convolutions + BN + MP
         self.conv1 = nn.Conv1d(1, self.conv1_channels,
                                kernel_size=self.kernel_size, padding=self.padding).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
 
         # Next steps of BN
         self.conv2_1 = nn.Conv1d(self.conv1_channels, self.conv2_channels,
                                  kernel_size=3, padding=1).to(device)
+        num_features = num_features + 2 * 1 - 1 * (3 - 1)
         self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
         num_features = int(num_features / 2)
         self.conv2_2 = nn.Conv1d(self.conv2_channels, self.conv3_channels,
                                  kernel_size=3, padding=1).to(device)
+        num_features = num_features + 2 * 1 - 1 * (3 - 1)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
 
         # Next steps of BN
         self.conv3_1 = nn.Conv1d(self.conv3_channels, self.conv4_channels,
                                  kernel_size=3, padding=1).to(device)
-        num_features = int(num_features)
+        num_features = num_features + 2 * 1 - 1 * (3 - 1)
         self.conv3_2 = nn.Conv1d(self.conv4_channels, self.conv5_channels,
                                  kernel_size=3, padding=1).to(device)
+        num_features = num_features + 2 * 1 - 1 * (3 - 1)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
 
         # Dropout
