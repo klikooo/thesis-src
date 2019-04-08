@@ -20,21 +20,27 @@ class MakeSomeNoise(nn.Module):
         self.channel_size = channel_size
 
         self.conv1_channels = self.channel_size  # 8
+        num_features = int((input_shape + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv2_channels = self.conv1_channels * 2  # 16
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv3_channels = self.conv2_channels * 2  # 32
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv4_channels = self.conv3_channels * 2  # 64
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv5_channels = self.conv4_channels * 2  # 128
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv6_channels = self.conv5_channels  # 128
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv7_channels = self.conv6_channels  # 128
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv8_channels = self.conv7_channels * 2  # 256
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv9_channels = self.conv8_channels  # 256
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
         self.conv10_channels = self.conv9_channels  # 256
-        num_features = input_shape
+        num_features = int((num_features + 2 * self.padding - 1 * (self.kernel_size - 1)) / self.max_pool)
 
-        # First BN
-        self.bn0 = nn.BatchNorm1d(num_features=1).to(device)
-
-        # Convolutions + BN + MP
+        # Convolutions + BN
         self.conv1 = nn.Conv1d(1, self.conv1_channels,
                                kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels,
@@ -56,45 +62,38 @@ class MakeSomeNoise(nn.Module):
         self.conv10 = nn.Conv1d(self.conv9_channels, self.conv10_channels,
                                 kernel_size=self.kernel_size, padding=self.padding).to(device)
 
+        self.bn0 = nn.BatchNorm1d(1).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
         self.bn5 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
         self.bn7 = nn.BatchNorm1d(num_features=self.conv7_channels).to(device)
         self.bn9 = nn.BatchNorm1d(num_features=self.conv9_channels).to(device)
-        self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(num_features / 2)
 
-        # Dropout
-        self.drop_out = nn.Dropout(p=0.5)
-        self.drop_out2 = nn.Dropout(p=0.5)
+        self.pool = nn.MaxPool1d(self.max_pool).to(device)
 
-        self.fc4 = torch.nn.Linear(int(self.conv10_channels * num_features), 256).to(device)
-        self.fc5 = torch.nn.Linear(256, self.out_shape).to(device)
+        self.fc1 = torch.nn.Linear(int(self.conv10_channels * num_features), 256).to(device)
+        self.out = torch.nn.Linear(256, self.out_shape).to(device)
 
     def forward(self, x):
         batch_size = x.size()[0]
-        inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
+        x = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
-        x = self.bn0(inputs)
-        # x = inputs
-        x = self.bn1(self.mp1(F.relu(self.conv1(x))))
-        x = self.bn3(F.relu(self.conv3(F.relu(self.conv2(x)))))
-        x = self.bn5(F.relu(self.conv5(F.relu(self.conv4(x)))))
-        x = self.bn7(F.relu(self.conv7(F.relu(self.conv6(x)))))
-        x = self.bn9(F.relu(self.conv9(F.relu(self.conv8(x)))))
-        x = F.relu(self.conv10(x))
+        x = self.pool(F.relu(self.bn1(self.conv1(x))))
+        x = self.pool(F.relu(self.conv2(x)))
+        # print(x.size())
+        # print(self.conv3(x).size())
+        x = self.pool(F.relu(self.bn3(self.conv3(x))))
+        x = self.pool(F.relu(self.conv4(x)))
+        x = self.pool(F.relu(self.bn5(self.conv5(x))))
+        x = self.pool(F.relu(self.conv6(x)))
+        x = self.pool(F.relu(self.bn7(self.conv7(x))))
+        x = self.pool(F.relu(self.conv8(x)))
+        x = self.pool(F.relu(self.bn9(self.conv9(x))))
+        x = self.pool(F.relu(self.conv10(x)))
 
-        # Reshape data for classification
-        x = x.view(batch_size, -1)
-
-        # Perform dropout
-        x = self.drop_out(x)
-
-        # Perform MLP
-        x = F.relu(self.fc4(x)).to(device)
-        x = self.drop_out2(x)
-        # Final layer without ReLU
-        x = self.fc5(x).to(device)
+        x = F.dropout(x.view(batch_size, -1), training=self.training, p=0.5)
+        x = F.dropout(F.relu(self.fc1(x)), training=self.training, p=0.5)
+        x = self.out(x)
         return x
 
     def name(self):

@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KernelBigSmallVGG"]
+    network_names = ["MakeSomeNoise"]
     use_hw = False
     runs = 1
     train_sizes = [10]
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 20
+    kernel_size = 3
     channel_size = 8
     num_layers = 4
     spread_factor = 1
