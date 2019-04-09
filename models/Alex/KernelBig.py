@@ -77,7 +77,7 @@ class KernelBig(nn.Module):
 
     @staticmethod
     def basename():
-        return "KernelBig"
+        return KernelBig.__name__
 
     def save(self, path):
         torch.save({

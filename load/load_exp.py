@@ -17,26 +17,27 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 40000
+train_size = 20000
 epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
-unmask = True  # False if sub_key_index < 2 else True
+unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+kernel_sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigVGG']
+network_names = ['KernelBigSmallVGG']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
 show_acc = True
+show_losses_all = False
 experiment = False
 l2_penalty = 0.05
 #####################################################################################
@@ -142,6 +143,8 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
 
 if show_losses or show_acc:
+    mean_mv = []
+    mean_lv = []
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
         plt.figure()
@@ -161,6 +164,7 @@ if show_losses or show_acc:
         mv = np.mean(acc_vali, axis=0) * 100
         plt.plot(mt, color='blue')
         plt.plot(mv, color='red')
+        mean_mv.append(mv)
 
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
@@ -180,4 +184,19 @@ if show_losses or show_acc:
         lv = np.mean(loss_vali, axis=0)
         plt.plot(lt, color='blue')
         plt.plot(lv, color='red')
+
+        mean_lv.append(lv)
+
+    plt.figure()
+    for i in range(len(mean_lv)):
+        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
+    plt.grid(True)
+    plt.legend()
+
+    plt.figure()
+    for i in range(len(mean_mv)):
+        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
+    plt.grid(True)
+    plt.legend()
+
 plt.show()
