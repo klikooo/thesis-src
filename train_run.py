@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KernelBig"]
+    network_names = ["KernelBigVGGM"]
     use_hw = False
     runs = 1
     train_sizes = [100]
@@ -34,7 +34,6 @@ if __name__ == "__main__":
     num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
-    use_noise_data = True
     ############################
 
     # DO NOT TOUCH #########################
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
     parser.add_argument('-m', "--model_save_path", default=model_save_path, type=str,
                         help="Path were the models are saved")
-    parser.add_argument('-n', "--use_noise_data", default=use_noise_data, action=BoolAction, type=bool,
+    parser.add_argument('-n', "--use_noise_data", default=False, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
 
     parser.add_argument('-p', "--traces_path", default=traces_path, type=str, help="Path to the traces")

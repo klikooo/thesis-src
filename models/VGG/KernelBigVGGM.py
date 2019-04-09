@@ -50,6 +50,7 @@ class KernelBigVGGM(nn.Module):
                                kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         num_features = int(num_features / 2)
 
         # Next steps of BN
@@ -59,6 +60,8 @@ class KernelBigVGGM(nn.Module):
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.mp2 = nn.MaxPool1d(self.max_pool).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         num_features = int(num_features / 2)
 
         # Next steps of BN
@@ -68,6 +71,8 @@ class KernelBigVGGM(nn.Module):
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.mp3 = nn.MaxPool1d(self.max_pool).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         num_features = int(num_features / 2)
 
         # Dropout
