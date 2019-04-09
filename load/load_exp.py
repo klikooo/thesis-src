@@ -26,7 +26,7 @@ rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_key_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3, 5, 7, 9, 11, 13, 15, 17]
+kernel_sizes = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 channel_sizes = [8]
 num_layers = []
 
@@ -118,7 +118,7 @@ line_marker = itertools.cycle(('+', '.', 'o', '*'))
 for i in range(len(rank_mean_y)):
     plt.title('Performance of {}'.format(name_models[i]))
     plt.xlabel('number of traces')
-    plt.ylabel('rank')
+    plt.ylabel('GE')
     plt.grid(True)
 
     # Plot the results
@@ -130,7 +130,7 @@ for i in range(len(rank_mean_y)):
 
 # plt.title('Comparison of networks')
 plt.xlabel('Number of traces')
-plt.ylabel('Mean rank')
+plt.ylabel('GE')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
     plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
@@ -148,8 +148,8 @@ if show_losses or show_acc:
 
         for r in range(len(loss_vali)):
             plt.title('Accuracy during training {}'.format(name_models[i]))
-            plt.xlabel('Accuracy')
-            plt.ylabel('Epoch')
+            plt.xlabel('Epoch')
+            plt.ylabel('Accuracy')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
@@ -167,8 +167,8 @@ if show_losses or show_acc:
         plt.figure()
         for r in range(len(loss_vali)):
             plt.title('Loss during training {}'.format(name_models[i]))
-            plt.xlabel('Loss')
-            plt.ylabel('Epoch')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):

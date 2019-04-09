@@ -429,3 +429,4 @@ def load_loss_acc(file):
     tl = np.load("{}.tl.npy".format(file))
     vl = np.load("{}.vl.npy".format(file))
     return ta, va, tl, vl
+

@@ -16,20 +16,20 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["MakeSomeNoise"]
+    network_names = ["KernelBig"]
     use_hw = False
     runs = 1
-    train_sizes = [10]
-    epochs = 10
+    train_sizes = [100]
+    epochs = 39
     batch_size = 10
-    lr = 0.001
+    lr = 0.0001
     subkey_index = 2
     checkpoints = None
     unmask = False  # False if subkey_index < 2 else True
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 3
+    kernel_size = 100
     channel_size = 8
     num_layers = 4
     spread_factor = 1
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
     parser.add_argument('-g', "--channel_size", default=channel_size, type=int, help="Channel size for a CNN")
-    parser.add_argument('-i', "--l2_penalty", default=0.0, type=float, help="L2 penalty")
+    parser.add_argument('-i', "--l2_penalty", default=0, type=float, help="L2 penalty")
 
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")

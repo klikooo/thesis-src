@@ -20,13 +20,15 @@ class KernelBig(nn.Module):
         self.conv1 = nn.Conv1d(1, self.conv1_channels, kernel_size=self.kernel_size, padding=self.padding).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
         self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(input_shape / 2)
+        num_features = input_shape + 2 * self.padding - 1 * (self.kernel_size - 1)
+        num_features = int(num_features / 2)
 
         self.conv2_channels = self.conv1_channels * 2
         self.conv2 = nn.Conv1d(self.conv1_channels, self.conv2_channels, self.kernel_size,
                                padding=self.padding).to(device)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv2_channels).to(device)
         self.mp2 = nn.MaxPool1d(2).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         num_features = int(num_features / 2)
 
         self.conv3_channels = self.conv2_channels * 2
@@ -34,6 +36,7 @@ class KernelBig(nn.Module):
                                padding=self.padding).to(device)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
         self.mp3 = nn.MaxPool1d(2).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         num_features = int(num_features / 2)
 
         self.drop_out = nn.Dropout(p=0.5)
