@@ -17,7 +17,7 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 20000
+train_size = 40000
 epochs = 75
 batch_size = 100
 lr = 0.0001
@@ -31,7 +31,7 @@ channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigSmallVGG']
+network_names = ['KernelBig']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -39,7 +39,7 @@ show_losses = False
 show_acc = True
 show_losses_all = False
 experiment = False
-l2_penalty = 0.05
+l2_penalty = 0.1
 #####################################################################################
 
 

@@ -16,11 +16,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["KernelBigVGGM"]
+    network_names = ["NumLayersVGG"]
     use_hw = False
     runs = 1
     train_sizes = [100]
-    epochs = 39
+    epochs = 40
     batch_size = 10
     lr = 0.0001
     subkey_index = 2
@@ -29,9 +29,9 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 100
+    kernel_size = 50
     channel_size = 8
-    num_layers = 4
+    num_layers = 3
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################
