@@ -38,7 +38,7 @@ if __name__ == "__main__":
     use_noise_data = False
     #####################################################################################
 
-    parser = argparse.ArgumentParser('Train a nn on the ascad db')
+    parser = argparse.ArgumentParser('Calculate GE for a nn')
     parser.add_argument('-a', "--attack_size", default=attack_size, type=int, help="Attack size")
     parser.add_argument('-b', "--batch_size", default=batch_size, type=int, help="Batch size")
     parser.add_argument('-c', "--num_layers", nargs='+', default=num_layers, type=int, help='List of number of layers')
