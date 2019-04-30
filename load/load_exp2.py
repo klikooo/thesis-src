@@ -17,33 +17,35 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 20000
-epochs = 120
+train_size = 40000
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
-unmask = True  # False if sub_key_index < 2 else True
+unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [60, 80, 110]
+kernel_sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 channel_sizes = [8]
 num_layers = []
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['ConvNetKernel']
+network_names = ['KernelBig']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
 show_acc = True
+show_losses_all = False
 experiment = False
+l2_penalty = 0.1
 #####################################################################################
 
 
 def get_ge(net_name, model_parameters):
     folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}/train{}/'.format(
+             'E{}_BZ{}_LR{}{}/train{}/'.format(
                                     '2' if not experiment else '',
                                     str(data_set),
                                     sub_key_index,
@@ -54,6 +56,7 @@ def get_ge(net_name, model_parameters):
                                     epochs,
                                     batch_size,
                                     '%.2E' % Decimal(lr),
+                                    '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
                                     train_size)
 
     ge_x, ge_y = [], []
@@ -116,7 +119,7 @@ line_marker = itertools.cycle(('+', '.', 'o', '*'))
 for i in range(len(rank_mean_y)):
     plt.title('Performance of {}'.format(name_models[i]))
     plt.xlabel('number of traces')
-    plt.ylabel('rank')
+    plt.ylabel('GE')
     plt.grid(True)
 
     # Plot the results
@@ -128,7 +131,7 @@ for i in range(len(rank_mean_y)):
 
 # plt.title('Comparison of networks')
 plt.xlabel('Number of traces')
-plt.ylabel('Mean rank')
+plt.ylabel('GE')
 plt.grid(True)
 for i in range(len(rank_mean_y)):
     plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
@@ -140,14 +143,16 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 
 
 if show_losses or show_acc:
+    mean_mv = []
+    mean_lv = []
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
         plt.figure()
 
         for r in range(len(loss_vali)):
             plt.title('Accuracy during training {}'.format(name_models[i]))
-            plt.xlabel('Accuracy')
-            plt.ylabel('Epoch')
+            plt.xlabel('Epoch')
+            plt.ylabel('Accuracy')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
@@ -159,14 +164,15 @@ if show_losses or show_acc:
         mv = np.mean(acc_vali, axis=0) * 100
         plt.plot(mt, color='blue')
         plt.plot(mv, color='red')
+        mean_mv.append(mv)
 
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
         plt.figure()
         for r in range(len(loss_vali)):
             plt.title('Loss during training {}'.format(name_models[i]))
-            plt.xlabel('Loss')
-            plt.ylabel('Epoch')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
             plt.grid(True)
             # Plot the accuracy
             # for x, y in zip(ranks_x[i], ranks_y[i]):
@@ -178,4 +184,19 @@ if show_losses or show_acc:
         lv = np.mean(loss_vali, axis=0)
         plt.plot(lt, color='blue')
         plt.plot(lv, color='red')
+
+        mean_lv.append(lv)
+
+    plt.figure()
+    for i in range(len(mean_lv)):
+        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
+    plt.grid(True)
+    plt.legend()
+
+    plt.figure()
+    for i in range(len(mean_mv)):
+        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
+    plt.grid(True)
+    plt.legend()
+
 plt.show()
