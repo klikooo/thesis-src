@@ -15,13 +15,13 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    network_names = ["NumLayersVGG"]
+    data_set = DataSet.ASCAD
+    network_names = ["SpreadNet"]
     use_hw = False
     runs = 1
-    train_sizes = [100]
+    train_sizes = [1000]
     epochs = 40
-    batch_size = 10
+    batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     kernel_size = 50
     channel_size = 8
     num_layers = 3
-    spread_factor = 1
+    spread_factor = 3
     loss_function = nn.CrossEntropyLoss()
     ############################
 
