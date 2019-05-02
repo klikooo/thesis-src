@@ -101,7 +101,7 @@ class SpreadV2(nn.Module):
         }, path)
 
     @staticmethod
-    def load_spread(file):
+    def load_model(file):
         checkpoint = torch.load(file)
 
         model = SpreadV2(checkpoint['sf'], input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
@@ -112,11 +112,11 @@ class SpreadV2(nn.Module):
         return model
 
     def name(self):
-        return "SpreadV2"
+        return SpreadV2.basename()
 
     @staticmethod
     def basename():
-        return "SpreadV2"
+        return SpreadV2.__name__
 
     @staticmethod
     def save_name(args):

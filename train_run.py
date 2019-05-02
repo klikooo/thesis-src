@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD
-    network_names = ["SpreadNet"]
+    network_names = ["DenseSpreadNet"]
     use_hw = False
     runs = 1
     train_sizes = [1000]

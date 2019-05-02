@@ -32,7 +32,6 @@ class DenseSpreadNet(nn.Module):
         # return F.softmax(x, dim=1).to(device)
         return x
 
-
     def name(self):
         return DenseSpreadNet.basename()
 

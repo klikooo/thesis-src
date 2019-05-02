@@ -100,7 +100,7 @@ class SpreadNet(nn.Module):
         }, path)
 
     @staticmethod
-    def load_spread(file):
+    def load_model(file):
         checkpoint = torch.load(file)
 
         model = SpreadNet(checkpoint['sf'], input_shape=checkpoint['input_shape'], out_shape=checkpoint['out_shape'])
@@ -111,11 +111,11 @@ class SpreadNet(nn.Module):
         return model
 
     def name(self):
-        return "SpreadNet"
+        return SpreadNet.basename()
 
     @staticmethod
     def basename():
-        return "SpreadNet"
+        return SpreadNet.__name__
 
     @staticmethod
     def save_name(args):
