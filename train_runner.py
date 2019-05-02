@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from models.SpreadNet import SpreadNet
+from models.Spread.SpreadNet import SpreadNet
 
 from util import save_model, load_data_set, DataSet, save_loss_acc
 from train import train, train_dk

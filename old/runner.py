@@ -1,5 +1,5 @@
-from models.SpreadNet import train_test, SpreadNet
-from models.DenseSpreadNet import DenseSpreadNet
+from models.Spread.SpreadNet import train_test, SpreadNet
+from models.Spread.DenseSpreadNet import DenseSpreadNet
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle

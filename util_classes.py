@@ -22,11 +22,11 @@ from models.ConvNetKernelMasked import ConvNetKernelMasked
 from models.ConvNetKernelSmall import ConvNetKernelSmall
 from models.ConvNetKernelSmallAvg import ConvNetKernelSmallAvg
 from models.CosNet import CosNet
-from models.DenseNet import DenseNet
-from models.DenseSpreadNet import DenseSpreadNet
+from models.Spread.DenseNet import DenseNet
+from models.Spread.DenseSpreadNet import DenseSpreadNet
 from models.SingleConv import SingleConv
-from models.SpreadNet import SpreadNet
-from models.SpreadV2 import SpreadV2
+from models.Spread.SpreadNet import SpreadNet
+from models.Spread.SpreadV2 import SpreadV2
 from models.VGG.KBVGG import KBVGG
 from models.VGG.KernelBigSmallVGG import KernelBigSmallVGG
 from models.VGG.KernelBigSmallVGGM import KernelBigSmallVGGM

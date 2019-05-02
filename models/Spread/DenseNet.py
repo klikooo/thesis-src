@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from util import device
 
 
+# This is the model MLP Best presented from the ASCAD paper
 class DenseNet(nn.Module):
     def __init__(self, input_shape, n_classes):
         super(DenseNet, self).__init__()
@@ -38,11 +39,11 @@ class DenseNet(nn.Module):
         return x
 
     def name(self):
-        return "DenseNet"
+        return DenseNet.__name__
 
     @staticmethod
     def basename():
-        return "DenseNet"
+        return DenseNet.__name__
 
     @staticmethod
     def save_name(args):
@@ -66,6 +67,3 @@ class DenseNet(nn.Module):
     @staticmethod
     def init(args):
         return DenseNet(n_classes=args['n_classes'], input_shape=args['input_shape'])
-
-    def name(self):
-        return "MLPBEST"

@@ -3,14 +3,9 @@ from decimal import Decimal
 
 import torch
 
-from models import DenseSpreadNet
-from models.CosNet import CosNet
-from models.DenseNet import DenseNet
-from models.SpreadNet import SpreadNet
-from models.SpreadNetIn import SpreadNetIn
+from models.Spread.SpreadNetIn import SpreadNetIn
 import numpy as np
 
-import torch.nn.functional as F
 import matplotlib.pyplot as plt
 
 

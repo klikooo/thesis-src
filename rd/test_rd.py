@@ -1,5 +1,4 @@
 from models.ConvNetKernel import ConvNetKernel
-from models.DenseNet import DenseNet
 from test import accuracy
 from train import train
 from util import load_csv

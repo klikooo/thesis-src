@@ -1,6 +1,6 @@
-from models.SpreadNet import train_test, SpreadNet
-from models.DenseSpreadNet import DenseSpreadNet
-from models.SpreadNetIn import SpreadNetIn
+from models.Spread.SpreadNet import train_test, SpreadNet
+from models.Spread.DenseSpreadNet import DenseSpreadNet
+from models.Spread.SpreadNetIn import SpreadNetIn
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -4,15 +4,14 @@ from decimal import Decimal
 import torch
 
 import util
-from models.SpreadNetIn import SpreadNetIn
+from models.Spread.SpreadNetIn import SpreadNetIn
 import numpy as np
 
 import matplotlib.pyplot as plt
 
-from models.SpreadV2 import SpreadV2
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode, SBOX
-from test import test, test_with_key_guess, accuracy, test_with_key_guess_p
+from util import load_ascad, shuffle_permutation, DataSet, req_dk, hot_encode
+from test import accuracy, test_with_key_guess_p
 
 path = '/media/rico/Data/TU/thesis'
 
