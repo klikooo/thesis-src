@@ -11,30 +11,30 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 100
-    epochs = 10
+    train_size = 12000
+    epochs = 120
     batch_size = 100
     lr = 0.001
     sub_key_index = 2
-    attack_size = 100
+    attack_size = 1000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [5]
-    channel_sizes = []
+    data_set = DataSet.RANDOM_DELAY_LARGE
+    kernel_sizes = [3]
+    channel_sizes = [8]
     num_layers = []
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['ConvNetKernel']
     desync = 0
-    num_exps = 100
+    num_exps = 20
     raw_traces = True
-    validation_size = 1000
+    validation_size = 100
     use_noise_data = False
     #####################################################################################
 

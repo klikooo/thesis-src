@@ -13,33 +13,33 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
-train_size = 20000
+runs = [x for x in range(1)]
+train_size = 12000
 epochs = 120
 batch_size = 100
-lr = 0.0001
+lr = 0.01
 sub_key_index = 2
 rank_step = 1
 type_network = 'HW' if use_hw else 'ID'
 unmask = True  # False if sub_kezy_index < 2 else True
-data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [100]
+data_set = util.DataSet.RANDOM_DELAY_LARGE
+kernel_sizes = [3]
+num_layers = []
 channel_sizes = [8]
-num_layers = [1]
-l2_penalty = 0.001
+l2_penalty = 0
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['NumLayersVGG']
+network_names = ['ConvNetKernel']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = False
 show_acc = False
 show_losses_all = False
-experiment = False
+experiment = True
 #####################################################################################
 
 

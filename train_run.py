@@ -15,24 +15,24 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD
-    network_names = ["DenseSpreadNet"]
-    use_hw = False
+    data_set = DataSet.RANDOM_DELAY
+    network_names = ["ConvNetKernel"]
+    use_hw = True
     runs = 1
-    train_sizes = [1000]
-    epochs = 40
+    train_sizes = [5000]
+    epochs = 120
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False  # False if subkey_index < 2 else True
+    unmask = True  # Only matters for ASCAD
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 50
+    kernel_size = 3
     channel_size = 8
     num_layers = 3
-    spread_factor = 3
+    spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################
 
@@ -79,7 +79,8 @@ if __name__ == "__main__":
 
     def get_raw_feature_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
-                    DataSet.DPA_V4: 3000}
+                    DataSet.DPA_V4: 3000,
+                    DataSet.RANDOM_DELAY_LARGE: 1250}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50

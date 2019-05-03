@@ -53,6 +53,10 @@ HW = [bin(x).count("1") for x in range(256)]
 C8 = [HW.count(HW[x]) / 256 for x in range(256)]
 
 
+def HD(x, y):
+    return bin(x ^ y).count("1")
+
+
 def check_file_exists(file_path):
     if not os.path.exists(file_path):
         print("Error: provided file path '%s' does not exist!" % file_path)
@@ -346,11 +350,28 @@ def load_random_delay(args):
     return x_train, y_train, plain
 
 
+def load_random_delay_large(args):
+    print(args)
+
+    x_train = load_csv('{}/Random_Delay_Large/traces/traces.csv'.format(args['traces_path']),
+                       delimiter=' ',
+                       start=args.get('start'),
+                       size=args.get('size'))
+
+    y_train = load_csv('{}/Random_Delay_Large/Value/model.csv'.format(args['traces_path']),
+                       delimiter=' ',
+                       dtype=np.long,
+                       start=args.get('start'),
+                       size=args.get('size'))
+    return x_train, y_train, None
+
+
 class DataSet(Enum):
     ASCAD = 1
     AES_HD = 2
     DPA_V4 = 3
     RANDOM_DELAY = 4
+    RANDOM_DELAY_LARGE = 5
 
     def __str__(self):
         if self.value == 1:
@@ -361,6 +382,8 @@ class DataSet(Enum):
             return "DPAv4"
         elif self.value == 4:
             return "Random_Delay"
+        elif self.value == 5:
+            return "Random_Delay_Large"
         else:
             print("ERROR {}".format(self.value))
 
@@ -376,7 +399,8 @@ def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
              DataSet.AES_HD: load_aes_hd,
              DataSet.DPA_V4: load_dpav4,
-             DataSet.RANDOM_DELAY: load_random_delay}
+             DataSet.RANDOM_DELAY: load_random_delay,
+             DataSet.RANDOM_DELAY_LARGE: load_random_delay_large}
     return table[data_set]
 
 
