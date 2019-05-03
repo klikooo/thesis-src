@@ -339,12 +339,14 @@ def load_random_delay(args):
                        start=args.get('start'),
                        size=args.get('size'))
     if args['domain_knowledge']:
-        plain = load_csv('{}/Random_Delay/{}/plain_0.csv'.format(args['traces_path'], hw),
-                         delimiter=' ',
-                         dtype=np.int,
-                         start=args.get('start'),
-                         size=args.get('size'))
-        plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+        # plain = load_csv('{}/Random_Delay/{}/plain_0.csv'.format(args['traces_path'], hw),
+        #                  delimiter=' ',
+        #                  dtype=np.int,
+        #                  start=args.get('start'),
+        #                  size=args.get('size'))
+        # plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+        # TODO: fix this for domain knowledge
+        plain = None
     else:
         plain = None
     return x_train, y_train, plain
