@@ -16,11 +16,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["ConvNetKernel"]
-    use_hw = True
+    network_names = ["AlexNet"]
+    use_hw = False
     runs = 1
     train_sizes = [5000]
-    epochs = 120
+    epochs = 75
     batch_size = 100
     lr = 0.0001
     subkey_index = 2

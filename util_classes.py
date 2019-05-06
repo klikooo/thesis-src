@@ -1,3 +1,4 @@
+from models.Alex.AlexNet import AlexNet
 from models.Alex.KB import KB
 from models.Alex.KB2 import KB2
 from models.Alex.KB3 import KB3
@@ -46,7 +47,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KB, KBS, KB2, KBS2, KBVGG, KBS3, KB3, KB4,
           ConvNetKernelSmall, KernelBigVGGM, KernelBigSmallVGGM,
           SingleConv, ConvNetKernelAvg, ConvNetKernelSmallAvg,
-          KernelBigVGGC, NumLayersVGG]
+          KernelBigVGGC, NumLayersVGG, AlexNet]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
