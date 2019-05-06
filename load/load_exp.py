@@ -13,26 +13,26 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 n_classes = 9 if use_hw else 256
-spread_factor = 1
+spread_factor = 6
 runs = [x for x in range(5)]
-train_size = 40000
-epochs = 75
+train_size = 1000
+epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [10, 50, 100]
+data_set = util.DataSet.ASCAD
+kernel_sizes = []
 num_layers = []
 channel_sizes = [8]
-l2_penalty = 0.05
+l2_penalty = 0
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigSmallVGG']
+network_names = ['DenseSpreadNet', 'SpreadNet', 'SpreadV2']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -124,9 +124,9 @@ for network_name in network_names:
 ###############################################
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
 for i in range(len(rank_mean_y)):
-    plt.title('Performance of {}'.format(name_models[i]))
-    plt.xlabel('number of traces')
-    plt.ylabel('GE')
+    plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
+    plt.xlabel('Number of traces', fontsize=16)
+    plt.ylabel('Guessing Entropy', fontsize=16)
     plt.grid(True)
     axes = plt.gca()
     axes.set_ylim([0, 256])
@@ -141,8 +141,8 @@ for i in range(len(rank_mean_y)):
 ###############################################
 # Plot the mean of the runs of a single model #
 ###############################################
-plt.xlabel('Number of traces')
-plt.ylabel('GE')
+plt.xlabel('Number of traces', fontsize=16)
+plt.ylabel('Guessing Entropy', fontsize=16)
 plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])

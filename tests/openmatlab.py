@@ -19,6 +19,7 @@ model_filename = "model.csv"
 def conv_to_plain(ptext):
     hex_string = "{}{}{}{}".format(hex(ptext[3])[2:].zfill(8), hex(ptext[2])[2:].zfill(8),
                                    hex(ptext[1])[2:].zfill(8), hex(ptext[0])[2:].zfill(8))
+    print(hex_string)
     return bytes.fromhex(hex_string)
 
 
@@ -50,7 +51,7 @@ model_values = []
 traces = []
 
 # Perform the conversion
-num_traces = 40000
+num_traces = 5000
 start = 5000
 for file_index in range(start, num_traces+1, start):
     file = "traces{}.mat".format(file_index)
@@ -62,6 +63,7 @@ for file_index in range(start, num_traces+1, start):
     for i in range(start):
         # Do the encryption of the plaintext
         plain = conv_to_plain(x['ptexts'][i])
+        exit()
         bytes_ct = aes.encrypt(plain)
 
         # Add the traces
