@@ -11,20 +11,20 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
     train_size = 5000
     epochs = 75
     batch_size = 100
-    lr = 0.001
+    lr = 0.0001
     sub_key_index = 2
     attack_size = 1000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY_LARGE
+    data_set = DataSet.ASCAD
     kernel_sizes = []
     channel_sizes = []
     num_layers = []

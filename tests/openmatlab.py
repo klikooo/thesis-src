@@ -3,8 +3,14 @@ from Crypto.Cipher import AES
 import util
 import numpy as np
 
-# data_set = "03_19_fpga_aes_ches11_desynch"
-data_set = "unprotected"
+num_traces = 50000
+
+
+data_set = "03_19_fpga_aes_ches11_desynch"
+# data_set = "unprotected"
+step_size = 1000
+if data_set == "unprotected":
+    step_size = 5000
 
 path = "/media/rico/Data/TU/thesis/data/RD2/{}/matlab_format".format(data_set)
 value_path = "/media/rico/Data/TU/thesis/data/Random_Delay_Large/Value/"
@@ -56,8 +62,7 @@ traces = []
 ciphertexts = []
 
 # Perform the conversion
-num_traces = 10000
-start = 5000
+start = step_size
 for file_index in range(start, num_traces+1, start):
     file = "traces{}.mat".format(file_index)
     x = loadmat('{}/{}'.format(path, file))
@@ -99,56 +104,55 @@ util.save_np("{}/{}".format(value_path, model_filename), model_values)
 # Save the key
 util.save_np("{}/secret_key.csv".format(key_path), [last_r_key[sub_key]])
 
+if data_set == "unprotected":
+    # Test with a CPA attack
+    numpoint = 1
+    numtraces= 5000
 
-# Test with a CPA attack
-numpoint = 1
-numtraces= 5000
+    traces = traces[:numtraces]
+    print(np.shape(traces))
+    # traces = np.array(traces)[:, 965]
+    print(np.shape(traces))
 
-traces = traces[:numtraces]
-print(np.shape(traces))
-# traces = np.array(traces)[:, 965]
-print(np.shape(traces))
+    cpaoutput = [0] * 256
+    maxcpa = [0] * 256
+    bnum=0
+    for kguess in range(0, 256):
+        print("Subkey {}, hyp = {}: ".format(bnum, kguess))
 
-cpaoutput = [0] * 256
-maxcpa = [0] * 256
-bnum=0
-for kguess in range(0, 256):
-    print("Subkey {}, hyp = {}: ".format(bnum, kguess))
+        # Initialize arrays & variables to zero
+        sumnum = np.zeros(numpoint)
+        sumden1 = np.zeros(numpoint)
+        sumden2 = np.zeros(numpoint)
 
-    # Initialize arrays & variables to zero
-    sumnum = np.zeros(numpoint)
-    sumden1 = np.zeros(numpoint)
-    sumden2 = np.zeros(numpoint)
+        hyp = np.zeros(numtraces)
+        for tnum in range(0, numtraces):
+            hyp[tnum] = util.HD(util.SBOX_INV[ciphertexts[tnum] ^ kguess], ciphertexts[tnum])
 
-    hyp = np.zeros(numtraces)
-    for tnum in range(0, numtraces):
-        hyp[tnum] = util.HD(util.SBOX_INV[ciphertexts[tnum] ^ kguess], ciphertexts[tnum])
+        # Mean of hypothesis
+        meanh = np.mean(hyp, dtype=np.float64)
 
-    # Mean of hypothesis
-    meanh = np.mean(hyp, dtype=np.float64)
+        # Mean of all points in trace
+        meant = np.mean(traces, axis=0, dtype=np.float64)
 
-    # Mean of all points in trace
-    meant = np.mean(traces, axis=0, dtype=np.float64)
+        # For each trace, do the following
+        for tnum in range(0, numtraces):
+            hdiff = (hyp[tnum] - meanh)
+            tdiff = traces[tnum] - meant
 
-    # For each trace, do the following
-    for tnum in range(0, numtraces):
-        hdiff = (hyp[tnum] - meanh)
-        tdiff = traces[tnum] - meant
+            sumnum = sumnum + (hdiff * tdiff)
+            sumden1 = sumden1 + hdiff * hdiff
+            sumden2 = sumden2 + tdiff * tdiff
 
-        sumnum = sumnum + (hdiff * tdiff)
-        sumden1 = sumden1 + hdiff * hdiff
-        sumden2 = sumden2 + tdiff * tdiff
+        cpaoutput[kguess] = sumnum / np.sqrt(sumden1 * sumden2)
+        maxcpa[kguess] = max(abs(cpaoutput[kguess]))
 
-    cpaoutput[kguess] = sumnum / np.sqrt(sumden1 * sumden2)
-    maxcpa[kguess] = max(abs(cpaoutput[kguess]))
+        print(maxcpa[kguess])
 
-    print(maxcpa[kguess])
+    # Find maximum value of key
+    bestguess = np.argmax(maxcpa)
+    print(bestguess)
 
-# Find maximum value of key
-bestguess = np.argmax(maxcpa)
-print(bestguess)
-
-
-
-
-#Use point 965
+    ############################
+    # POINT 965 LEAKS THE MOST #
+    ############################
