@@ -15,11 +15,16 @@ traces_filename = "traces.csv"
 model_filename = "model.csv"
 
 
+# Define a leakage function
+def leakage_function(ct, key_guess):
+    inverse_sbox = util.SBOX_INV[ct ^ key_guess]
+    return abs(ct - inverse_sbox)
+
+
 # Convert matlab plaintext to hex
 def conv_to_plain(ptext):
     hex_string = "{}{}{}{}".format(hex(ptext[3])[2:].zfill(8), hex(ptext[2])[2:].zfill(8),
                                    hex(ptext[1])[2:].zfill(8), hex(ptext[0])[2:].zfill(8))
-    print(hex_string)
     return bytes.fromhex(hex_string)
 
 
@@ -27,8 +32,7 @@ def conv_to_plain(ptext):
 def generate_key_guess(ct):
     key_guesses = []
     for key_guess in range(256):
-        inverse_sbox = util.SBOX_INV[ct ^ key_guess]
-        key_guesses.append(util.HD(inverse_sbox, ct))
+        key_guesses.append(leakage_function(ct, key_guess))
     return key_guesses
 
 
@@ -49,9 +53,10 @@ aes = AES.new(master_key, AES.MODE_ECB)
 all_key_guesses = []
 model_values = []
 traces = []
+ciphertexts = []
 
 # Perform the conversion
-num_traces = 5000
+num_traces = 10000
 start = 5000
 for file_index in range(start, num_traces+1, start):
     file = "traces{}.mat".format(file_index)
@@ -63,7 +68,6 @@ for file_index in range(start, num_traces+1, start):
     for i in range(start):
         # Do the encryption of the plaintext
         plain = conv_to_plain(x['ptexts'][i])
-        exit()
         bytes_ct = aes.encrypt(plain)
 
         # Add the traces
@@ -71,18 +75,21 @@ for file_index in range(start, num_traces+1, start):
 
         # Select a byte
         ct_byte = int(bytes_ct[sub_key])
+        ciphertexts.append(ct_byte)
 
         # Do inv sbox and calculate HD
-        inv_sbox_byte = util.SBOX_INV[ct_byte ^ round_sub_key]
-        hd = util.HD(ct_byte, inv_sbox_byte)
+        leakage = leakage_function(ct_byte, last_r_key[sub_key])
 
         # Store the HD for model file
-        model_values.append(hd)
+        model_values.append(leakage)
 
         # Generate the key guesses:
         all_key_guesses.append(generate_key_guess(ct_byte))
 
     # Save the key guesses to a file
+
+# traces = np.array(traces)[:, 900:1200]
+
 print("Saving {}".format(key_guesses_filename))
 print("Traces format: {}".format(np.shape(traces)))
 util.save_np("{}/{}".format(value_path, key_guesses_filename), all_key_guesses)
@@ -93,3 +100,55 @@ util.save_np("{}/{}".format(value_path, model_filename), model_values)
 util.save_np("{}/secret_key.csv".format(key_path), [last_r_key[sub_key]])
 
 
+# Test with a CPA attack
+numpoint = 1
+numtraces= 5000
+
+traces = traces[:numtraces]
+print(np.shape(traces))
+# traces = np.array(traces)[:, 965]
+print(np.shape(traces))
+
+cpaoutput = [0] * 256
+maxcpa = [0] * 256
+bnum=0
+for kguess in range(0, 256):
+    print("Subkey {}, hyp = {}: ".format(bnum, kguess))
+
+    # Initialize arrays & variables to zero
+    sumnum = np.zeros(numpoint)
+    sumden1 = np.zeros(numpoint)
+    sumden2 = np.zeros(numpoint)
+
+    hyp = np.zeros(numtraces)
+    for tnum in range(0, numtraces):
+        hyp[tnum] = util.HD(util.SBOX_INV[ciphertexts[tnum] ^ kguess], ciphertexts[tnum])
+
+    # Mean of hypothesis
+    meanh = np.mean(hyp, dtype=np.float64)
+
+    # Mean of all points in trace
+    meant = np.mean(traces, axis=0, dtype=np.float64)
+
+    # For each trace, do the following
+    for tnum in range(0, numtraces):
+        hdiff = (hyp[tnum] - meanh)
+        tdiff = traces[tnum] - meant
+
+        sumnum = sumnum + (hdiff * tdiff)
+        sumden1 = sumden1 + hdiff * hdiff
+        sumden2 = sumden2 + tdiff * tdiff
+
+    cpaoutput[kguess] = sumnum / np.sqrt(sumden1 * sumden2)
+    maxcpa[kguess] = max(abs(cpaoutput[kguess]))
+
+    print(maxcpa[kguess])
+
+# Find maximum value of key
+bestguess = np.argmax(maxcpa)
+print(bestguess)
+
+
+
+
+#Use point 965
