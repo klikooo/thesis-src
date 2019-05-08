@@ -34,7 +34,7 @@ from models.VGG.KernelBigSmallVGGM import KernelBigSmallVGGM
 from models.VGG.KernelBigVGG import KernelBigVGG
 from models.VGG.KernelBigVGGC import KernelBigVGGC
 from models.VGG.KernelBigVGGM import KernelBigVGGM
-from models.VGG.KernelBigVGGRDL import KernelBigVGGRDLM
+from models.VGG.KernelBigVGGRDLM import KernelBigVGGRDLM
 from models.VGG.MakeSomeNoise import MakeSomeNoise
 from models.VGG.NumLayersVGG import NumLayersVGG
 
