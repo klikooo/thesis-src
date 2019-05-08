@@ -16,10 +16,10 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY_LARGE
-    network_names = ["KernelBigVGGRDLM"]
+    network_names = ["KernelBigVGGRDLM2"]
     use_hw = False
     runs = 1
-    train_sizes = [1000]
+    train_sizes = [2000]
     epochs = 75
     batch_size = 100
     lr = 0.0001
