@@ -80,7 +80,7 @@ if __name__ == "__main__":
     def get_raw_feature_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
                     DataSet.DPA_V4: 3000,
-                    DataSet.RANDOM_DELAY_LARGE: 1250}
+                    DataSet.RANDOM_DELAY_LARGE: 6250}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50
