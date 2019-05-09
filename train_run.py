@@ -29,8 +29,8 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 3
-    channel_size = 8
+    kernel_size = 10
+    channel_size = 16
     num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()

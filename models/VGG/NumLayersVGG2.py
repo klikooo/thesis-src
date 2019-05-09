@@ -21,6 +21,8 @@ class NumLayersVGG2(nn.Module):
         self.bn_layers = []
         self.mp_layers = []
 
+        self.bn0 = nn.BatchNorm1d(num_features=1).to(device)
+
         in_channels = 1
         out_channels = channel_size
         num_features = input_shape
@@ -62,12 +64,13 @@ class NumLayersVGG2(nn.Module):
         inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
         x = inputs
+        x = self.bn0(inputs)
         for i in range(self.num_blocks):
             for j in range(self.num_layers):
-                x = self.conv_layers[i][j](x)
+                x = F.relu(self.conv_layers[i][j](x))
 
             # TODO: should I do BN before pooling or after?
-            x = self.pool(F.relu(x))
+            x = self.pool(x)
             x = self.bn_layers[i](x)
         # Reshape data for classification
         x = x.view(batch_size, -1)
