@@ -89,6 +89,10 @@ class ConvNetDK(nn.Module):
         }, path)
 
     @staticmethod
+    def save_name(args):
+        return "{}".format(ConvNetDK.basename())
+
+    @staticmethod
     def load_model(file):
         checkpoint = torch.load(file)
 

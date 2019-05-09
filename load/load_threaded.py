@@ -90,6 +90,9 @@ def load_data(args, network_name):
             _dk_plain = _metadata_attack[:]['plaintext'][:, args.subkey_index]
             _dk_plain = hot_encode(_dk_plain, 9 if args.use_hw else 256, dtype=np.float)
     else:
+        ###################
+        # Load the traces #
+        ###################
         loader = util.load_data_set(args.data_set)
         total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
                                                         'traces_path': args.traces_path,
@@ -98,7 +101,13 @@ def load_data(args, network_name):
                                                         'size': args.attack_size,
                                                         'domain_knowledge': True,
                                                         'use_noise_data': args.use_noise_data})
+        if plain is not None:
+            _dk_plain = torch.from_numpy(plain).cuda()
         print('Loading key guesses')
+
+        ####################################
+        # Load the key guesses and the key #
+        ####################################
         data_set_name = str(args.data_set)
         _key_guesses = util.load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
             args.traces_path,

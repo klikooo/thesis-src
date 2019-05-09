@@ -17,22 +17,22 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(1)]
-train_size = 5000
+train_size = 1000
 epochs = 75
 batch_size = 100
-lr = 0.001
+lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-data_set = util.DataSet.RANDOM_DELAY_LARGE
+data_set = util.DataSet.RANDOM_DELAY_DK
 kernel_sizes = []
 num_layers = []
 channel_sizes = []
 l2_penalty = 0
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['DenseNet']
+network_names = ['ConvNetDK']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
