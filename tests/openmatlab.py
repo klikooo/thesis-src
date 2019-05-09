@@ -97,62 +97,79 @@ for file_index in range(start, num_traces+1, start):
 
 print("Saving {}".format(key_guesses_filename))
 print("Traces format: {}".format(np.shape(traces)))
-util.save_np("{}/{}".format(value_path, key_guesses_filename), all_key_guesses)
-util.save_np("{}/{}".format(traces_path, traces_filename), traces)
-util.save_np("{}/{}".format(value_path, model_filename), model_values)
+# util.save_np("{}/{}".format(value_path, key_guesses_filename), all_key_guesses)
+# util.save_np("{}/{}".format(traces_path, traces_filename), traces)
+# util.save_np("{}/{}".format(value_path, model_filename), model_values)
 
 # Save the key
-util.save_np("{}/secret_key.csv".format(key_path), [last_r_key[sub_key]])
+# util.save_np("{}/secret_key.csv".format(key_path), [last_r_key[sub_key]])
+all_key_guesses = np.array(all_key_guesses)
+traces = np.array(traces)
+print("Shape model values: {}".format(np.shape(model_values)))
+print("Shape traces: {}".format(np.shape(traces)))
 
-if data_set == "unprotected":
-    # Test with a CPA attack
-    numpoint = 1
-    numtraces= 5000
-
-    traces = traces[:numtraces]
-    print(np.shape(traces))
-    # traces = np.array(traces)[:, 965]
-    print(np.shape(traces))
-
-    cpaoutput = [0] * 256
-    maxcpa = [0] * 256
-    bnum=0
+for trace_point in range(0, 6250):
+    probabilities = [0] * 256
     for kguess in range(0, 256):
-        print("Subkey {}, hyp = {}: ".format(bnum, kguess))
+        kguess_vals = all_key_guesses[:, kguess]
+        traces_points = traces[:, trace_point]
+        corr = np.corrcoef(traces_points, kguess_vals)[1][0]
+        # print("For kguess {}: {}".format(kguess, corr))
+        probabilities[kguess] = abs(corr)
+    print("Point {}, Max: {}".format(trace_point, np.argmax(probabilities)))
 
-        # Initialize arrays & variables to zero
-        sumnum = np.zeros(numpoint)
-        sumden1 = np.zeros(numpoint)
-        sumden2 = np.zeros(numpoint)
 
-        hyp = np.zeros(numtraces)
-        for tnum in range(0, numtraces):
-            hyp[tnum] = util.HD(util.SBOX_INV[ciphertexts[tnum] ^ kguess], ciphertexts[tnum])
+exit()
 
-        # Mean of hypothesis
-        meanh = np.mean(hyp, dtype=np.float64)
 
-        # Mean of all points in trace
-        meant = np.mean(traces, axis=0, dtype=np.float64)
+##############
+if data_set == "unprotected" or True:
 
-        # For each trace, do the following
-        for tnum in range(0, numtraces):
-            hdiff = (hyp[tnum] - meanh)
-            tdiff = traces[tnum] - meant
+    print("Shape traces {}".format(np.shape(traces)))
+    for trace_point in range(965, 966):
+        # Test with a CPA attack
+        sp_traces = np.array(traces)[:, trace_point]
+        numpoint = 1
+        numtraces= 50000
 
-            sumnum = sumnum + (hdiff * tdiff)
-            sumden1 = sumden1 + hdiff * hdiff
-            sumden2 = sumden2 + tdiff * tdiff
 
-        cpaoutput[kguess] = sumnum / np.sqrt(sumden1 * sumden2)
-        maxcpa[kguess] = max(abs(cpaoutput[kguess]))
+        cpaoutput = [0] * 256
+        maxcpa = [0] * 256
+        bnum=0
+        for kguess in range(0, 256):
+            print("going for kguess {}".format(kguess))
 
-        print(maxcpa[kguess])
+            # Initialize arrays & variables to zero
+            sumnum = np.zeros(numpoint)
+            sumden1 = np.zeros(numpoint)
+            sumden2 = np.zeros(numpoint)
 
-    # Find maximum value of key
-    bestguess = np.argmax(maxcpa)
-    print(bestguess)
+            hyp = np.zeros(numtraces)
+            for tnum in range(0, numtraces):
+                hyp[tnum] = util.HD(util.SBOX_INV[ciphertexts[tnum] ^ kguess], ciphertexts[tnum])
 
-    ############################
-    # POINT 965 LEAKS THE MOST #
-    ############################
+            # Mean of hypothesis
+            meanh = np.mean(hyp, dtype=np.float64)
+
+            # Mean of all points in trace
+            meant = np.mean(sp_traces, axis=0, dtype=np.float64)
+
+            # For each trace, do the following
+            for tnum in range(0, numtraces):
+                hdiff = (hyp[tnum] - meanh)
+                tdiff = sp_traces[tnum] - meant
+
+                sumnum = sumnum + (hdiff * tdiff)
+                sumden1 = sumden1 + hdiff * hdiff
+                sumden2 = sumden2 + tdiff * tdiff
+
+            cpaoutput[kguess] = sumnum / np.sqrt(sumden1 * sumden2)
+            maxcpa[kguess] = max(abs(cpaoutput[kguess]))
+
+        # Find maximum value of key
+        bestguess = np.argmax(maxcpa)
+        print("For point {} is best guess: {}".format(trace_point, bestguess))
+
+    ########################################################
+    # POINT 965 LEAKS THE MOST FOR THE UNPROTECTED DATA SET#
+    ########################################################

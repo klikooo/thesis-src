@@ -17,7 +17,7 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 20000
+train_size = 40000
 epochs = 120
 batch_size = 100
 lr = 0.0001
@@ -26,17 +26,17 @@ rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [3,5,7,9,11]
-num_layers = []
+kernel_sizes = [100, 50]
+num_layers = [1]
 channel_sizes = [8]
-l2_penalty = 0
+l2_penalty = 0.001
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBig']
+network_names = ['NumLayersVGG']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-show_losses = False
+show_losses = True
 show_acc = False
 show_losses_all = False
 experiment = False
@@ -183,7 +183,7 @@ if show_losses or show_acc:
         mean_mv.append(mv)
 
     for i in range(len(rank_mean_y)):
-        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+        (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
         plt.figure()
         for r in range(len(loss_vali)):
             plt.title('Loss during training {}'.format(name_models[i]))
@@ -198,8 +198,8 @@ if show_losses or show_acc:
 
         lt = np.mean(loss_train, axis=0)
         lv = np.mean(loss_vali, axis=0)
-        plt.plot(lt, color='blue')
-        plt.plot(lv, color='red')
+        plt.plot(lt, color='blue', label='Train')
+        plt.plot(lv, color='red', label='Validation')
 
         mean_lv.append(lv)
 
@@ -207,12 +207,14 @@ if show_losses or show_acc:
     for i in range(len(mean_lv)):
         plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
     plt.grid(True)
+    plt.title("Mean loss validation")
     plt.legend()
 
     plt.figure()
     for i in range(len(mean_mv)):
         plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
     plt.grid(True)
+    plt.title("Mean accuracy validation")
     plt.legend()
 
 plt.show()

@@ -16,30 +16,30 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
-train_size = 5000
-epochs = 75
+runs = [x for x in range(5)]
+train_size = 40000
+epochs = 120
 batch_size = 100
-lr = 0.001
+lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-data_set = util.DataSet.RANDOM_DELAY_LARGE
-kernel_sizes = []
-num_layers = []
-channel_sizes = []
-l2_penalty = 0
+data_set = util.DataSet.RANDOM_DELAY
+kernel_sizes = [100]
+num_layers = [1]
+channel_sizes = [4]
+l2_penalty = 0.0001
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['DenseNet']
+network_names = ['NumLayersVGG']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-show_losses = False
+show_losses = True
 show_acc = False
 show_losses_all = False
-experiment = True
+experiment = False
 type_network = 'HW' if use_hw else 'ID'
 #####################################################################################
 
@@ -113,11 +113,19 @@ for network_name in network_names:
 
         all_loss_acc.append(loss_acc)
 
-    util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
-        util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
-            util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)
-        ))
-    ))
+    for cs in channel_sizes:
+        model_params.update({"channel_size": cs})
+        for i in range(len(num_layers)):
+            model_params.update({"kernel_size": kernel_sizes[i]})
+            model_params.update({"num_layers": num_layers[i]})
+            retrieve_ge()
+
+
+    # util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
+    #     util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
+    #         util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)
+    #     ))
+    # ))
 
 ###############################################
 # Plot the runs of the same model in one plot #
