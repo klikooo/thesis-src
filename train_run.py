@@ -15,8 +15,8 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    network_names = ["NumLayersVGG2"]
+    data_set = DataSet.RANDOM_DELAY_DK
+    network_names = ["ConvNetDK"]
     use_hw = False
     runs = 1
     train_sizes = [1000]
@@ -80,7 +80,8 @@ if __name__ == "__main__":
     def get_raw_feature_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
                     DataSet.DPA_V4: 3000,
-                    DataSet.RANDOM_DELAY_LARGE: 6250}
+                    DataSet.RANDOM_DELAY_LARGE: 6250,
+                    DataSet.RANDOM_DELAY_DK: 3500}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50

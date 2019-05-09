@@ -14,6 +14,16 @@ class ConvNetDK(nn.Module):
 
         self.hidden_size = 100
 
+        num_features = input_shape
+        num_features = num_features + 2 * 3 - 1 * (11 - 1)
+        num_features = int(num_features / 5)
+
+        num_features = num_features + 2 * 3 - 1 * (11 - 1)
+        num_features = int(num_features / 5)
+
+        num_features = num_features + 2 * 3 - 1 * (11 - 1)
+        num_features = int(num_features / 5)
+
         self.conv1 = nn.Conv1d(1, 32, kernel_size=11, padding=3).to(device)
         self.bn1 = nn.BatchNorm1d(num_features=32).to(device)
         self.mp1 = nn.MaxPool1d(5).to(device)
@@ -30,7 +40,7 @@ class ConvNetDK(nn.Module):
         # self.bn4 = nn.BatchNorm1d(num_features=128).to(device)
         # self.mp4 = nn.MaxPool1d(5).to(device)
 
-        self.fc4 = torch.nn.Linear(512+256, 400).to(device)
+        self.fc4 = torch.nn.Linear(num_features*128+256, 400).to(device)
         self.fc5 = torch.nn.Linear(400, 400).to(device)
         self.fc6 = torch.nn.Linear(400, self.out_shape).to(device)
 
@@ -65,11 +75,11 @@ class ConvNetDK(nn.Module):
         return x
 
     def name(self):
-        return "ConvNetDK"
+        return ConvNetDK.__name__
 
     @staticmethod
     def basename():
-        return "ConvNetDK"
+        return ConvNetDK.__name__
 
     def save(self, path):
         torch.save({

@@ -26,7 +26,7 @@ rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [10, 40]
+kernel_sizes = [10]
 num_layers = [1]
 channel_sizes = [8]
 l2_penalty = 0.05

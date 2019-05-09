@@ -3,7 +3,7 @@ from decimal import Decimal
 from models.Spread.SpreadNet import SpreadNet
 
 from util import save_model, load_data_set, DataSet, save_loss_acc
-from train import train, train_dk
+from train import train, train_dk2
 
 import numpy as np
 
@@ -62,6 +62,11 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
     y_validation = y_train[train_size:train_size + validation_size]
     x_train = x_train[0:train_size]
     y_train = y_train[0:train_size]
+    p_train = None
+    p_validation = None
+    if plain is not None:
+        p_train = plain[0:train_size]
+        p_validation = plain[train_size:train_size + validation_size]
 
     print('Shape x: {}'.format(np.shape(x_train)))
 
@@ -86,17 +91,22 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
         print('Training with learning rate: {}, desync {}'.format(lr, desync))
 
         if domain_knowledge:
-            # TODO: save losses and accuracies for this
-            network = train_dk(x_train, y_train,
-                               train_size=train_size,
-                               network=network,
-                               epochs=epochs,
-                               batch_size=batch_size,
-                               lr=lr,
-                               checkpoints=checkpoints,
-                               save_path=model_save_file,
-                               plain=plain
-                               )
+            network, res = train_dk2(x_train, y_train, p_train,
+                                     train_size=train_size,
+                                     x_validation=x_validation,
+                                     y_validation=y_validation,
+                                     p_validation=p_validation,
+                                     validation_size=validation_size,
+                                     network=network,
+                                     epochs=epochs,
+                                     batch_size=batch_size,
+                                     lr=lr,
+                                     checkpoints=checkpoints,
+                                     save_path=model_save_file,
+                                     loss_function=loss_function,
+                                     l2_penalty=l2_penalty,
+
+                                     )
         else:
             network, res = train(x_train, y_train,
                                  train_size=train_size,
@@ -112,7 +122,8 @@ def run(use_hw, runs, train_size, epochs, batch_size, lr, subkey_index, spread_f
                                  loss_function=loss_function,
                                  l2_penalty=l2_penalty
                                  )
-            save_loss_acc(model_save_file, filename, res)
+        # Save the results of the accuracy and loss during training
+        save_loss_acc(model_save_file, filename, res)
 
         # Make sure don't mess with our min/max of the spread network
         if isinstance(network, SpreadNet):

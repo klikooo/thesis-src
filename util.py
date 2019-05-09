@@ -368,12 +368,35 @@ def load_random_delay_large(args):
     return x_train, y_train, None
 
 
+def load_random_delay_dk(args):
+    print(args)
+
+    x_train = load_csv('{}/Random_Delay_DK/traces/traces.csv'.format(args['traces_path']),
+                       delimiter=' ',
+                       start=args.get('start'),
+                       size=args.get('size'))
+
+    y_train = load_csv('{}/Random_Delay_DK/Value/model.csv'.format(args['traces_path']),
+                       delimiter=' ',
+                       dtype=np.long,
+                       start=args.get('start'),
+                       size=args.get('size'))
+    plain = load_csv('{}/Random_Delay_DK/Value/plaintexts.csv'.format(args['traces_path']),
+                     delimiter=' ',
+                     dtype=np.long,
+                     start=args.get('start'),
+                     size=args.get('size'))
+    plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
+    return x_train, y_train, plain
+
+
 class DataSet(Enum):
     ASCAD = 1
     AES_HD = 2
     DPA_V4 = 3
     RANDOM_DELAY = 4
     RANDOM_DELAY_LARGE = 5
+    RANDOM_DELAY_DK = 6
 
     def __str__(self):
         if self.value == 1:
@@ -386,6 +409,8 @@ class DataSet(Enum):
             return "Random_Delay"
         elif self.value == 5:
             return "Random_Delay_Large"
+        elif self.value == 6:
+            return "Random_Delay_DK"
         else:
             print("ERROR {}".format(self.value))
 
@@ -402,7 +427,8 @@ def load_data_set(data_set):
              DataSet.AES_HD: load_aes_hd,
              DataSet.DPA_V4: load_dpav4,
              DataSet.RANDOM_DELAY: load_random_delay,
-             DataSet.RANDOM_DELAY_LARGE: load_random_delay_large}
+             DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
+             DataSet.RANDOM_DELAY_DK: load_random_delay_dk}
     return table[data_set]
 
 
@@ -455,4 +481,3 @@ def load_loss_acc(file):
     tl = np.load("{}.tl.npy".format(file))
     vl = np.load("{}.vl.npy".format(file))
     return ta, va, tl, vl
-
