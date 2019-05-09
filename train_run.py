@@ -15,11 +15,11 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY_LARGE
-    network_names = ["KernelBigVGGRDLM2"]
+    data_set = DataSet.RANDOM_DELAY
+    network_names = ["NumLayersVGG2"]
     use_hw = False
     runs = 1
-    train_sizes = [2000]
+    train_sizes = [1000]
     epochs = 75
     batch_size = 100
     lr = 0.0001
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     validation_size = 1000
     kernel_size = 3
     channel_size = 8
-    num_layers = 3
+    num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################

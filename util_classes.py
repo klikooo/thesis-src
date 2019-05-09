@@ -38,6 +38,7 @@ from models.VGG.KernelBigVGGRDLM import KernelBigVGGRDLM
 from models.VGG.KernelBigVGGRDLM2 import KernelBigVGGRDLM2
 from models.VGG.MakeSomeNoise import MakeSomeNoise
 from models.VGG.NumLayersVGG import NumLayersVGG
+from models.VGG.NumLayersVGG2 import NumLayersVGG2
 
 MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           SpreadNet, CosNet, ConvNet, ConvNetDK,
@@ -49,7 +50,8 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KB, KBS, KB2, KBS2, KBVGG, KBS3, KB3, KB4,
           ConvNetKernelSmall, KernelBigVGGM, KernelBigSmallVGGM,
           SingleConv, ConvNetKernelAvg, ConvNetKernelSmallAvg,
-          KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2]
+          KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2,
+          NumLayersVGG2]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 

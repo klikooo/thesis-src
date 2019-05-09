@@ -18,7 +18,7 @@ n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
 train_size = 40000
-epochs = 120
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
@@ -26,13 +26,13 @@ rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [100, 50]
+kernel_sizes = [10,20,30,40,50,60,70,80,90,100]
 num_layers = [1]
 channel_sizes = [8]
-l2_penalty = 0.001
+l2_penalty = 0.05
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['NumLayersVGG']
+network_names = ['KernelBigVGG']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0

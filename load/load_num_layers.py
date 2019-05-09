@@ -20,14 +20,14 @@ runs = [x for x in range(5)]
 train_size = 40000
 epochs = 120
 batch_size = 100
-lr = 0.0001
+lr = 0.001
 sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [100]
-num_layers = [1]
+kernel_sizes = [100, 50, 25, 12, 6, 3]
+num_layers = [1, 2, 3, 4, 5, 6]
 channel_sizes = [4]
 l2_penalty = 0.0001
 
