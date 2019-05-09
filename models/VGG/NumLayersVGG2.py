@@ -23,13 +23,22 @@ class NumLayersVGG2(nn.Module):
 
         self.bn0 = nn.BatchNorm1d(num_features=1).to(device)
 
-        in_channels = 1
-        out_channels = channel_size
         num_features = input_shape
 
         max_channels = 128
 
-        self.num_blocks = 3
+        self.num_blocks = 2
+
+        # Starting point
+        self.conv1 = nn.Conv1d(1, channel_size,
+                               kernel_size=self.kernel_size, padding=self.padding).to(device)
+        self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
+        self.bn1 = nn.BatchNorm1d(num_features=channel_size).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        num_features = int(num_features / 2)
+
+        in_channels = channel_size
+        out_channels = channel_size * 2
 
         for i in range(self.num_blocks):
             self.conv_layers.append([])
@@ -63,13 +72,12 @@ class NumLayersVGG2(nn.Module):
         batch_size = x.size()[0]
         inputs = x.to(device).view(batch_size, 1, self.input_shape).contiguous()
 
-        x = inputs
         x = self.bn0(inputs)
+        x = self.bn1(self.mp1(F.relu(self.conv1(x))))
         for i in range(self.num_blocks):
             for j in range(self.num_layers):
                 x = F.relu(self.conv_layers[i][j](x))
 
-            # TODO: should I do BN before pooling or after?
             x = self.pool(x)
             x = self.bn_layers[i](x)
         # Reshape data for classification
