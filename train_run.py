@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY_DK
-    network_names = ["NumLayersVGG2"]
+    network_names = ["NumLayersVGG3"]
     use_hw = False
     runs = 1
     train_sizes = [1000]
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     validation_size = 1000
     kernel_size = 5
     channel_size = 8
-    num_layers = 2
+    num_layers = 4
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################
