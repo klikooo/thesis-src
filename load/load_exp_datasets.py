@@ -1,5 +1,4 @@
 import itertools
-import pdb
 from decimal import Decimal
 
 import util
@@ -25,14 +24,15 @@ sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [5,10,20, 30]
+kernel_sizes = [5, 10, 20, 30]
 num_layers = [2]
 channel_sizes = [8]
 l2_penalty = 0.05
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['NumLayersVGG3', 'KernelBigVGG']
+network_names = {'KernelBigVGGM': util.DataSet.RANDOM_DELAY,
+                 'KernelBigVGGMDK': util.DataSet.RANDOM_DELAY_DK
+                 }
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -42,25 +42,27 @@ show_losses_all = False
 show_mean = True
 experiment = False
 type_network = 'HW' if use_hw else 'ID'
+
+
 #####################################################################################
 
 
 # Function to load the GE of a single model
-def get_ge(net_name, model_parameters):
+def get_ge(net_name, model_parameters, load_parameters):
     folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
              'E{}_BZ{}_LR{}{}/train{}/'.format(
-                                    '3' if not experiment else '',
-                                    str(data_set),
-                                    sub_key_index,
-                                    '' if unmask else 'masked/',
-                                    '' if desync is 0 else 'desync{}/'.format(desync),
-                                    type_network,
-                                    spread_factor,
-                                    epochs,
-                                    batch_size,
-                                    '%.2E' % Decimal(lr),
-                                    '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
-                                    train_size)
+                                            load_parameters["experiment"],
+                                            load_parameters["data_set"],
+                                            load_parameters["subkey"],
+                                            load_parameters["masked"],
+                                            load_parameters["desync"],
+                                            load_parameters["hw"],
+                                            load_parameters["spread"],
+                                            load_parameters["epochs"],
+                                            load_parameters["batch_size"],
+                                            load_parameters["lr"],
+                                            load_parameters["l2"],
+                                            load_parameters["train_size"])
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -95,17 +97,30 @@ rank_mean_y = []
 name_models = []
 model_params = {}
 all_loss_acc = []  # ([], [], [], [])
-for network_name in network_names:
+for network_name, data_set in network_names.items():
     def lambda_kernel(x): model_params.update({"kernel_size": x})
-
 
     def lambda_channel(x): model_params.update({"channel_size": x})
 
     def lambda_layers(x): model_params.update({"num_layers": x})
 
+    load_params = {"experiment": '3' if not experiment else '',
+                   "data_set": data_set,
+                   "subkey": sub_key_index,
+                   "masked": '' if unmask else 'masked/',
+                   "desync": '' if desync is 0 else 'desync{}/'.format(desync),
+                   "hw": type_network,
+                   "spread": spread_factor,
+                   "epochs": epochs,
+                   "batch_size": batch_size,
+                   "lr": '%.2E' % Decimal(lr),
+                   "l2": '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
+                   "train_size": train_size}
+
+
     def retrieve_ge():
         print(model_params)
-        ge_x, ge_y, loss_acc = get_ge(network_name, model_params)
+        ge_x, ge_y, loss_acc = get_ge(network_name, model_params, load_params)
         mean_y = np.mean(ge_y, axis=0)
         ranks_x.append(ge_x)
         ranks_y.append(ge_y)
@@ -113,6 +128,7 @@ for network_name in network_names:
         name_models.append(get_save_name(network_name, model_params))
 
         all_loss_acc.append(loss_acc)
+
 
     util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
         util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
@@ -154,7 +170,6 @@ for i in range(len(rank_mean_y)):
     # plt.figure()
 figure = plt.gcf()
 figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
-
 
 ################################
 # Show loss and accuracy plots #
