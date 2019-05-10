@@ -3,7 +3,9 @@ from Crypto.Cipher import AES
 import util
 import numpy as np
 
-num_traces = 50000
+import matplotlib.pyplot as plt
+
+num_traces = 1000
 
 
 data_set = "03_19_fpga_aes_ches11_desynch"
@@ -108,7 +110,12 @@ traces = np.array(traces)
 print("Shape model values: {}".format(np.shape(model_values)))
 print("Shape traces: {}".format(np.shape(traces)))
 
-for trace_point in range(0, 6250):
+
+num_features = 6250
+plot_real_key = []
+# plot_real_key[4].append(1)
+
+for trace_point in range(0, num_features):
     probabilities = [0] * 256
     for kguess in range(0, 256):
         kguess_vals = all_key_guesses[:, kguess]
@@ -116,5 +123,13 @@ for trace_point in range(0, 6250):
         corr = np.corrcoef(traces_points, kguess_vals)[1][0]
         # print("For kguess {}: {}".format(kguess, corr))
         probabilities[kguess] = abs(corr)
+    plot_real_key.append(probabilities)
     print("Point {}, Max: {}".format(trace_point, np.argmax(probabilities)))
 
+plt.figure()
+plt.plot(plot_real_key)
+real = np.array(plot_real_key)[:, 208]
+print(np.array(plot_real_key)[:, 208])
+plt.plot(real, label="Real key", marker="+", color='gold')
+plt.legend()
+plt.show()
