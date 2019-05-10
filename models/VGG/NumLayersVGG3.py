@@ -38,16 +38,12 @@ class NumLayersVGG3(nn.Module):
         num_features = int(num_features / self.max_pool)
 
         self.block2 = self.conv_block(channel_size, self.num_layers)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = int(num_features / self.max_pool)
-        channel_size = self.calc_num_channels(channel_size, num_layers)
+        num_features = self.calc_num_features(num_features)
+        channel_size = self.calc_num_channels(channel_size)
 
         self.block3 = self.conv_block(channel_size, self.num_layers)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = int(num_features / self.max_pool)
-        channel_size = self.calc_num_channels(channel_size, num_layers)
+        num_features = self.calc_num_features(num_features)
+        channel_size = self.calc_num_channels(channel_size)
 
         ########################
         # CLASSIFICATION BLOCK #
@@ -78,8 +74,13 @@ class NumLayersVGG3(nn.Module):
             nn.BatchNorm1d(in_channels)
         ).to(device)
 
-    def calc_num_channels(self, in_channels, num_layers):
-        res = int(in_channels * math.pow(2, num_layers))
+    def calc_num_features(self, num_features):
+        for i in range(self.num_layers):
+            num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        return int(num_features / self.max_pool)
+
+    def calc_num_channels(self, in_channels,):
+        res = int(in_channels * math.pow(2, self.num_layers))
         return self.max_channels if res > self.max_channels else res
 
     def forward(self, x):
