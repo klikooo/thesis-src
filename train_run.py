@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY_DK
-    network_names = ["ConvNetDK"]
+    network_names = ["KernelBigVGGDK"]
     use_hw = False
     runs = 1
     train_sizes = [1000]

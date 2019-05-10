@@ -42,40 +42,67 @@ class KernelBigVGGDK(nn.Module):
         self.conv5_channels = self.conv4_channels * 2
         num_features = input_shape
 
-        # First BN
+        ##########
+        # STEP 1 #
+        ##########
         self.bn0 = nn.BatchNorm1d(num_features=1).to(device)
 
         # Convolutions + BN + MP
         self.conv1 = nn.Conv1d(1, self.conv1_channels,
                                kernel_size=self.kernel_size, padding=self.padding).to(device)
         num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-
+        self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
+        num_features = int(num_features / 2)
         self.bn1 = nn.BatchNorm1d(num_features=self.conv1_channels).to(device)
 
-        # Next steps of BN
+        ##########
+        # STEP 2 #
+        ##########
         self.conv2_1 = nn.Conv1d(self.conv1_channels, self.conv2_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        self.mp1 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(num_features / 2)
         self.conv2_2 = nn.Conv1d(self.conv2_channels, self.conv3_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        self.mp2 = nn.MaxPool1d(self.max_pool).to(device)
+        num_features = int(num_features / 2)
         self.bn2 = nn.BatchNorm1d(num_features=self.conv3_channels).to(device)
 
-        # Next steps of BN
+        ##########
+        # STEP 3 #
+        ##########
         self.conv3_1 = nn.Conv1d(self.conv3_channels, self.conv4_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
         self.conv3_2 = nn.Conv1d(self.conv4_channels, self.conv5_channels,
                                  kernel_size=self.kernel_size, padding=self.padding).to(device)
         num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        self.mp3 = nn.MaxPool1d(self.max_pool).to(device)
+        num_features = int(num_features / 2)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
 
-        # Dropout
+        ##########
+        # STEP 4 #
+        ##########
+        self.conv4_1 = nn.Conv1d(self.conv5_channels, self.conv5_channels,
+                                 kernel_size=self.kernel_size, padding=self.padding).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        self.conv4_2 = nn.Conv1d(self.conv5_channels, self.conv5_channels,
+                                 kernel_size=self.kernel_size, padding=self.padding).to(device)
+        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
+        self.mp4 = nn.MaxPool1d(self.max_pool).to(device)
+        num_features = int(num_features / 2)
+        self.bn4 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
+
+        ###########
+        # Dropout #
+        ###########
         self.drop_out = nn.Dropout(p=0.5)
         self.drop_out2 = nn.Dropout(p=0.5)
 
+        ###################
+        # FULLY CONNECTED #
+        ###################
         self.fc4 = torch.nn.Linear(int(self.conv5_channels * num_features) + 256, 256).to(device)
         self.fc5 = torch.nn.Linear(256, self.out_shape).to(device)
 
@@ -86,8 +113,9 @@ class KernelBigVGGDK(nn.Module):
         x = self.bn0(inputs)
 
         x = self.bn1(self.mp1(F.relu(self.conv1(x))))
-        x = self.bn2(F.relu(self.conv2_2(F.relu(self.conv2_1(x)))))
-        x = self.bn3(F.relu(self.conv3_2(F.relu(self.conv3_1(x)))))
+        x = self.bn2(self.mp2(F.relu(self.conv2_2(F.relu(self.conv2_1(x))))))
+        x = self.bn3(self.mp3(F.relu(self.conv3_2(F.relu(self.conv3_1(x))))))
+        x = self.bn4(self.mp4(F.relu(self.conv4_2(F.relu(self.conv4_1(x))))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
