@@ -7,7 +7,7 @@ import torch.nn as nn
 
 
 from util import BoolAction, DataSet, func_in_list
-from util_classes import get_init_func
+from util_classes import get_init_func, require_domain_knowledge
 
 if __name__ == "__main__":
 
@@ -36,11 +36,9 @@ if __name__ == "__main__":
     loss_function = nn.CrossEntropyLoss()
     ############################
 
-    # DO NOT TOUCH #########################
-    req_dk = [ConvNetDK.init, ConvNetDPA.init]
-    ########################################
-
-    # Parse arguments
+    ###################
+    # Parse arguments #
+    ###################
     parser = argparse.ArgumentParser('Train a nn on the ascad db')
     parser.add_argument('-a', "--raw_traces", default=raw_traces, type=bool,
                         help="Load raw traces", action=BoolAction)
@@ -77,6 +75,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
+    # TODO: move this to some util thing, or even the enum class
     def get_raw_feature_size(the_data_set):
         switcher = {DataSet.RANDOM_DELAY: 3500,
                     DataSet.DPA_V4: 3000,
@@ -107,7 +106,7 @@ if __name__ == "__main__":
                 model_save_path=args.model_save_path,
                 data_set=args.data_set,
                 raw_traces=raw_traces,
-                domain_knowledge=func_in_list(init_func, req_dk),
+                domain_knowledge=require_domain_knowledge(network_name),
                 desync=args.desync,
                 validation_size=args.validation_size,
                 kernel_size=args.kernel_size,

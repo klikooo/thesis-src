@@ -17,7 +17,7 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(1)]
-train_size = 1000
+train_size = 5000
 epochs = 75
 batch_size = 100
 lr = 0.0001
@@ -29,7 +29,7 @@ data_set = util.DataSet.RANDOM_DELAY_DK
 kernel_sizes = []
 num_layers = []
 channel_sizes = []
-l2_penalty = 0
+l2_penalty = 0.005
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_names = ['ConvNetDK']

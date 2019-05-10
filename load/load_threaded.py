@@ -7,9 +7,9 @@ import util
 import numpy as np
 
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, req_dk, hot_encode
+from util import load_ascad, shuffle_permutation, hot_encode
 from test import accuracy, test_with_key_guess_p
-from util_classes import get_save_name
+from util_classes import get_save_name, require_domain_knowledge
 
 
 def get_ranks(args, network_name, model_params):
@@ -86,7 +86,7 @@ def load_data(args, network_name):
         _real_key = _metadata_attack[0]['key'][args.subkey_index]
 
         # Load additional plaintexts
-        if network_name in req_dk:
+        if require_domain_knowledge(network_name):
             _dk_plain = _metadata_attack[:]['plaintext'][:, args.subkey_index]
             _dk_plain = hot_encode(_dk_plain, 9 if args.use_hw else 256, dtype=np.float)
     else:

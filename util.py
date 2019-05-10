@@ -9,7 +9,6 @@ import torch
 from enum import Enum
 
 device = torch.device('cuda:0')
-req_dk = ['ConvNetDK', 'ConvNetDPA']
 req_kernel_size = ['ConvNetKernel', 'ConvNetKernelAscad', 'ConvNetKernelMasked', 'ConvNetKernelAscad2']
 
 SBOX = np.array([
