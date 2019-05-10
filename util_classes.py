@@ -29,6 +29,7 @@ from models.SingleConv import SingleConv
 from models.Spread.SpreadNet import SpreadNet
 from models.Spread.SpreadV2 import SpreadV2
 from models.VGG.DK.KernelBigVGGDK import KernelBigVGGDK
+from models.VGG.DK.KernelBigVGGMDK import KernelBigVGGMDK
 from models.VGG.KBVGG import KBVGG
 from models.VGG.KernelBigSmallVGG import KernelBigSmallVGG
 from models.VGG.KernelBigSmallVGGM import KernelBigSmallVGGM
@@ -52,7 +53,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           ConvNetKernelSmall, KernelBigVGGM, KernelBigSmallVGGM,
           SingleConv, ConvNetKernelAvg, ConvNetKernelSmallAvg,
           KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2,
-          NumLayersVGG2, KernelBigVGGDK]
+          NumLayersVGG2, KernelBigVGGDK, KernelBigVGGMDK]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
@@ -63,10 +64,11 @@ def get_init_func(basename):
 def get_save_name(basename, args):
     return MODELS_TABLE[basename].save_name(args)
 
+
 ###########################
 # DOMAIN KNOWLEDGE TABLES #
 ###########################
-MODELS_DK = [ConvNetDK, KernelBigVGGDK, ConvNetDPA]
+MODELS_DK = [ConvNetDK, KernelBigVGGDK, ConvNetDPA, KernelBigVGGMDK]
 MODELS_DK_TABLE = dict(zip([model.basename() for model in MODELS_DK], MODELS_DK))
 
 

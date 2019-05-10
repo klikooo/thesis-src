@@ -9,9 +9,9 @@ from util import device
 # Note: This has one extra layer #
 ##################################
 
-class KernelBigVGGDK(nn.Module):
+class KernelBigVGGMDK(nn.Module):
     def __init__(self, input_shape, out_shape, kernel_size, channel_size):
-        super(KernelBigVGGDK, self).__init__()
+        super(KernelBigVGGMDK, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
@@ -66,19 +66,6 @@ class KernelBigVGGDK(nn.Module):
         num_features = int(num_features / 2)
         self.bn3 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
 
-        ##########
-        # STEP 4 #
-        ##########
-        self.conv4_1 = nn.Conv1d(self.conv5_channels, self.conv5_channels,
-                                 kernel_size=self.kernel_size, padding=self.padding).to(device)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        self.conv4_2 = nn.Conv1d(self.conv5_channels, self.conv5_channels,
-                                 kernel_size=self.kernel_size, padding=self.padding).to(device)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        self.mp4 = nn.MaxPool1d(self.max_pool).to(device)
-        num_features = int(num_features / 2)
-        self.bn4 = nn.BatchNorm1d(num_features=self.conv5_channels).to(device)
-
         ###########
         # Dropout #
         ###########
@@ -100,7 +87,6 @@ class KernelBigVGGDK(nn.Module):
         x = self.bn1(self.mp1(F.relu(self.conv1(x))))
         x = self.bn2(self.mp2(F.relu(self.conv2_2(F.relu(self.conv2_1(x))))))
         x = self.bn3(self.mp3(F.relu(self.conv3_2(F.relu(self.conv3_1(x))))))
-        x = self.bn4(self.mp4(F.relu(self.conv4_2(F.relu(self.conv4_1(x))))))
 
         # Reshape data for classification
         x = x.view(batch_size, -1)
@@ -120,15 +106,15 @@ class KernelBigVGGDK(nn.Module):
         return x
 
     def name(self):
-        return "{}_k{}_c{}".format(KernelBigVGGDK.basename(), self.kernel_size, self.channel_size)
+        return "{}_k{}_c{}".format(KernelBigVGGMDK.basename(), self.kernel_size, self.channel_size)
 
     @staticmethod
     def basename():
-        return KernelBigVGGDK.__name__
+        return KernelBigVGGMDK.__name__
 
     @staticmethod
     def save_name(args):
-        return "{}_k{}_c{}".format(KernelBigVGGDK.basename(), args['kernel_size'],
+        return "{}_k{}_c{}".format(KernelBigVGGMDK.basename(), args['kernel_size'],
                                    args['channel_size'])
 
     def save(self, path):
@@ -144,16 +130,16 @@ class KernelBigVGGDK(nn.Module):
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = KernelBigVGGDK(input_shape=checkpoint['input_shape'],
-                               out_shape=checkpoint['out_shape'],
-                               kernel_size=checkpoint['kernel_size'],
-                               channel_size=checkpoint['channel_size'])
+        model = KernelBigVGGMDK(input_shape=checkpoint['input_shape'],
+                                out_shape=checkpoint['out_shape'],
+                                kernel_size=checkpoint['kernel_size'],
+                                channel_size=checkpoint['channel_size'])
         model.load_state_dict(checkpoint['model_state_dict'])
         return model
 
     @staticmethod
     def init(args):
-        return KernelBigVGGDK(out_shape=args['n_classes'],
-                              input_shape=args['input_shape'],
-                              kernel_size=args['kernel_size'],
-                              channel_size=args['channel_size'])
+        return KernelBigVGGMDK(out_shape=args['n_classes'],
+                               input_shape=args['input_shape'],
+                               kernel_size=args['kernel_size'],
+                               channel_size=args['channel_size'])
