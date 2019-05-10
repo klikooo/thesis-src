@@ -22,7 +22,7 @@ last_r_key = [0xd0, 0x14, 0xf9, 0xa8, 0xc9, 0xee, 0x25, 0x89, 0xa1, 0x3f, 0x0c, 
 master_key = bytes([0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c])
 
 
-num_traces = 1000
+num_traces = 50000
 traces = np.array(util.load_csv("{}/{}".format(traces_path, traces_filename), start=0, size=num_traces, delimiter=' ',
                                 dtype=np.int))
 key_guesses = np.array(util.load_csv("{}/{}".format(value_path, key_guesses_filename), start=0, size=num_traces,
@@ -33,7 +33,7 @@ print(traces[0])
 print("Shape key guesses: {}".format(np.shape(key_guesses)))
 print("Shape traces: {}".format(np.shape(traces)))
 
-num_features = 100
+num_features = 6250
 num_threads = 5
 plot_real_key = [[], [], [], [], []]
 
