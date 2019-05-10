@@ -78,8 +78,7 @@ class NumLayersVGG2(nn.Module):
             for j in range(self.num_layers):
                 x = F.relu(self.conv_layers[i][j](x))
 
-            x = self.pool(x)
-            x = self.bn_layers[i](x)
+            x = self.bn_layers[i](self.pool(x))
         # Reshape data for classification
         x = x.view(batch_size, -1)
 
@@ -87,10 +86,39 @@ class NumLayersVGG2(nn.Module):
         x = self.drop_out(x)
 
         # Perform MLP
-        x = F.relu(self.fc1(x).to(device)).to(device)
+        x = F.relu(self.fc1(x))
         x = self.drop_out(x)
-        x = self.fc2(x).to(device).to(device)
+        x = self.fc2(x).to(device)
         return x
+
+    def print(self):
+
+        print(self.bn0)
+        print(self.conv1)
+        print(self.mp1)
+        print(self.bn1)
+        # x = self.bn0(inputs)
+        # x = self.bn1(self.mp1(F.relu(self.conv1(x))))
+        for i in range(self.num_blocks):
+            for j in range(self.num_layers):
+                print("Relu({})".format(self.conv_layers[i][j]))
+                # x = F.relu(self.conv_layers[i][j](x))
+
+            print(self.pool)
+            print(self.bn_layers[i])
+            # x = self.bn_layers[i](self.pool(x))
+        # Reshape data for classification
+        # x = x.view(batch_size, -1)
+
+        # Perform dropout
+        # x = self.drop_out(x)
+
+        # Perform MLP
+        # x = F.relu(self.fc1(x))
+        # x = self.drop_out(x)
+        # x = self.fc2(x).to(device)
+        # return x
+
 
     def name(self):
         return "{}_k{}_c{}_l{}".format(NumLayersVGG2.basename(),

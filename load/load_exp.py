@@ -16,7 +16,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
+runs = [x for x in range(2)]
 train_size = 40000
 epochs = 75
 batch_size = 100
@@ -26,19 +26,20 @@ rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
 data_set = util.DataSet.RANDOM_DELAY
-kernel_sizes = [10]
-num_layers = [1]
+kernel_sizes = [30]
+num_layers = [2]
 channel_sizes = [8]
 l2_penalty = 0.05
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_names = ['KernelBigVGGM']
+network_names = ['KernelBigVGGM', 'NumLayersVGG2']
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = True
 show_acc = False
 show_losses_all = False
+show_mean = False
 experiment = False
 type_network = 'HW' if use_hw else 'ID'
 #####################################################################################
@@ -161,48 +162,60 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 if show_losses or show_acc:
     mean_mv = []
     mean_lv = []
+
+    ############
+    # ACCURACY #
+    ############
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-
-        for r in range(len(loss_vali)):
-            plt.title('Accuracy during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Accuracy')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            # pdb.set_trace()
-            plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
-            plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
-            plt.legend()
+        if not show_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Accuracy during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Accuracy')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                # pdb.set_trace()
+                plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+                plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
+                plt.legend()
         mt = np.mean(acc_train, axis=0) * 100
         mv = np.mean(acc_vali, axis=0) * 100
-        plt.plot(mt, color='blue')
-        plt.plot(mv, color='red')
+        if not show_mean:
+            plt.plot(mt, color='blue')
+            plt.plot(mv, color='red')
         mean_mv.append(mv)
 
+    ########
+    # LOSS #
+    ########
     for i in range(len(rank_mean_y)):
         (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-        for r in range(len(loss_vali)):
-            plt.title('Loss during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Loss')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
-            plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
-            plt.legend()
+        if not show_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Loss during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Loss')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+                plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
+                plt.legend()
 
         lt = np.mean(loss_train, axis=0)
         lv = np.mean(loss_vali, axis=0)
-        plt.plot(lt, color='blue', label='Train')
-        plt.plot(lv, color='red', label='Validation')
-
+        if not show_mean:
+            plt.plot(lt, color='blue', label='Train')
+            plt.plot(lv, color='red', label='Validation')
         mean_lv.append(lv)
 
+    ##############
+    # SHOW MEANS #
+    ##############
     plt.figure()
     for i in range(len(mean_lv)):
         plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))

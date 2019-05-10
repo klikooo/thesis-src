@@ -1,5 +1,3 @@
-from models.ConvNetDK import ConvNetDK
-from models.ConvNetDPA import ConvNetDPA
 from train_runner import run
 import os
 import argparse
@@ -16,7 +14,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY_DK
-    network_names = ["KernelBigVGGDK"]
+    network_names = ["NumLayersVGG2"]
     use_hw = False
     runs = 1
     train_sizes = [1000]
