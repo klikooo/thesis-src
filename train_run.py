@@ -13,8 +13,8 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY_DK
-    network_names = ["NumLayersVGG3"]
+    data_set = DataSet.RANDOM_DELAY
+    network_names = ["KernelBigTestM"]
     use_hw = False
     runs = 1
     train_sizes = [1000]
