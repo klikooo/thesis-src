@@ -70,7 +70,7 @@ class KernelBigAlexBN(nn.Module):
         return x
 
     def name(self):
-        return "KernelBig_k{}_c{}".format(self.kernel_size, self.channel_size)
+        return "{}_k{}_c{}".format(KernelBigAlexBN.basename(), self.kernel_size, self.channel_size)
 
     @staticmethod
     def save_name(args):

@@ -39,7 +39,7 @@ desync = 0
 show_losses = True
 show_acc = False
 show_losses_all = False
-show_mean = True
+show_only_mean = True
 experiment = False
 type_network = 'HW' if use_hw else 'ID'
 #####################################################################################
@@ -168,7 +168,7 @@ if show_losses or show_acc:
     ############
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
-        if not show_mean:
+        if not show_only_mean:
             plt.figure()
             for r in range(len(loss_vali)):
                 plt.title('Accuracy during training {}'.format(name_models[i]))
@@ -183,7 +183,7 @@ if show_losses or show_acc:
                 plt.legend()
         mt = np.mean(acc_train, axis=0) * 100
         mv = np.mean(acc_vali, axis=0) * 100
-        if not show_mean:
+        if not show_only_mean:
             plt.plot(mt, color='blue')
             plt.plot(mv, color='red')
         mean_mv.append(mv)
@@ -193,7 +193,7 @@ if show_losses or show_acc:
     ########
     for i in range(len(rank_mean_y)):
         (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
-        if not show_mean:
+        if not show_only_mean:
             plt.figure()
             for r in range(len(loss_vali)):
                 plt.title('Loss during training {}'.format(name_models[i]))
@@ -208,7 +208,7 @@ if show_losses or show_acc:
 
         lt = np.mean(loss_train, axis=0)
         lv = np.mean(loss_vali, axis=0)
-        if not show_mean:
+        if not show_only_mean:
             plt.plot(lt, color='blue', label='Train')
             plt.plot(lv, color='red', label='Validation')
         mean_lv.append(lv)

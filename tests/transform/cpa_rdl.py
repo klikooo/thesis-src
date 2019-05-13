@@ -45,7 +45,7 @@ def threaded(step, prk):
         for kguess in range(0, 256):
             kguess_vals = key_guesses[:, kguess]
             traces_points = traces[:, trace_point]
-            corr = np.corrcoef(traces_points, kguess_vals)[1][0]
+            corr = np.corrcoef(traces_points, kguess_vals)[0][1]
             # print("For kguess {}: {}".format(kguess, corr))
             probabilities[kguess] = abs(corr)
         prk[step].append(probabilities)
