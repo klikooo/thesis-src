@@ -7,6 +7,8 @@ from models.Alex.KBS import KBS
 from models.Alex.KBS2 import KBS2
 from models.Alex.KBS3 import KBS3
 from models.Alex.KernelBig import KernelBig
+from models.Alex.KernelBigAlex import KernelBigAlex
+from models.Alex.KernelBigAlexBN import KernelBigAlexBN
 from models.Alex.KernelBigAvg import KernelBigAvg
 from models.Alex.KernelBigSmall import KernelBigSmall
 from models.Alex.KernelBigSmallAvg import KernelBigSmallAvg
@@ -57,7 +59,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           SingleConv, ConvNetKernelAvg, ConvNetKernelSmallAvg,
           KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2,
           NumLayersVGG2, KernelBigVGGDK, KernelBigVGGMDK, NumLayersVGG3,
-          KernelBigTest, KernelBigTestM]
+          KernelBigTest, KernelBigTestM, KernelBigAlex, KernelBigAlexBN]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
