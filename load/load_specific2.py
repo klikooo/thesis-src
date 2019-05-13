@@ -15,33 +15,33 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(2)]
-train_size = 40000
+runs = [x for x in range(5)]
+train_size = 20000
 epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_kezy_index < 2 else True
-kernel_sizes = []
+unmask = True  # False if sub_key_index < 2 else True
+kernel_sizes = [10]
 num_layers = []
 channel_sizes = [8]
-l2_penalty = 0.005
+l2_penalty = 0.05
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'NumLayersVGG3': 2,
+    'KernelBigVGG': 1,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.RANDOM_DELAY
+data_set = util.DataSet.RANDOM_DELAY_LARGE
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = True
 show_acc = False
 show_losses_all = False
-show_only_mean = True
+show_only_mean = False
 experiment = False
 type_network = 'HW' if use_hw else 'ID'
 
@@ -72,12 +72,9 @@ for k, v in network_settings.items():
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-network_settings['NumLayersVGG3'][0].update({
-    "kernel_sizes": [17, 30],
-    "num_layers": [4]})
-network_settings['NumLayersVGG3'][1].update({
-    "kernel_sizes": [20],
-    "num_layers": [5]})
+# network_settings['NumLayersVGG3'][0].update({
+#     "kernel_sizes": [17, 30],
+#     "num_layers": [4]})
 
 #####################################################################################
 
