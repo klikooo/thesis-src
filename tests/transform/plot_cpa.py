@@ -9,6 +9,7 @@ res = np.array(util.load_csv(f, delimiter=' ', dtype=np.float))
 print(np.shape(res))
 print(res[0])
 
+
 def plot(results):
     plt.figure()
     plt.plot(results)
