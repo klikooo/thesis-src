@@ -464,6 +464,17 @@ def loop_at_least_once(data, func, do):
             break
 
 
+def loop_at_least_once_with_arg(data, func, do, arg):
+    i = 0
+    while True:
+        if len(data) != 0:
+            func(data[i])
+        do(arg)
+        i += 1
+        if i >= len(data):
+            break
+
+
 def save_loss_acc(path, filename, res):
     path = os.path.dirname(path)
     os.makedirs(path, exist_ok=True)

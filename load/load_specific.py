@@ -24,16 +24,17 @@ sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-kernel_sizes = [5, 10, 20, 30]
-num_layers = [2]
+kernel_sizes = []
+num_layers = []
 channel_sizes = [8]
-l2_penalty = 0.05
+l2_penalty = 0.005
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'KernelBigVGGM': {},
-    'KernelBigVGGMDK': {}
+    'NumLayersVGG3': 2,
+    # 'KernelBigVGGMDK': {}
 }
+data_set = util.DataSet.RANDOM_DELAY
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -48,27 +49,35 @@ type_network = 'HW' if use_hw else 'ID'
 # SETTINGS FOR EACH MODEL #
 ###########################
 for k, v in network_settings.items():
-    v.update({"experiment": '3' if not experiment else '',
-              # "data_set": data_set,
-              "subkey": sub_key_index,
-              "masked": '' if unmask else 'masked/',
-              "desync": '' if desync is 0 else 'desync{}/'.format(desync),
-              "hw": type_network,
-              "spread": spread_factor,
-              "epochs": epochs,
-              "batch_size": batch_size,
-              "lr": '%.2E' % Decimal(lr),
-              "l2": '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
-              "train_size": train_size,
-              "kernel_sizes": kernel_sizes,
-              "num_layers": num_layers,
-              "channel_sizes": channel_sizes})
+    network_settings[k] = []
+    for num_models in range(v):
+        setting = {"experiment": '3' if not experiment else '',
+                   "data_set": data_set,
+                   "subkey": sub_key_index,
+                   "masked": '' if unmask else 'masked/',
+                   "desync": '' if desync is 0 else 'desync{}/'.format(desync),
+                   "hw": type_network,
+                   "spread": spread_factor,
+                   "epochs": epochs,
+                   "batch_size": batch_size,
+                   "lr": '%.2E' % Decimal(lr),
+                   "l2": '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
+                   "train_size": train_size,
+                   "kernel_sizes": kernel_sizes,
+                   "num_layers": num_layers,
+                   "channel_sizes": channel_sizes,
+                   "network_name": k}
+        network_settings[k].append(setting)
 
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-network_settings['KernelBigVGGMDK'].update({"data_set": util.DataSet.RANDOM_DELAY_DK})
-network_settings['KernelBigVGGM'].update({"data_set": util.DataSet.RANDOM_DELAY})
+network_settings['NumLayersVGG3'][0].update({
+    "kernel_sizes": [17, 30],
+    "num_layers": [4]})
+network_settings['NumLayersVGG3'][1].update({
+    "kernel_sizes": [20],
+    "num_layers": [5]})
 
 #####################################################################################
 
@@ -133,9 +142,9 @@ for network_name, network_setting in network_settings.items():
     def lambda_layers(x): model_params.update({"num_layers": x})
 
 
-    def retrieve_ge():
+    def retrieve_ge(net_setting):
         print(model_params)
-        ge_x, ge_y, loss_acc = get_ge(network_name, model_params, network_setting)
+        ge_x, ge_y, loss_acc = get_ge(network_name, model_params, net_setting)
         mean_y = np.mean(ge_y, axis=0)
         ranks_x.append(ge_x)
         ranks_y.append(ge_y)
@@ -144,12 +153,13 @@ for network_name, network_setting in network_settings.items():
 
         all_loss_acc.append(loss_acc)
 
-
-    util.loop_at_least_once(network_setting['kernel_sizes'], lambda_kernel, lambda: (
-        util.loop_at_least_once(network_setting['channel_sizes'], lambda_channel, lambda: (
-            util.loop_at_least_once(network_setting['num_layers'], lambda_layers, retrieve_ge)
+    for setting in network_setting:
+        util.loop_at_least_once(setting['kernel_sizes'], lambda_kernel, lambda: (
+            util.loop_at_least_once(setting['channel_sizes'], lambda_channel, lambda: (
+                util.loop_at_least_once_with_arg(setting['num_layers'], lambda_layers, retrieve_ge,
+                                                 setting)
+            ))
         ))
-    ))
 
 ###############################################
 # Plot the runs of the same model in one plot #
