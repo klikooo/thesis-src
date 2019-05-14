@@ -75,8 +75,8 @@ for k, v in network_settings.items():
 # network_settings['NumLayersVGG3'][0].update({
 #     "kernel_sizes": [17, 30],
 #     "num_layers": [4]})
-
-#####################################################################################
+#
+####################################################################################
 
 
 # Function to load the GE of a single model
