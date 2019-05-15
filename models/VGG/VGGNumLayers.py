@@ -1,4 +1,3 @@
-import math
 import torch
 import torch.nn as nn
 
@@ -27,17 +26,8 @@ class VGGNumLayers(nn.Module):
         #################
         # DEFINE BLOCKS #
         #################
-        self.block1 = nn.Sequential(
-            nn.Conv1d(1, channel_size, kernel_size=self.kernel_size, padding=self.padding),
-            nn.ReLU(),
-            nn.Conv1d(channel_size, channel_size, kernel_size=self.kernel_size, padding=self.padding),
-            nn.ReLU(),
-            nn.MaxPool1d(self.max_pool).to(device),
-            nn.BatchNorm1d(num_features=channel_size).to(device)
-        ).to(device)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = num_features + 2 * self.padding - 1 * (self.kernel_size - 1)
-        num_features = int(num_features / self.max_pool)
+        self.block1 = self.first_conv_block(channel_size, self.num_layers)
+        num_features = self.calc_num_features(num_features)
 
         self.block2 = self.conv_block(channel_size, self.num_layers)
         num_features = self.calc_num_features(num_features)
@@ -61,6 +51,21 @@ class VGGNumLayers(nn.Module):
     def conv_block(self, in_channels, num_layers):
         out_channels = in_channels * 2
         conv_layers = []
+        for i in range(num_layers):
+            conv_layers.append(nn.Conv1d(in_channels, out_channels, kernel_size=self.kernel_size, padding=self.padding))
+            conv_layers.append(nn.ReLU())
+
+            in_channels = out_channels
+
+        return nn.Sequential(
+            nn.Sequential(*conv_layers),
+            nn.MaxPool1d(self.max_pool),
+            nn.BatchNorm1d(out_channels)
+        ).to(device)
+
+    def first_conv_block(self, out_channels, num_layers):
+        conv_layers = []
+        in_channels = 1
         if out_channels > 128:
             out_channels = 128
         for i in range(num_layers):
