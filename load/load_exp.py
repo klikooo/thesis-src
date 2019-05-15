@@ -27,6 +27,7 @@ args.unmask = True  # False if sub_kezy_index < 2 else True
 args.data_set = util.DataSet.RANDOM_DELAY
 args.l2_penalty = 0.05
 args.desync = 0
+args.init_weights = ""
 
 ###################
 # MODEL ARGUMENTS #

@@ -28,6 +28,7 @@ kernel_sizes = []
 num_layers = []
 channel_sizes = [8]
 l2_penalty = 0.005
+init_weights = ""
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
@@ -65,7 +66,8 @@ for k, v in network_settings.items():
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
                    "channel_sizes": channel_sizes,
-                   "network_name": k}
+                   "network_name": k,
+                   "init_weights": init_weights}
         network_settings[k].append(setting)
 
 #####################################
