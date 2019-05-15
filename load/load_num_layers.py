@@ -1,5 +1,4 @@
 import itertools
-import pdb
 from decimal import Decimal
 
 import util
@@ -37,6 +36,7 @@ plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = True
+show_only_mean = True
 show_acc = False
 show_losses_all = False
 experiment = False
@@ -121,16 +121,11 @@ for network_name in network_names:
             retrieve_ge()
 
 
-    # util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
-    #     util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
-    #         util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)
-    #     ))
-    # ))
-
 ###############################################
 # Plot the runs of the same model in one plot #
 ###############################################
-line_marker = itertools.cycle(('+', '.', 'o', '*'))
+line_marker = ['+', '.', 'o', '*']
+colors = ["b", "g", "r", "c", "m", "y", "b"]
 for i in range(len(rank_mean_y)):
     plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
     plt.xlabel('Number of traces', fontsize=16)
@@ -154,14 +149,15 @@ plt.ylabel('Guessing Entropy', fontsize=16)
 plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])
+num_models_tests = int(len(rank_mean_y) / len(network_names))
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    # print("name: {}, color: {}, i {}".format(name_models[i], num_models_tests, ))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=line_marker[int(i / num_models_tests)],
+             color=colors[i % num_models_tests])
     plt.legend()
-
     # plt.figure()
 figure = plt.gcf()
 figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
-
 
 ################################
 # Show loss and accuracy plots #
@@ -169,58 +165,72 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 if show_losses or show_acc:
     mean_mv = []
     mean_lv = []
+
+    ############
+    # ACCURACY #
+    ############
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-
-        for r in range(len(loss_vali)):
-            plt.title('Accuracy during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Accuracy')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            # pdb.set_trace()
-            plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
-            plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
-            plt.legend()
+        if not show_only_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Accuracy during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Accuracy')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                # pdb.set_trace()
+                plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+                plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
+                plt.legend()
         mt = np.mean(acc_train, axis=0) * 100
         mv = np.mean(acc_vali, axis=0) * 100
-        plt.plot(mt, color='blue')
-        plt.plot(mv, color='red')
+        if not show_only_mean:
+            plt.plot(mt, color='blue')
+            plt.plot(mv, color='red')
         mean_mv.append(mv)
 
+    ########
+    # LOSS #
+    ########
     for i in range(len(rank_mean_y)):
         (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-        for r in range(len(loss_vali)):
-            plt.title('Loss during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Loss')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
-            plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
-            plt.legend()
+        if not show_only_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Loss during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Loss')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+                plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
+                plt.legend()
 
         lt = np.mean(loss_train, axis=0)
         lv = np.mean(loss_vali, axis=0)
-        plt.plot(lt, color='blue', label='Train')
-        plt.plot(lv, color='red', label='Validation')
-
+        if not show_only_mean:
+            plt.plot(lt, color='blue', label='Train')
+            plt.plot(lv, color='red', label='Validation')
         mean_lv.append(lv)
 
+    ##############
+    # SHOW MEANS #
+    ##############
     plt.figure()
     for i in range(len(mean_lv)):
-        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
+        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]), marker=line_marker[int(i / num_models_tests)],
+                 color=colors[i % num_models_tests])
     plt.grid(True)
     plt.title("Mean loss validation")
     plt.legend()
 
     plt.figure()
     for i in range(len(mean_mv)):
-        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
+        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]), marker=line_marker[int(i / num_models_tests)],
+                 color=colors[i % num_models_tests])
     plt.grid(True)
     plt.title("Mean accuracy validation")
     plt.legend()

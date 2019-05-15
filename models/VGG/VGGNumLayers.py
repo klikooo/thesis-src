@@ -29,6 +29,7 @@ class VGGNumLayers(nn.Module):
         #################
         self.block1 = nn.Sequential(
             nn.Conv1d(1, channel_size, kernel_size=self.kernel_size, padding=self.padding),
+            nn.ReLU(),
             nn.Conv1d(channel_size, channel_size, kernel_size=self.kernel_size, padding=self.padding),
             nn.ReLU(),
             nn.MaxPool1d(self.max_pool).to(device),
