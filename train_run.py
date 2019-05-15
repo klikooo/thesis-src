@@ -101,29 +101,5 @@ if __name__ == "__main__":
             args.domain_knowledge = require_domain_knowledge(network_name)
             args.loss_function = loss_function
 
-            # for k, v in args.__dict__.items():
-            #     print("{}: {}".format(k, v))
-            # print(args)
-            # exit()
-
+            # Start the training with the specified arguments
             run(args)
-            # run(use_hw=args.use_hw, spread_factor=args.spread_factor, runs=args.runs,
-            #     train_size=train_size, epochs=args.epochs, lr=args.lr,
-            #     subkey_index=args.subkey_index, batch_size=args.batch_size,
-            #     init=init_func,
-            #     input_shape=input_shape,
-            #     checkpoints=checkpoints,
-            #     unmask=args.unmask,
-            #     traces_path=args.traces_path,
-            #     model_save_path=args.model_save_path,
-            #     data_set=args.data_set,
-            #     raw_traces=raw_traces,
-            #     domain_knowledge=require_domain_knowledge(network_name),
-            #     desync=args.desync,
-            #     validation_size=args.validation_size,
-            #     kernel_size=args.kernel_size,
-            #     loss_function=loss_function,
-            #     use_noise_data=args.use_noise_data,
-            #     channel_size=args.channel_size,
-            #     num_layers=args.num_layers,
-            #     l2_penalty=args.l2_penalty)
