@@ -43,7 +43,6 @@ show_acc = False
 show_losses_all = False
 show_only_mean = True
 experiment = False
-type_network = 'HW' if use_hw else 'ID'
 
 ###########################
 # SETTINGS FOR EACH MODEL #
@@ -53,15 +52,15 @@ for k, v in network_settings.items():
     for num_models in range(v):
         setting = {"experiment": '3' if not experiment else '',
                    "data_set": data_set,
-                   "subkey": sub_key_index,
-                   "masked": '' if unmask else 'masked/',
-                   "desync": '' if desync is 0 else 'desync{}/'.format(desync),
-                   "hw": type_network,
-                   "spread": spread_factor,
+                   "subkey_index": sub_key_index,
+                   "unmask": unmask,
+                   "desync": desync,
+                   "use_hw": use_hw,
+                   "spread_factor": spread_factor,
                    "epochs": epochs,
                    "batch_size": batch_size,
                    "lr": '%.2E' % Decimal(lr),
-                   "l2": '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
+                   "l2_penalty": l2_penalty,
                    "train_size": train_size,
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
@@ -84,20 +83,10 @@ network_settings['NumLayersVGG3'][1].update({
 
 # Function to load the GE of a single model
 def get_ge(net_name, model_parameters, load_parameters):
-    folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}{}/train{}/'.format(
-                    load_parameters["experiment"],
-                    load_parameters["data_set"],
-                    load_parameters["subkey"],
-                    load_parameters["masked"],
-                    load_parameters["desync"],
-                    load_parameters["hw"],
-                    load_parameters["spread"],
-                    load_parameters["epochs"],
-                    load_parameters["batch_size"],
-                    load_parameters["lr"],
-                    load_parameters["l2"],
-                    load_parameters["train_size"])
+    args = util.EmptySpace()
+    for key, value in load_parameters.items():
+        setattr(args, key, value)
+    folder = "/media/rico/Data/TU/thesis/runs{}/{}".format(args.experiment, util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []

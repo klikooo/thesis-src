@@ -508,3 +508,9 @@ def generate_folder_name(args):
         '' if np.math.ceil(args.l2_penalty) <= 0 else '_L2_{}'.format(args.l2_penalty),
         args.train_size,
     )
+
+
+class EmptySpace(object):
+    pass
+
+
