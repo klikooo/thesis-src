@@ -12,6 +12,7 @@ INIT_WEIGHTS_MAP = {
 }
 
 
-def init_weights(name, model):
+def init_weights(model, name):
+    print("Init weight with: {}".format(name))
     if name in INIT_WEIGHTS_MAP:
         model.apply(INIT_WEIGHTS_MAP[name])

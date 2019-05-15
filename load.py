@@ -28,6 +28,7 @@ if __name__ == "__main__":
     kernel_sizes = [3]
     channel_sizes = [8]
     num_layers = [1]
+    init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['VGGNumLayers']
@@ -70,6 +71,8 @@ if __name__ == "__main__":
                         help="Use raw traces", action=BoolAction)
     parser.add_argument('-x', "--num_exps", default=num_exps, type=int, help="Number of experiments for GE")
     parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
+    parser.add_argument('-z', "--init_weights", default=init_weights, type=str,
+                        help="Specify how the weights are initialized")
 
     args = parser.parse_args()
     print(args)

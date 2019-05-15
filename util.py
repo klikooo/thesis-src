@@ -495,7 +495,7 @@ def load_loss_acc(file):
 
 
 def generate_folder_name(args):
-    return '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}{}/train{}'.format(
+    return '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}{}{}/train{}'.format(
         str(args.data_set),
         args.subkey_index,
         '' if args.unmask or args.data_set is not DataSet.ASCAD else 'masked/',
@@ -506,6 +506,7 @@ def generate_folder_name(args):
         args.batch_size,
         '%.2E' % Decimal(args.lr),
         '' if np.math.ceil(args.l2_penalty) <= 0 else '_L2_{}'.format(args.l2_penalty),
+        '' if not args.init_weights else '_{}'.format(args.init_weights),
         args.train_size,
     )
 

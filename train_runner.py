@@ -1,9 +1,11 @@
 from models.Spread.SpreadNet import SpreadNet
 
-from util import save_model, load_data_set, DataSet, save_loss_acc, generate_folder_name
+from util import save_model, load_data_set, save_loss_acc, generate_folder_name
 from train import train, train_dk2
 
 import numpy as np
+
+from util_init import init_weights
 
 
 def run(args):
@@ -49,10 +51,11 @@ def run(args):
 
     # Do the runs
     for i in range(args.runs):
-        # Initialize the network and train it
+        # Initialize the network and the weights
         network = args.init(init_args)
+        init_weights(network, args.init_weights)
 
-        # Where the file is stored
+        # Filename of the model + the folder
         filename = 'model_r{}_{}'.format(i, network.name())
         model_save_file = '{}/{}/{}.pt'.format(args.model_save_path, dir_name, filename)
 

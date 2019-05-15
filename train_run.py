@@ -4,7 +4,7 @@ import argparse
 import torch.nn as nn
 
 
-from util import BoolAction, DataSet, func_in_list
+from util import BoolAction, DataSet
 from util_classes import get_init_func, require_domain_knowledge
 
 if __name__ == "__main__":
@@ -32,6 +32,7 @@ if __name__ == "__main__":
     num_layers = 1
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
+    init_weights = ""
     ############################
 
     ###################
@@ -69,6 +70,8 @@ if __name__ == "__main__":
     parser.add_argument('-w', '--network_names', nargs='+', help='List of networks', default=network_names)
 
     parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
+    parser.add_argument('-z', "--init_weights", default=init_weights, type=str,
+                        help="Specify how the weights are initialized")
 
     args = parser.parse_args()
     print(args)
