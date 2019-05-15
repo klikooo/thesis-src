@@ -16,7 +16,7 @@ if __name__ == "__main__":
     spread_factor = 1
     runs = [x for x in range(1)]
     train_size = 1000
-    epochs = 75
+    epochs = 10
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
@@ -24,13 +24,13 @@ if __name__ == "__main__":
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY_DK
-    kernel_sizes = []
-    channel_sizes = []
-    num_layers = []
+    data_set = DataSet.RANDOM_DELAY
+    kernel_sizes = [3]
+    channel_sizes = [8]
+    num_layers = [1]
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['ConvNetDK']
+    network_names = ['VGGNumLayers']
     desync = 0
     num_exps = 20
     raw_traces = True

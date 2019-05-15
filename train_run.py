@@ -18,7 +18,7 @@ if __name__ == "__main__":
     use_hw = False
     runs = 1
     train_sizes = [1000]
-    epochs = 75
+    epochs = 10
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
@@ -27,9 +27,9 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 5
-    channel_size = 32
-    num_layers = 4
+    kernel_size = 3
+    channel_size = 8
+    num_layers = 1
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     ############################
@@ -92,24 +92,38 @@ if __name__ == "__main__":
 
     for train_size in args.train_sizes:
         for network_name in args.network_names:
-            init_func = get_init_func(network_name)
-            run(use_hw=args.use_hw, spread_factor=args.spread_factor, runs=args.runs,
-                train_size=train_size, epochs=args.epochs, lr=args.lr,
-                subkey_index=args.subkey_index, batch_size=args.batch_size,
-                init=init_func,
-                input_shape=input_shape,
-                checkpoints=checkpoints,
-                unmask=args.unmask,
-                traces_path=args.traces_path,
-                model_save_path=args.model_save_path,
-                data_set=args.data_set,
-                raw_traces=raw_traces,
-                domain_knowledge=require_domain_knowledge(network_name),
-                desync=args.desync,
-                validation_size=args.validation_size,
-                kernel_size=args.kernel_size,
-                loss_function=loss_function,
-                use_noise_data=args.use_noise_data,
-                channel_size=args.channel_size,
-                num_layers=args.num_layers,
-                l2_penalty=args.l2_penalty)
+            # Set the arguments to be set
+            args.train_size = train_size
+            args.init = get_init_func(network_name)
+            args.input_shape = input_shape
+            args.checkpoints = checkpoints
+            args.raw_traces = raw_traces
+            args.domain_knowledge = require_domain_knowledge(network_name)
+            args.loss_function = loss_function
+
+            # for k, v in args.__dict__.items():
+            #     print("{}: {}".format(k, v))
+            # print(args)
+            # exit()
+
+            run(args)
+            # run(use_hw=args.use_hw, spread_factor=args.spread_factor, runs=args.runs,
+            #     train_size=train_size, epochs=args.epochs, lr=args.lr,
+            #     subkey_index=args.subkey_index, batch_size=args.batch_size,
+            #     init=init_func,
+            #     input_shape=input_shape,
+            #     checkpoints=checkpoints,
+            #     unmask=args.unmask,
+            #     traces_path=args.traces_path,
+            #     model_save_path=args.model_save_path,
+            #     data_set=args.data_set,
+            #     raw_traces=raw_traces,
+            #     domain_knowledge=require_domain_knowledge(network_name),
+            #     desync=args.desync,
+            #     validation_size=args.validation_size,
+            #     kernel_size=args.kernel_size,
+            #     loss_function=loss_function,
+            #     use_noise_data=args.use_noise_data,
+            #     channel_size=args.channel_size,
+            #     num_layers=args.num_layers,
+            #     l2_penalty=args.l2_penalty)

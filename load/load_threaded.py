@@ -1,4 +1,3 @@
-from decimal import Decimal
 from multiprocessing import Process
 
 import torch
@@ -7,7 +6,7 @@ import util
 import numpy as np
 
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, hot_encode
+from util import load_ascad, shuffle_permutation, hot_encode, generate_folder_name
 from test import accuracy, test_with_key_guess_p
 from util_classes import get_save_name, require_domain_knowledge
 
@@ -17,20 +16,7 @@ def get_ranks(args, network_name, model_params):
     global x_attack, y_attack, dk_plain, key_guesses
     x_attack, y_attack, key_guesses, real_key, dk_plain = load_data(args, network_name)
 
-    folder = '{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}{}/train{}/'.format(
-                args.models_path,
-                str(args.data_set),
-                args.subkey_index,
-                '' if args.unmask else 'masked/',
-                '' if args.desync is 0 else 'desync{}/'.format(args.desync),
-                args.type_network,
-                args.spread_factor,
-                args.epochs,
-                args.batch_size,
-                '%.2E' % Decimal(args.lr),
-                '' if np.math.ceil(args.l2_penalty) <= 0 else '_L2_{}'.format(args.l2_penalty),
-                args.train_size)
+    folder = "{}/{}/".format(args.models_path, generate_folder_name(args))
 
     # Calculate the predictions before hand
     predictions = []
