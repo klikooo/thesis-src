@@ -17,14 +17,14 @@ args.use_hw = False
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
 args.runs = [x for x in range(4)]
-args.train_size = 40000
-args.epochs = 120
+args.train_size = 20000
+args.epochs = 75
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
 args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY
+args.data_set = util.DataSet.RANDOM_DELAY_LARGE
 args.l2_penalty = 0.05
 args.desync = 0
 args.init_weights = ""
@@ -32,13 +32,13 @@ args.init_weights = ""
 ###################
 # MODEL ARGUMENTS #
 ###################
-runs = [x for x in range(4)]
+runs = [x for x in range(5)]
 rank_step = 1
-kernel_sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+kernel_sizes = [5, 10]
 num_layers = []
-channel_sizes = [24]
+channel_sizes = [8]
 
-network_names = ['KernelBigAlex', 'KernelBigAlexBN']
+network_names = ['KernelBigVGG']
 
 ##################
 # PLOT ARGUMENTS #
