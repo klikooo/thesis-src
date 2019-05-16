@@ -81,9 +81,9 @@ for step_index in range(num_steps):
             corr = (numerator[subkey][feature_index] - nMeanXY) / float(d)
 
             correlation[step_index][subkey][feature_index] = corr
-            print("Saving result")
-            np.save(result_filename, correlation)
-            print("Done saving result")
+    print("Saving result")
+    np.save(result_filename, correlation)
+    print("Done saving result")
 
         # print(np.corrcoef(x, y)[0, 1])
         # print(correlation)
