@@ -12,7 +12,7 @@ model_filename = model_path + "model_{}.csv.npy"
 key_guesses_filename = model_path + "key_guesses_{}.csv.npy"
 result_filename = path + "correlation"
 
-num_traces = 20000
+num_traces = 1000000
 num_features = 6250
 
 
