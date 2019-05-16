@@ -2,8 +2,8 @@ import numpy as np
 import math
 np.seterr(all='warn')
 
-path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/Random_Delay_Large/"
-# path = "/media/rico/Data/TU/thesis/data/Random_Delay_Large/"
+# path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/Random_Delay_Large/"
+path = "/media/rico/Data/TU/thesis/data/Random_Delay_Large/"
 traces_path = "{}/{}/".format(path, "traces")
 model_path = "{}/{}/".format(path, "Value")
 
@@ -52,7 +52,6 @@ for step_index in range(num_steps):
     print("Opened {} with shape {}".format(traces_filename.format(file_index), traces.shape))
 
     for feature_index in range(num_features):
-        print("Calculating feature index {}".format(feature_index))
         for subkey in range(256):
             # Select the correct data
             x = traces[:, feature_index]
@@ -85,8 +84,3 @@ for step_index in range(num_steps):
     np.save(result_filename, correlation)
     print("Done saving result")
 
-        # print(np.corrcoef(x, y)[0, 1])
-        # print(correlation)
-        # exit(0)
-
-# print("My2   corr {}".format(correlation))

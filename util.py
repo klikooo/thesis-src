@@ -511,6 +511,23 @@ def generate_folder_name(args):
     )
 
 
+def get_memory():
+    import os
+    import psutil
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss
+
+
+def format_bytes(size):
+    power = 2**10
+    n = 0
+    power_labels = {0: '', 1: 'kilo', 2: 'mega', 3: 'giga', 4: 'tera'}
+    while size > power:
+        size /= power
+        n += 1
+    return size, power_labels[n]+'bytes'
+
+
 class EmptySpace(object):
     pass
 
