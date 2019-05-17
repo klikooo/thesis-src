@@ -352,6 +352,16 @@ def load_random_delay(args):
     return x_train, y_train, plain
 
 
+def load_random_delay_npy(args):
+    print(args)
+    x_train = np.load('{}/Random_Delay/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    y_train = np.load('{}/Random_Delay/Value/model.csv.npy'.format(args['traces_path']))
+
+    y_train = y_train[:args.get('size')]
+    y_train = np.reshape(y_train, (args.get('size')))
+    return x_train[:args.get('size')], y_train, None
+
+
 def load_random_delay_large(args):
     print(args)
 
@@ -426,7 +436,7 @@ def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
              DataSet.AES_HD: load_aes_hd,
              DataSet.DPA_V4: load_dpav4,
-             DataSet.RANDOM_DELAY: load_random_delay,
+             DataSet.RANDOM_DELAY: load_random_delay_npy,
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
              DataSet.RANDOM_DELAY_DK: load_random_delay_dk}
     return table[data_set]

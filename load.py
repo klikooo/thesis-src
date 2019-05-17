@@ -15,7 +15,7 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 1000
+    train_size = 40000
     epochs = 10
     batch_size = 100
     lr = 0.0001
@@ -25,9 +25,9 @@ if __name__ == "__main__":
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
     data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [3]
-    channel_sizes = [8]
-    num_layers = [1]
+    kernel_sizes = [20]
+    channel_sizes = [16]
+    num_layers = [2]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-g', "--l2_penalty", default=0.0, type=float, help="L2 penalty")
+    parser.add_argument('-g', "--l2_penalty", default=0, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')

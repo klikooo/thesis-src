@@ -17,8 +17,8 @@ if __name__ == "__main__":
     network_names = ["VGGNumLayers"]
     use_hw = False
     runs = 1
-    train_sizes = [1000]
-    epochs = 10
+    train_sizes = [40000]
+    epochs = 40
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
@@ -27,9 +27,9 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 3
-    channel_size = 8
-    num_layers = 1
+    kernel_size = 20
+    channel_size = 16
+    num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""

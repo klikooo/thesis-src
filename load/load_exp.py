@@ -13,19 +13,19 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = False
+args.use_hw = True
 args.n_classes = 9 if args.use_hw else 256
-args.spread_factor = 1
-args.runs = [x for x in range(4)]
-args.train_size = 20000
-args.epochs = 75
+args.spread_factor = 6
+args.runs = [x for x in range(5)]
+args.train_size = 40000
+args.epochs = 80
 args.batch_size = 100
-args.lr = 0.0001
+args.lr = 0.001
 args.subkey_index = 2
 args.rank_step = 1
 args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY_LARGE
-args.l2_penalty = 0.05
+args.data_set = util.DataSet.RANDOM_DELAY
+args.l2_penalty = 0
 args.desync = 0
 args.init_weights = ""
 
@@ -34,11 +34,11 @@ args.init_weights = ""
 ###################
 runs = [x for x in range(5)]
 rank_step = 1
-kernel_sizes = [5, 10]
+kernel_sizes = []
 num_layers = []
-channel_sizes = [8]
+channel_sizes = []
 
-network_names = ['KernelBigVGG']
+network_names = ['SpreadNet', 'DenseSpreadNet']
 
 ##################
 # PLOT ARGUMENTS #

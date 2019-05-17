@@ -29,11 +29,11 @@ model_filename = key_guesses_path + "model.csv"
 #     np.save(new_traces_filename, all_traces)
 
 
-def to_npy(step_size, num_features, filename):
-    total_size = 50000
+def to_npy(total_size, step_size, num_features, filename):
+    # total_size = 50000
     num_steps = int(total_size / step_size)
 
-    all = np.zeros((total_size, num_features))
+    all_samples = np.zeros((total_size, num_features))
     for i in range(num_steps):
         start = i * step_size
         print("Start = {}".format(start))
@@ -45,12 +45,14 @@ def to_npy(step_size, num_features, filename):
             x = x.reshape((step_size, 1))
         print(x.shape)
 
-        all[start:start + step_size] = x
+        all_samples[start:start + step_size] = x
 
-    print(all.shape)
-    np.save(filename, all)
+    print(all_samples.shape)
+    np.save(filename, all_samples)
 
 
-# to_npy(1000, 3500, traces_filename)
-# to_npy(1000, 256, key_guesses_filename)
-to_npy(1000, 1, model_filename)
+t_size = 50000
+step = 1000
+# to_npy(t_size, step, 3500, traces_filename)
+# to_npy(t_size, step, 256, key_guesses_filename)
+to_npy(t_size, step, 1, model_filename)
