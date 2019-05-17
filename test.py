@@ -59,7 +59,7 @@ def accuracy(network, x_test, y_test, plain=None, batch_size=100):
             predi = torch.cat((predi, predictions), 0)
 
         _, pred = predi.max(1)
-        z = pred.long() == torch.from_numpy(y_test).long().to(device)
+        z = pred.long() == torch.from_numpy(y_test.reshape(len(y_test))).long().to(device)
         # print(predi[0])
         # exit()
         num_correct = z.sum().item()
