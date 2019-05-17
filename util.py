@@ -300,20 +300,7 @@ def load_dpav4(args):
                        dtype=np.long,
                        start=args.get('start'),
                        size=args.get('size'))
-    if args['domain_knowledge']:
-        # TODO : add plain 0
-        if True:
-            plain = []
-        else:
-            plain = load_csv('{}/DPAv4/{}/plain_0.csv'.format(args['traces_path'], hw),
-                             delimiter=' ',
-                             dtype=np.int,
-                             start=args.get('start'),
-                             size=args.get('size'))
-            plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
-    else:
-        plain = None
-    return x_train, y_train, plain
+    return x_train, y_train, None
 
 
 def load_dpa_npy(args):
@@ -322,10 +309,8 @@ def load_dpa_npy(args):
     x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
     y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
 
-    y_train = y_train[:args.get('size')]
-    y_train = np.reshape(y_train, (args.get('size')))
-    x_train = x_train[:args.get('size')]
-    print("size = {}".format(args['size']))
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
     import gc
     gc.collect()
     return x_train, y_train, None
@@ -372,12 +357,10 @@ def load_random_delay_npy(args):
     x_train = np.load('{}/Random_Delay/traces/traces_complete.csv.npy'.format(args['traces_path']))
     y_train = np.load('{}/Random_Delay/Value/model.csv.npy'.format(args['traces_path']))
 
-    y_train = y_train[:args.get('size')]
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
     y_train = np.reshape(y_train, (args.get('size')))
-    x_train = x_train[:args.get('size')]
-    print("size = {}".format(args['size']))
-    import gc
-    gc.collect()
     return x_train, y_train, None
 
 

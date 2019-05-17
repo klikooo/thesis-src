@@ -60,6 +60,8 @@ def accuracy(network, x_test, y_test, plain=None, batch_size=100):
 
         _, pred = predi.max(1)
         z = pred.long() == torch.from_numpy(y_test).long().to(device)
+        # print(predi[0])
+        # exit()
         num_correct = z.sum().item()
         print('Correct: {}'.format(num_correct))
         print('Accuracy: {} - {}%'.format(num_correct / len(y_test), num_correct / len(y_test) * 100))

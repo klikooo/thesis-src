@@ -17,17 +17,17 @@ args.use_hw = False
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
 # args.runs = [x for x in range(5)]
-args.train_size = 5000
-args.epochs = 80
+args.train_size = 40000
+args.epochs = 40
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
 args.unmask = True  # False if sub_key_index < 2 else True
-args.data_set = util.DataSet.DPA_V4
-args.l2_penalty = 0
+args.data_set = util.DataSet.RANDOM_DELAY
+args.l2_penalty = 0.05
 args.desync = 0
-args.init_weights = ""
+args.init_weights = "kaiming"
 
 ###################
 # MODEL ARGUMENTS #
@@ -38,7 +38,7 @@ kernel_sizes = [20]
 num_layers = [2]
 channel_sizes = [16]
 
-network_names = ['DenseNet']
+network_names = ['VGGNumLayers']
 
 ##################
 # PLOT ARGUMENTS #
