@@ -15,8 +15,8 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 40000
-    epochs = 10
+    train_size = 5000
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
@@ -24,14 +24,14 @@ if __name__ == "__main__":
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY
+    data_set = DataSet.DPA_V4
     kernel_sizes = [20]
     channel_sizes = [16]
     num_layers = [2]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['VGGNumLayers']
+    network_names = ['DenseNet']
     desync = 0
     num_exps = 20
     raw_traces = True

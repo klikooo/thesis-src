@@ -316,6 +316,21 @@ def load_dpav4(args):
     return x_train, y_train, plain
 
 
+def load_dpa_npy(args):
+    print(args)
+
+    x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
+
+    y_train = y_train[:args.get('size')]
+    y_train = np.reshape(y_train, (args.get('size')))
+    x_train = x_train[:args.get('size')]
+    print("size = {}".format(args['size']))
+    import gc
+    gc.collect()
+    return x_train, y_train, None
+
+
 def load_random_delay(args):
     print(args)
     hw = 'HW' if args['use_hw'] else 'Value'
@@ -359,7 +374,11 @@ def load_random_delay_npy(args):
 
     y_train = y_train[:args.get('size')]
     y_train = np.reshape(y_train, (args.get('size')))
-    return x_train[:args.get('size')], y_train, None
+    x_train = x_train[:args.get('size')]
+    print("size = {}".format(args['size']))
+    import gc
+    gc.collect()
+    return x_train, y_train, None
 
 
 def load_random_delay_large(args):
@@ -435,7 +454,7 @@ class DataSet(Enum):
 def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
              DataSet.AES_HD: load_aes_hd,
-             DataSet.DPA_V4: load_dpav4,
+             DataSet.DPA_V4: load_dpa_npy,
              DataSet.RANDOM_DELAY: load_random_delay_npy,
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
              DataSet.RANDOM_DELAY_DK: load_random_delay_dk}

@@ -9,41 +9,23 @@ traces_filename = traces_path + "traces_complete.csv"
 key_guesses_filename = key_guesses_path + "key_guesses_ALL_transposed.csv"
 model_filename = key_guesses_path + "model.csv"
 
-# def traces():
-#     total_size = 50000
-#     size = 1000
-#     num_steps = int(total_size / size)
-#     num_features = 3500
-#
-#     all_traces = np.zeros((total_size, num_features))
-#     for i in range(num_steps):
-#         start = i * size
-#         print("Start = {}".format(start))
-#         x = util.load_csv(traces_filename,
-#                           delimiter=' ',
-#                           start=start,
-#                           size=size)
-#         all_traces[start:start+size] = x
-#
-#     print(all_traces.shape)
-#     np.save(new_traces_filename, all_traces)
-
 
 def to_npy(total_size, step_size, num_features, filename):
-    # total_size = 50000
     num_steps = int(total_size / step_size)
+    print("number steps: {}".format(num_steps))
 
     all_samples = np.zeros((total_size, num_features))
+
     for i in range(num_steps):
         start = i * step_size
-        print("Start = {}".format(start))
+        print("Step: {}. Start = {}".format(i, start))
         x = util.load_csv(filename,
                           delimiter=' ',
                           start=start,
                           size=step_size)
         if x.shape == (step_size,):
             x = x.reshape((step_size, 1))
-        print(x.shape)
+        print("Shape of data {}".format(x.shape))
 
         all_samples[start:start + step_size] = x
 
@@ -51,8 +33,24 @@ def to_npy(total_size, step_size, num_features, filename):
     np.save(filename, all_samples)
 
 
-t_size = 50000
-step = 1000
-# to_npy(t_size, step, 3500, traces_filename)
-# to_npy(t_size, step, 256, key_guesses_filename)
-to_npy(t_size, step, 1, model_filename)
+rd_t_size = 50000
+rd_step = 1000
+# to_npy(rd_t_size, rd_step, 3500, traces_filename)
+# to_npy(rd_t_size, rd_step, 256, key_guesses_filename)
+# to_npy(rd_t_size, rd_step, 1, model_filename)
+
+
+path = "/media/rico/Data/TU/thesis/data/DPAv4/"
+key_guesses_path = path + "Value/"
+traces_path = path + "traces/"
+
+dpa_traces_filename = traces_path + "traces_complete.csv"
+dpa_key_guesses_filename = key_guesses_path + "key_guesses_ALL_transposed.csv"
+dpa_model_filename = key_guesses_path + "model.csv"
+
+
+dpa_t_size = 100000
+dpa_step = 1000
+# to_npy(dpa_t_size, dpa_step, 3000, dpa_traces_filename)
+# to_npy(dpa_t_size, dpa_step, 256, dpa_key_guesses_filename)
+# to_npy(dpa_t_size, dpa_step, 1, dpa_model_filename)

@@ -13,12 +13,12 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    network_names = ["VGGNumLayers"]
+    data_set = DataSet.DPA_V4
+    network_names = ["DenseNet"]
     use_hw = False
     runs = 1
-    train_sizes = [40000]
-    epochs = 40
+    train_sizes = [5000]
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
