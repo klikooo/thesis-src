@@ -22,7 +22,9 @@ def run(args):
                  "size": args.train_size + args.validation_size,
                  "domain_knowledge": True,
                  "desync": args.desync,
-                 "use_noise_data": args.use_noise_data}
+                 "use_noise_data": args.use_noise_data,
+                 "start": 0,
+                 "data_set": args.data_set}
 
     # Load data and chop into the desired sizes
     load_function = load_data_set(args.data_set)

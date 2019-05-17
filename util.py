@@ -380,6 +380,19 @@ def load_random_delay_large(args):
     return x_train, y_train, None
 
 
+def load_data_generic(args):
+    print(args)
+
+    x_train = np.load('{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+    y_train = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    y_train = np.reshape(y_train, (args.get('size')))
+    return x_train, y_train, None
+
+
 def load_random_delay_dk(args):
     print(args)
 
@@ -409,6 +422,7 @@ class DataSet(Enum):
     RANDOM_DELAY = 4
     RANDOM_DELAY_LARGE = 5
     RANDOM_DELAY_DK = 6
+    RANDOM_DELAY_NORMALIZED = 7
 
     def __str__(self):
         if self.value == 1:
@@ -423,6 +437,8 @@ class DataSet(Enum):
             return "Random_Delay_Large"
         elif self.value == 6:
             return "Random_Delay_DK"
+        elif self.value ==7:
+            return "Random_Delay_Normalized"
         else:
             print("ERROR {}".format(self.value))
 
@@ -440,7 +456,8 @@ def load_data_set(data_set):
              DataSet.DPA_V4: load_dpa_npy,
              DataSet.RANDOM_DELAY: load_random_delay_npy,
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
-             DataSet.RANDOM_DELAY_DK: load_random_delay_dk}
+             DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
+             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic}
     return table[data_set]
 
 

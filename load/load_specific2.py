@@ -15,35 +15,35 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
-train_size = 20000
-epochs = 75
+runs = [x for x in range(1)]
+train_size = 40000
+epochs = 15
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_key_index < 2 else True
-kernel_sizes = [10]
-num_layers = []
-channel_sizes = [8]
+unmask = True  # False if sub_kezy_index < 2 else True
+kernel_sizes = [20]
+num_layers = [2]
+channel_sizes = [16]
 l2_penalty = 0.05
+init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'KernelBigVGG': 1,
+    'VGGNumLayers': 2,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.RANDOM_DELAY_LARGE
+data_set = util.DataSet.RANDOM_DELAY
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = True
 show_acc = False
 show_losses_all = False
-show_only_mean = False
-experiment = False
-type_network = 'HW' if use_hw else 'ID'
+show_only_mean = True
+experiment = True
 
 ###########################
 # SETTINGS FOR EACH MODEL #
@@ -53,48 +53,42 @@ for k, v in network_settings.items():
     for num_models in range(v):
         setting = {"experiment": '3' if not experiment else '',
                    "data_set": data_set,
-                   "subkey": sub_key_index,
-                   "masked": '' if unmask else 'masked/',
-                   "desync": '' if desync is 0 else 'desync{}/'.format(desync),
-                   "hw": type_network,
-                   "spread": spread_factor,
+                   "subkey_index": sub_key_index,
+                   "unmask": unmask,
+                   "desync": desync,
+                   "use_hw": use_hw,
+                   "spread_factor": spread_factor,
                    "epochs": epochs,
                    "batch_size": batch_size,
                    "lr": '%.2E' % Decimal(lr),
-                   "l2": '' if np.math.ceil(l2_penalty) <= 0 else '_L2_{}'.format(l2_penalty),
+                   "l2_penalty": l2_penalty,
                    "train_size": train_size,
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
                    "channel_sizes": channel_sizes,
-                   "network_name": k}
+                   "network_name": k,
+                   "init_weights": init_weights}
         network_settings[k].append(setting)
 
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-# network_settings['NumLayersVGG3'][0].update({
-#     "kernel_sizes": [17, 30],
-#     "num_layers": [4]})
-#
-####################################################################################
+network_settings['VGGNumLayers'][0].update({
+    "data_set": util.DataSet.RANDOM_DELAY
+})
+network_settings['VGGNumLayers'][1].update({
+    "data_set": util.DataSet.RANDOM_DELAY_NORMALIZED
+})
+
+#####################################################################################
 
 
 # Function to load the GE of a single model
 def get_ge(net_name, model_parameters, load_parameters):
-    folder = '/media/rico/Data/TU/thesis/runs{}/{}/subkey_{}/{}{}{}_SF{}_' \
-             'E{}_BZ{}_LR{}{}/train{}/'.format(
-                    load_parameters["experiment"],
-                    load_parameters["data_set"],
-                    load_parameters["subkey"],
-                    load_parameters["masked"],
-                    load_parameters["desync"],
-                    load_parameters["hw"],
-                    load_parameters["spread"],
-                    load_parameters["epochs"],
-                    load_parameters["batch_size"],
-                    load_parameters["lr"],
-                    load_parameters["l2"],
-                    load_parameters["train_size"])
+    args = util.EmptySpace()
+    for key, value in load_parameters.items():
+        setattr(args, key, value)
+    folder = "/media/rico/Data/TU/thesis/runs{}/{}".format(args.experiment, util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
