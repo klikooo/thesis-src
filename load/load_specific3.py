@@ -16,26 +16,29 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
-train_size = 10000
-epochs = 5
+train_size = 40000
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-kernel_sizes = [3]
-num_layers = [2]
+kernel_sizes = [100, 50, 26, 21, 17, 15]
+num_layers = [1, 2, 3, 4, 5, 6]
+# kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
+# num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
 l2_penalty = 0.05
-init_weights = "kaiming"
+init_weights = ""
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_1 = "VGGNumLayers"
 network_settings = {
-    'VGGNumLayers': 1,
+    network_1: 2,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.RANDOM_DELAY_LARGE
+data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -43,7 +46,10 @@ show_losses = True
 show_acc = False
 show_losses_all = False
 show_only_mean = True
+show_ge = False
 experiment = False
+colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
+          "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 
 ###########################
 # SETTINGS FOR EACH MODEL #
@@ -67,20 +73,43 @@ for k, v in network_settings.items():
                    "num_layers": num_layers,
                    "channel_sizes": channel_sizes,
                    "network_name": k,
-                   "init_weights": init_weights}
+                   "init_weights": init_weights,
+                   "title": "",
+                   "plot_colors": colors,
+                   }
         network_settings[k].append(setting)
 
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-# network_settings['NumLayersVGG3'][0].update({
-#     "kernel_sizes": [17, 30],
-#     "num_layers": [4]})
-# network_settings['NumLayersVGG3'][1].update({
-#     "kernel_sizes": [20],
-#     "num_layers": [5]})
+# network_settings[network_1][0].update({
+#     "init_weights": "kaiming",
+#     "l2_penalty": 0.05,
+#     "title": " 0.05 kaiming",
+#     "plot_marker": " "
+# })
+# network_settings[network_1][1].update({
+#     "init_weights": "kaiming",
+#     "l2_penalty": 0.005,
+#     "title": " 0.005 kaiming",
+#     "plot_marker": "*",
+# })
+network_settings[network_1][0].update({
+    "l2_penalty": 0.05,
+    "title": " 0.05",
+    "plot_marker": " "
+})
+network_settings[network_1][1].update({
+    "l2_penalty": 0.005,
+    "title": " 0.005",
+    "plot_marker": "o"
+})
+
 
 #####################################################################################
+
+
+n_settings = []
 
 
 # Function to load the GE of a single model
@@ -123,6 +152,7 @@ rank_mean_y = []
 name_models = []
 model_params = {}
 all_loss_acc = []  # ([], [], [], [])
+plot_colors = []
 for network_name, network_setting in network_settings.items():
     def lambda_kernel(x): model_params.update({"kernel_size": x})
 
@@ -141,35 +171,42 @@ for network_name, network_setting in network_settings.items():
         ranks_y.append(ge_y)
         rank_mean_y.append(mean_y)
         name_models.append(get_save_name(network_name, model_params))
+        n_settings.append(net_setting)
 
         all_loss_acc.append(loss_acc)
 
     for setting in network_setting:
-        util.loop_at_least_once(setting['kernel_sizes'], lambda_kernel, lambda: (
-            util.loop_at_least_once(setting['channel_sizes'], lambda_channel, lambda: (
-                util.loop_at_least_once_with_arg(setting['num_layers'], lambda_layers, retrieve_ge,
-                                                 setting)
-            ))
-        ))
+        print(setting)
+        # exit()
+        for cs in setting['channel_sizes']:
+            model_params.update({"channel_size": cs})
+            for i in range(len(setting['num_layers'])):
+                model_params.update({"kernel_size": setting['kernel_sizes'][i]})
+                model_params.update({"num_layers": setting['num_layers'][i]})
+                plot_colors.append(setting['plot_colors'][i])
+                retrieve_ge(setting)
+
 
 ###############################################
 # Plot the runs of the same model in one plot #
 ###############################################
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
-for i in range(len(rank_mean_y)):
-    plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
-    plt.grid(True)
-    axes = plt.gca()
-    axes.set_ylim([0, 256])
+# colors = ["b", "g", "r", "c", "m", "y", "b"]
+if show_ge:
+    for i in range(len(rank_mean_y)):
+        plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
+        plt.xlabel('Number of traces', fontsize=16)
+        plt.ylabel('Guessing Entropy', fontsize=16)
+        plt.grid(True)
+        axes = plt.gca()
+        axes.set_ylim([0, 256])
 
-    # Plot the results
-    for x, y in zip(ranks_x[i], ranks_y[i]):
-        plt.plot(x, y)
-    figure = plt.gcf()
-    plt.figure()
-    figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
+        # Plot the results
+        for x, y in zip(ranks_x[i], ranks_y[i]):
+            plt.plot(x, y)
+        figure = plt.gcf()
+        plt.figure()
+        figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
 
 ###############################################
 # Plot the mean of the runs of a single model #
@@ -180,7 +217,8 @@ plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], n_settings[i]['title']),
+             marker=n_settings[i]['plot_marker'], color=plot_colors[i])
     plt.legend()
 
     # plt.figure()
@@ -249,14 +287,17 @@ if show_losses or show_acc:
     ##############
     plt.figure()
     for i in range(len(mean_lv)):
-        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
+        plt.plot(mean_lv[i], label="Loss {} {}".format(name_models[i], n_settings[i]['title']),
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+
     plt.grid(True)
     plt.title("Mean loss validation")
     plt.legend()
 
     plt.figure()
     for i in range(len(mean_mv)):
-        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
+        plt.plot(mean_mv[i], label="Accuracy {} {}".format(name_models[i], n_settings[i]['title']),
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
     plt.grid(True)
     plt.title("Mean accuracy validation")
     plt.legend()

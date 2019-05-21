@@ -366,18 +366,70 @@ def load_random_delay_npy(args):
 
 def load_random_delay_large(args):
     print(args)
+    traces_step = 20000
+    total_steps = np.math.ceil((args['start'] + args['size']) / traces_step)
+    x_train = np.zeros((args['size'], 6250))
+    y_train = np.zeros((args['size']))
+    start_step = int(args['start'] / traces_step)
 
-    x_train = load_csv('{}/Random_Delay_Large/traces/traces.csv'.format(args['traces_path']),
-                       delimiter=' ',
-                       start=args.get('start'),
-                       size=args.get('size'))
+    index_start = 0
+    for step in range(start_step, total_steps):
+        x_file = '{}/Random_Delay_Large/traces/traces_{}.csv.npy'.format(args['traces_path'], traces_step * (step + 1))
+        y_file = '{}/Random_Delay_Large/Value/model_{}.csv.npy'.format(args['traces_path'], traces_step * (step + 1))
+        x = np.load(x_file)
+        y = np.load(y_file)
 
-    y_train = load_csv('{}/Random_Delay_Large/Value/model.csv'.format(args['traces_path']),
-                       delimiter=' ',
-                       dtype=np.long,
-                       start=args.get('start'),
-                       size=args.get('size'))
+        # Begin step
+        if step == start_step:
+            if step == total_steps-1:
+                x_train[0:args['size']] = x[args['start']:args['start']+args['size']]
+                y_train[0:args['size']] = y[args['start']:args['start']+args['size']]
+            # More steps to come
+            else:
+                x_train[0:traces_step-args['start']] = x[args['start']:traces_step]
+                y_train[0:traces_step-args['start']] = y[args['start']:traces_step]
+                index_start = traces_step-args['start']
+        # Last step
+        elif step == total_steps-1:
+            x_train[index_start:args['size']] = x[0:traces_step-index_start]
+            y_train[index_start:args['size']] = y[0:traces_step-index_start]
+        # More steps to come
+        else:
+            x_train[index_start:index_start+traces_step] = x[0:traces_step]
+            y_train[index_start:index_start+traces_step] = y[0:traces_step]
+            index_start += traces_step
+    print(x_train.shape)
+    print(y_train.shape)
     return x_train, y_train, None
+
+
+def load_random_delay_large_key_guesses(traces_path, start, size):
+    traces_step = 20000
+    total_steps = np.math.ceil((start + size) / traces_step)
+    key_guesses = np.zeros((size, 256))
+    start_step = int(start / traces_step)
+
+    index_start = 0
+    for step in range(start_step, total_steps):
+        file = '{}/Random_Delay_Large/Value/key_guesses_{}.csv.npy'.format(traces_path, traces_step * (step + 1))
+        step_key_guesses = np.load(file)
+
+        # Begin step
+        if step == start_step:
+            if step == total_steps-1:
+                key_guesses[0:size] = step_key_guesses[start:start+size]
+            # More steps to come
+            else:
+                key_guesses[0:traces_step-start] = step_key_guesses[start:traces_step]
+                index_start = traces_step-start
+        # Last step
+        elif step == total_steps-1:
+            key_guesses[index_start:size] = step_key_guesses[0:traces_step-index_start]
+        # More steps to come
+        else:
+            key_guesses[index_start:index_start+traces_step] = step_key_guesses[0:traces_step]
+            index_start += traces_step
+    return key_guesses.astype(np.int)
 
 
 def load_data_generic(args):
@@ -437,7 +489,7 @@ class DataSet(Enum):
             return "Random_Delay_Large"
         elif self.value == 6:
             return "Random_Delay_DK"
-        elif self.value ==7:
+        elif self.value == 7:
             return "Random_Delay_Normalized"
         else:
             print("ERROR {}".format(self.value))
@@ -548,16 +600,14 @@ def get_memory():
 
 
 def format_bytes(size):
-    power = 2**10
+    power = 2 ** 10
     n = 0
     power_labels = {0: '', 1: 'kilo', 2: 'mega', 3: 'giga', 4: 'tera'}
     while size > power:
         size /= power
         n += 1
-    return size, power_labels[n]+'bytes'
+    return size, power_labels[n] + 'bytes'
 
 
 class EmptySpace(object):
     pass
-
-

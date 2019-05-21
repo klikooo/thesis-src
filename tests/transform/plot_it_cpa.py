@@ -16,7 +16,7 @@ def plot(results, num):
 
     plt.figure()
     plt.title("Correlation of first {} traces".format(num))
-    # plt.plot(results)
+    plt.plot(results)
     real = np.array(results)[:, real_key]
     plt.plot(real, label="Real key", marker="*", color='gold')
     plt.legend()
