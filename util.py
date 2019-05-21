@@ -424,7 +424,7 @@ def load_random_delay_large_key_guesses(traces_path, start, size):
                 index_start = traces_step-start
         # Last step
         elif step == total_steps-1:
-            key_guesses[index_start:size] = step_key_guesses[0:traces_step-index_start]
+            key_guesses[index_start:size] = step_key_guesses[0:size-index_start]
         # More steps to come
         else:
             key_guesses[index_start:index_start+traces_step] = step_key_guesses[0:traces_step]
