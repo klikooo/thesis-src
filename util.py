@@ -391,8 +391,8 @@ def load_random_delay_large(args):
                 index_start = traces_step-args['start']
         # Last step
         elif step == total_steps-1:
-            x_train[index_start:args['size']] = x[0:traces_step-index_start]
-            y_train[index_start:args['size']] = y[0:traces_step-index_start]
+            x_train[index_start:args['size']] = x[0:args['size']-index_start]
+            y_train[index_start:args['size']] = y[0:args['size']-index_start]
         # More steps to come
         else:
             x_train[index_start:index_start+traces_step] = x[0:traces_step]
