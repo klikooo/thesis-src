@@ -381,14 +381,15 @@ def load_random_delay_large(args):
 
         # Begin step
         if step == start_step:
+            # There is only one step
             if step == total_steps-1:
-                x_train[0:args['size']] = x[args['start']:args['start']+args['size']]
-                y_train[0:args['size']] = y[args['start']:args['start']+args['size']]
+                x_train[0:args['size']] = x[args['start'] % traces_step:(args['start']+args['size']) % traces_step]
+                y_train[0:args['size']] = y[args['start'] % traces_step:(args['start']+args['size']) % traces_step]
             # More steps to come
             else:
-                x_train[0:traces_step-args['start']] = x[args['start']:traces_step]
-                y_train[0:traces_step-args['start']] = y[args['start']:traces_step]
-                index_start = traces_step-args['start']
+                x_train[0:traces_step-(args['start'] % traces_step)] = x[(args['start'] % traces_step):traces_step]
+                y_train[0:traces_step-(args['start'] % traces_step)] = y[(args['start'] % traces_step):traces_step]
+                index_start = traces_step-(args['start'] % traces_step)
         # Last step
         elif step == total_steps-1:
             x_train[index_start:args['size']] = x[0:args['size']-index_start]
@@ -398,8 +399,6 @@ def load_random_delay_large(args):
             x_train[index_start:index_start+traces_step] = x[0:traces_step]
             y_train[index_start:index_start+traces_step] = y[0:traces_step]
             index_start += traces_step
-    print(x_train.shape)
-    print(y_train.shape)
     return x_train, y_train, None
 
 
@@ -417,11 +416,11 @@ def load_random_delay_large_key_guesses(traces_path, start, size):
         # Begin step
         if step == start_step:
             if step == total_steps-1:
-                key_guesses[0:size] = step_key_guesses[start:start+size]
+                key_guesses[0:size] = step_key_guesses[start % traces_step:(start+size) % traces_step]
             # More steps to come
             else:
-                key_guesses[0:traces_step-start] = step_key_guesses[start:traces_step]
-                index_start = traces_step-start
+                key_guesses[0:traces_step-(start % traces_step)] = step_key_guesses[(start % traces_step):traces_step]
+                index_start = traces_step-(start % traces_step)
         # Last step
         elif step == total_steps-1:
             key_guesses[index_start:size] = step_key_guesses[0:size-index_start]

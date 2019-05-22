@@ -1,4 +1,5 @@
 import itertools
+from decimal import Decimal
 
 import util
 import numpy as np
@@ -9,52 +10,105 @@ from util_classes import get_save_name
 
 path = '/media/rico/Data/TU/thesis'
 
-######################
-# TRAINING ARGUMENTS #
-######################
-args = util.EmptySpace()
-args.use_hw = False
-args.n_classes = 9 if args.use_hw else 256
-args.spread_factor = 1
-args.train_size = 20000
-args.epochs = 50
-args.batch_size = 100
-args.lr = 0.0001
-args.subkey_index = 2
-args.rank_step = 1
-args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY_LARGE
-args.l2_penalty = 0.05
-args.desync = 0
-args.init_weights = "kaiming"
-
-###################
-# MODEL ARGUMENTS #
-###################
-runs = [x for x in range(1)]
+#####################################################################################
+# Parameters
+use_hw = False
+n_classes = 9 if use_hw else 256
+spread_factors = [6]
+runs = [x for x in range(5)]
+train_size = 1000
+epochs = 80
+batch_size = 100
+lr = 0.0001
+sub_key_index = 2
 rank_step = 1
-kernel_sizes = [3]
-num_layers = [2]
-channel_sizes = [32]
 
-network_names = ['DenseNet']
+unmask = True  # False if sub_kezy_index < 2 else True
+l2_penalty = 0
+init_weights = ""
 
-##################
-# PLOT ARGUMENTS #
-##################
+# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
+network_1 = "SpreadNet"
+network_2 = "SpreadNet"
+network_3 = "DenseSpreadNet"
+network_4 = "SpreadV2"
+network_settings = {
+    network_1: 1,
+    network_2: 1,
+    network_3: 1,
+    network_4: 1
+}
+data_set = util.DataSet.RANDOM_DELAY
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
+desync = 0
 show_losses = True
 show_acc = False
 show_losses_all = False
 show_only_mean = True
+show_ge = False
 experiment = False
-type_network = 'HW' if args.use_hw else 'ID'
+colors = ["black", "brown", "darkblue", "darkgreen",
+          "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender", "aqua"]
+
+###########################
+# SETTINGS FOR EACH MODEL #
+###########################
+for k, v in network_settings.items():
+    network_settings[k] = []
+    for num_models in range(v):
+        setting = {"experiment": '3' if not experiment else '',
+                   "data_set": data_set,
+                   "subkey_index": sub_key_index,
+                   "unmask": unmask,
+                   "desync": desync,
+                   "use_hw": use_hw,
+                   "spread_factors": spread_factors,
+                   "epochs": epochs,
+                   "batch_size": batch_size,
+                   "lr": '%.2E' % Decimal(lr),
+                   "l2_penalty": l2_penalty,
+                   "train_size": train_size,
+                   "network_name": k,
+                   "init_weights": init_weights,
+                   "title": "",
+                   "plot_colors": colors,
+                   }
+        network_settings[k].append(setting)
+
+#####################################
+# UPDATE SETTINGS FOR DESIRED MODEL #
+#####################################
+network_settings[network_1][0].update({
+    "plot_marker": " ",
+    "plot_colors": ['g']
+})
+network_settings[network_2][0].update({
+    "plot_marker": "<",
+    "plot_colors": ['r']
+})
+network_settings[network_3][0].update({
+    "plot_marker": "o",
+    "plot_colors": ['b']
+})
+network_settings[network_4][0].update({
+    "plot_marker": " ",
+    "plot_colors": ['y']
+})
+
+
+#####################################################################################
+
+
+n_settings = []
 
 
 # Function to load the GE of a single model
-def get_ge(net_name, model_parameters):
-    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs/', util.generate_folder_name(args))
+def get_ge(net_name, model_parameters, load_parameters):
+    args = util.EmptySpace()
+    for key, value in load_parameters.items():
+        setattr(args, key, value)
+    folder = "/media/rico/Data/TU/thesis/runs{}/{}".format(args.experiment, util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -89,49 +143,54 @@ rank_mean_y = []
 name_models = []
 model_params = {}
 all_loss_acc = []  # ([], [], [], [])
-for network_name in network_names:
-    def lambda_kernel(x): model_params.update({"kernel_size": x})
+plot_colors = []
+titles = []
+for network_name, network_setting in network_settings.items():
 
-
-    def lambda_channel(x): model_params.update({"channel_size": x})
-
-    def lambda_layers(x): model_params.update({"num_layers": x})
-
-    def retrieve_ge():
+    def retrieve_ge(net_setting):
         print(model_params)
-        ge_x, ge_y, loss_acc = get_ge(network_name, model_params)
+        ge_x, ge_y, loss_acc = get_ge(network_name, model_params, net_setting)
         mean_y = np.mean(ge_y, axis=0)
         ranks_x.append(ge_x)
         ranks_y.append(ge_y)
         rank_mean_y.append(mean_y)
         name_models.append(get_save_name(network_name, model_params))
+        n_settings.append(net_setting)
 
         all_loss_acc.append(loss_acc)
 
-    util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
-        util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
-            util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)
-        ))
-    ))
+    for setting in network_setting:
+        print(setting)
+        # exit()
+        for i in range(len(setting['spread_factors'])):
+            model_params.update({"spread_factor": setting['spread_factors'][i]})
+            setting.update({'spread_factor': setting['spread_factors'][i]})
+
+            plot_colors.append(setting['plot_colors'][i])
+            titles.append(setting['spread_factors'][i])
+            retrieve_ge(setting)
+
 
 ###############################################
 # Plot the runs of the same model in one plot #
 ###############################################
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
-for i in range(len(rank_mean_y)):
-    plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
-    plt.grid(True)
-    axes = plt.gca()
-    axes.set_ylim([0, 256])
+# colors = ["b", "g", "r", "c", "m", "y", "b"]
+if show_ge:
+    for i in range(len(rank_mean_y)):
+        plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
+        plt.xlabel('Number of traces', fontsize=16)
+        plt.ylabel('Guessing Entropy', fontsize=16)
+        plt.grid(True)
+        axes = plt.gca()
+        axes.set_ylim([0, 256])
 
-    # Plot the results
-    for x, y in zip(ranks_x[i], ranks_y[i]):
-        plt.plot(x, y)
-    figure = plt.gcf()
-    plt.figure()
-    figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
+        # Plot the results
+        for x, y in zip(ranks_x[i], ranks_y[i]):
+            plt.plot(x, y)
+        figure = plt.gcf()
+        plt.figure()
+        figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
 
 ###############################################
 # Plot the mean of the runs of a single model #
@@ -142,13 +201,13 @@ plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], titles[i]),
+             marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
     plt.legend()
 
     # plt.figure()
 figure = plt.gcf()
 figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
-
 
 ################################
 # Show loss and accuracy plots #
@@ -212,14 +271,17 @@ if show_losses or show_acc:
     ##############
     plt.figure()
     for i in range(len(mean_lv)):
-        plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))
+        plt.plot(mean_lv[i], label="Loss {} {}".format(name_models[i], titles[i]),
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
+
     plt.grid(True)
     plt.title("Mean loss validation")
     plt.legend()
 
     plt.figure()
     for i in range(len(mean_mv)):
-        plt.plot(mean_mv[i], label="Accuracy {}".format(name_models[i]))
+        plt.plot(mean_mv[i], label="Accuracy {} {}".format(name_models[i], titles[i]),
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
     plt.grid(True)
     plt.title("Mean accuracy validation")
     plt.legend()

@@ -2,17 +2,17 @@ import numpy as np
 import math
 np.seterr(all='warn')
 
-# path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/Random_Delay_Large/"
-path = "/media/rico/Data/TU/thesis/data/Random_Delay_Large/"
+path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/Random_Delay_Large/"
+# path = "/media/rico/Data/TU/thesis/data/Random_Delay_Large/"
 traces_path = "{}/{}/".format(path, "traces")
 model_path = "{}/{}/".format(path, "Value")
 
 traces_filename = traces_path + "/traces_{}.csv.npy"
 model_filename = model_path + "model_{}.csv.npy"
 key_guesses_filename = model_path + "key_guesses_{}.csv.npy"
-result_filename = path + "correlation"
+result_filename = path + "correlation_{}"
 
-num_traces = 1000000
+num_traces = 2000000
 num_features = 6250
 
 
@@ -52,6 +52,7 @@ for step_index in range(num_steps):
     print("Opened {} with shape {}".format(traces_filename.format(file_index), traces.shape))
 
     for feature_index in range(num_features):
+        # print("Starting witg index: {}".format(feature_index))
         for subkey in range(256):
             # Select the correct data
             x = traces[:, feature_index]
@@ -81,6 +82,6 @@ for step_index in range(num_steps):
 
             correlation[step_index][subkey][feature_index] = corr
     print("Saving result")
-    np.save(result_filename, correlation)
+    np.save(result_filename.format((step_index+1) * step_size), correlation[step_index])
     print("Done saving result")
 
