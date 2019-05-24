@@ -245,7 +245,7 @@ def load_ascad_train_traces(args):
     print(args)
     traces_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args['traces_path'], args['sub_key_index'], args['desync'])
     print('Loading {}'.format(traces_file))
-    (x_train, y_train), (_, _), (metadata_profiling, metadata_attack) = load_ascad(traces_file, load_metadata=True)
+    (x_train, y_train), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
 
     plain = None
     if args['domain_knowledge']:
@@ -264,6 +264,33 @@ def load_ascad_train_traces(args):
         y_train = np.array([HW[val] for val in y_train])
 
     return x_train, y_train, plain
+
+
+def load_ascad_test_traces(args):
+    print(args)
+    traces_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args['traces_path'], args['sub_key_index'], args['desync'])
+    print('Loading {}'.format(traces_file))
+    (_, _), (x_test, y_test), (_, metadata_attack) = load_ascad(traces_file, load_metadata=True)
+
+    plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
+
+    if args['unmask']:
+        print(metadata_attack[:]['masks'][args['sub_key_index'] - 2])
+        y_test = np.array(
+            [y_test[i] ^ metadata_attack[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_test))])
+        # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
+
+    # Convert values to hamming weight if asked for
+    if args['use_hw']:
+        y_test = np.array([HW[val] for val in y_test])
+
+    key = metadata_attack[0]['key'][args['sub_key_index']]
+    key_guesses = np.load('{}/ASCAD/key_guesses_{}masked_{}.npy'.format(
+        args['traces_path'],
+        'un' if args['unmask'] else '',
+        args['desync']
+    ))
+    return x_test, y_test, plain, key, key_guesses
 
 
 def load_aes_hd(args):
@@ -382,22 +409,22 @@ def load_random_delay_large(args):
         # Begin step
         if step == start_step:
             # There is only one step
-            if step == total_steps-1:
-                x_train[0:args['size']] = x[args['start'] % traces_step:(args['start']+args['size']) % traces_step]
-                y_train[0:args['size']] = y[args['start'] % traces_step:(args['start']+args['size']) % traces_step]
+            if step == total_steps - 1:
+                x_train[0:args['size']] = x[args['start'] % traces_step:(args['start'] + args['size']) % traces_step]
+                y_train[0:args['size']] = y[args['start'] % traces_step:(args['start'] + args['size']) % traces_step]
             # More steps to come
             else:
-                x_train[0:traces_step-(args['start'] % traces_step)] = x[(args['start'] % traces_step):traces_step]
-                y_train[0:traces_step-(args['start'] % traces_step)] = y[(args['start'] % traces_step):traces_step]
-                index_start = traces_step-(args['start'] % traces_step)
+                x_train[0:traces_step - (args['start'] % traces_step)] = x[(args['start'] % traces_step):traces_step]
+                y_train[0:traces_step - (args['start'] % traces_step)] = y[(args['start'] % traces_step):traces_step]
+                index_start = traces_step - (args['start'] % traces_step)
         # Last step
-        elif step == total_steps-1:
-            x_train[index_start:args['size']] = x[0:args['size']-index_start]
-            y_train[index_start:args['size']] = y[0:args['size']-index_start]
+        elif step == total_steps - 1:
+            x_train[index_start:args['size']] = x[0:args['size'] - index_start]
+            y_train[index_start:args['size']] = y[0:args['size'] - index_start]
         # More steps to come
         else:
-            x_train[index_start:index_start+traces_step] = x[0:traces_step]
-            y_train[index_start:index_start+traces_step] = y[0:traces_step]
+            x_train[index_start:index_start + traces_step] = x[0:traces_step]
+            y_train[index_start:index_start + traces_step] = y[0:traces_step]
             index_start += traces_step
     return x_train, y_train, None
 
@@ -415,18 +442,18 @@ def load_random_delay_large_key_guesses(traces_path, start, size):
 
         # Begin step
         if step == start_step:
-            if step == total_steps-1:
-                key_guesses[0:size] = step_key_guesses[start % traces_step:(start+size) % traces_step]
+            if step == total_steps - 1:
+                key_guesses[0:size] = step_key_guesses[start % traces_step:(start + size) % traces_step]
             # More steps to come
             else:
-                key_guesses[0:traces_step-(start % traces_step)] = step_key_guesses[(start % traces_step):traces_step]
-                index_start = traces_step-(start % traces_step)
+                key_guesses[0:traces_step - (start % traces_step)] = step_key_guesses[(start % traces_step):traces_step]
+                index_start = traces_step - (start % traces_step)
         # Last step
-        elif step == total_steps-1:
-            key_guesses[index_start:size] = step_key_guesses[0:size-index_start]
+        elif step == total_steps - 1:
+            key_guesses[index_start:size] = step_key_guesses[0:size - index_start]
         # More steps to come
         else:
-            key_guesses[index_start:index_start+traces_step] = step_key_guesses[0:traces_step]
+            key_guesses[index_start:index_start + traces_step] = step_key_guesses[0:traces_step]
             index_start += traces_step
     return key_guesses.astype(np.int)
 
@@ -442,6 +469,45 @@ def load_data_generic(args):
 
     y_train = np.reshape(y_train, (args.get('size')))
     return x_train, y_train, None
+
+
+def load_ascad_normalized(args):
+    print(args)
+
+    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}.csv.npy'.format
+                      (args['traces_path'], str(args['data_set']),
+                       args['train_size'], args['validation_size']))
+    y_train = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                              'un' if args['unmask'] else ''))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    y_train = np.reshape(y_train, (args.get('size')))
+    if args['use_hw']:
+        y_train = np.array([HW[val] for val in y_train])
+    return x_train, y_train, None
+
+
+def load_ascad_normalized_test_traces(args):
+    print(args)
+
+    x = np.load('{}/{}/traces/traces_normalized_t{}_v{}.csv.npy'.format
+                (args['traces_path'], str(args['data_set']),
+                 args['train_size'], args['validation_size']))
+    y = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                        'un' if args['unmask'] else ''))
+    key_guesses = np.load('{}/{}/Value/key_guesses_{}masked_{}.npy'.format(args['traces_path'], str(args['data_set']),
+                                                                           'un' if args['unmask'] else '',
+                                                                           args['desync']))
+    x_test = x[args['start']:args['start'] + args['size']]
+    y_test = y[args['start']:args['start'] + args['size']]
+
+    # Convert values to hamming weight if asked for
+    if args['use_hw']:
+        y_test = np.array([HW[val] for val in y_test])
+
+    return x_test, y_test, key_guesses, 224
 
 
 def load_random_delay_dk(args):
@@ -474,6 +540,7 @@ class DataSet(Enum):
     RANDOM_DELAY_LARGE = 5
     RANDOM_DELAY_DK = 6
     RANDOM_DELAY_NORMALIZED = 7
+    ASCAD_NORMALIZED = 8
 
     def __str__(self):
         if self.value == 1:
@@ -490,6 +557,8 @@ class DataSet(Enum):
             return "Random_Delay_DK"
         elif self.value == 7:
             return "Random_Delay_Normalized"
+        elif self.value == 8:
+            return "ASCAD_Normalized"
         else:
             print("ERROR {}".format(self.value))
 
@@ -508,7 +577,8 @@ def load_data_set(data_set):
              DataSet.RANDOM_DELAY: load_random_delay_npy,
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
              DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
-             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic}
+             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
+             DataSet.ASCAD_NORMALIZED: load_ascad_normalized}
     return table[data_set]
 
 

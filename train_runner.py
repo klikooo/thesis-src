@@ -20,6 +20,8 @@ def run(args):
                  "sub_key_index": args.subkey_index,
                  "raw_traces": args.raw_traces,
                  "size": args.train_size + args.validation_size,
+                 "train_size": args.train_size,
+                 "validation_size": args.validation_size,
                  "domain_knowledge": True,
                  "desync": args.desync,
                  "use_noise_data": args.use_noise_data,

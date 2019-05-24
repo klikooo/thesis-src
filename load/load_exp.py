@@ -16,15 +16,15 @@ args = util.EmptySpace()
 args.use_hw = False
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
-args.train_size = 20000
-args.epochs = 50
+args.train_size = 45000
+args.epochs = 5
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY_LARGE
-args.l2_penalty = 0.05
+args.unmask = False  # False if sub_kezy_index < 2 else True
+args.data_set = util.DataSet.ASCAD_NORMALIZED
+args.l2_penalty = 0.005
 args.desync = 0
 args.init_weights = "kaiming"
 
@@ -33,11 +33,11 @@ args.init_weights = "kaiming"
 ###################
 runs = [x for x in range(1)]
 rank_step = 1
-kernel_sizes = [3]
-num_layers = [2]
+kernel_sizes = [15]
+num_layers = [4]
 channel_sizes = [32]
 
-network_names = ['DenseNet']
+network_names = ['VGGNumLayers']
 
 ##################
 # PLOT ARGUMENTS #
@@ -142,7 +142,7 @@ plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker), markevery=0.1)
     plt.legend()
 
     # plt.figure()

@@ -24,18 +24,18 @@ sub_key_index = 2
 rank_step = 1
 
 unmask = True  # False if sub_kezy_index < 2 else True
-kernel_sizes = [100, 50, 26, 21, 17, 15]
-num_layers = [1, 2, 3, 4, 5, 6]
+kernel_sizes = [10, 5, 7, 3]
+num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
 l2_penalty = 0.05
-init_weights = ""
+init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
-    network_1: 2,
+    network_1: 4,
     # 'KernelBigVGGMDK': {}
 }
 data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
@@ -95,14 +95,25 @@ for k, v in network_settings.items():
 #     "plot_marker": "*",
 # })
 network_settings[network_1][0].update({
-    "l2_penalty": 0.05,
-    "title": " 0.05",
+    # "kernel_sizes": [],
+    "num_layers": [5, 5, 5, 5],
+    "title": " 5 layers",
     "plot_marker": " "
 })
 network_settings[network_1][1].update({
-    "l2_penalty": 0.005,
-    "title": " 0.005",
+    "num_layers": [6, 6, 6, 6],
+    "title": " 6 layers",
     "plot_marker": "o"
+})
+network_settings[network_1][2].update({
+    "num_layers": [7, 7, 7, 7],
+    "title": " 7 layers",
+    "plot_marker": "*"
+})
+network_settings[network_1][3].update({
+    "num_layers": [8, 8, 8, 8],
+    "title": " 8 layers",
+    "plot_marker": "."
 })
 
 

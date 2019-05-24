@@ -16,7 +16,7 @@ def plot(num):
 
     plt.figure()
     plt.title("Correlation of first {} traces".format(num))
-    plt.plot(result)
+    # plt.plot(result)
     real = np.array(result)[:, real_key]
     plt.plot(real, label="Real key", marker="*", color='gold', markevery=0.1)
     plt.legend()
@@ -24,8 +24,10 @@ def plot(num):
 
 
 for i in range(200):
-    continue_plotting = plot((i + 1) * 20000)
-    if not continue_plotting:
+    res = plot((i + 1) * 20000)
+    # if res:
+    #     break
+    if not res:
         break
 
 plt.show()

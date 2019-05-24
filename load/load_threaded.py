@@ -51,31 +51,24 @@ def get_ranks(args, network_name, model_params):
 
 def load_data(args, network_name):
     _x_attack, _y_attack, _real_key, _dk_plain, _key_guesses = None, None, None, None, None
+    argz = {'use_hw': args.use_hw,
+            'traces_path': args.traces_path,
+            'raw_traces': args.raw_traces,
+            'start': args.train_size + args.validation_size,
+            'size': args.attack_size,
+            'train_size': args.train_size,
+            'validation_size': args.validation_size,
+            'domain_knowledge': True,
+            'use_noise_data': args.use_noise_data,
+            'data_set': args.data_set,
+            'sub_key_index': args.subkey_index,
+            'desync': args.desync,
+            'unmask': args.unmask}
     if args.data_set == util.DataSet.ASCAD:
-        args.trace_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args.traces_path, args.subkey_index, args.desync)
-        (_, _), (_x_attack, _y_attack), (_metadata_profiling, _metadata_attack) = load_ascad(
-            args.trace_file, load_metadata=True)
-        _key_guesses = util.load_csv('{}/ASCAD/key_guesses.csv'.format(args.traces_path),
-                                     delimiter=' ',
-                                     dtype=np.int,
-                                     start=0,
-                                     size=args.attack_size)
-        # Manipulate the data
-        _x_attack = _x_attack[:args.attack_size]
-        _y_attack = _y_attack[:args.attack_size]
-        if args.unmask:
-            if args.use_hw:
-                _y_attack = np.array([_y_attack[i] ^ _metadata_attack[i]['masks'][0] for i in range(len(_y_attack))])
-            else:
-                _y_attack = np.array(
-                    [util.HW[_y_attack[i] ^ _metadata_attack[i]['masks'][0]] for i in range(len(_y_attack))])
-        _real_key = _metadata_attack[0]['key'][args.subkey_index]
-
-        # Load additional plaintexts
-        if require_domain_knowledge(network_name):
-            _dk_plain = _metadata_attack[:]['plaintext'][:, args.subkey_index]
-            _dk_plain = hot_encode(_dk_plain, 9 if args.use_hw else 256, dtype=np.float)
-    if args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
+        _x_attack, _y_attack, _plain, _real_key, _key_guesses = util.load_ascad_test_traces(argz)
+    elif args.data_set == util.DataSet.ASCAD_NORMALIZED:
+        _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
+    elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
         ###################
         # Load the traces #
         ###################
@@ -187,6 +180,6 @@ def run_load(args):
                 util.loop_at_least_once(args.num_layers, layers_lambda, lambda: (
                     print(model_params),
                     get_ranks(args, net_name, model_params))
-                                    ))
+                                        ))
                                     )
         ))
