@@ -17,16 +17,16 @@ args.use_hw = False
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
 args.train_size = 45000
-args.epochs = 5
+args.epochs = 80
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = False  # False if sub_kezy_index < 2 else True
+args.unmask = False
 args.data_set = util.DataSet.ASCAD_NORMALIZED
-args.l2_penalty = 0.005
-args.desync = 0
-args.init_weights = "kaiming"
+args.l2_penalty = 0
+args.desync = 50
+args.init_weights = ""
 
 ###################
 # MODEL ARGUMENTS #
@@ -37,7 +37,7 @@ kernel_sizes = [15]
 num_layers = [4]
 channel_sizes = [32]
 
-network_names = ['VGGNumLayers']
+network_names = ['DenseNet']
 
 ##################
 # PLOT ARGUMENTS #

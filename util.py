@@ -474,9 +474,9 @@ def load_data_generic(args):
 def load_ascad_normalized(args):
     print(args)
 
-    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}.csv.npy'.format
+    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
                       (args['traces_path'], str(args['data_set']),
-                       args['train_size'], args['validation_size']))
+                       args['train_size'], args['validation_size'], args['desync']))
     y_train = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
                                                               'un' if args['unmask'] else ''))
 
@@ -492,16 +492,17 @@ def load_ascad_normalized(args):
 def load_ascad_normalized_test_traces(args):
     print(args)
 
-    x = np.load('{}/{}/traces/traces_normalized_t{}_v{}.csv.npy'.format
+    x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
                 (args['traces_path'], str(args['data_set']),
-                 args['train_size'], args['validation_size']))
+                 args['train_size'], args['validation_size'], args['desync']))
     y = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
                                                         'un' if args['unmask'] else ''))
-    key_guesses = np.load('{}/{}/Value/key_guesses_{}masked_{}.npy'.format(args['traces_path'], str(args['data_set']),
-                                                                           'un' if args['unmask'] else '',
-                                                                           args['desync']))
+    key_guesses = np.load('{}/{}/Value/key_guesses_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                                        'un' if args['unmask'] else ''))
+
     x_test = x[args['start']:args['start'] + args['size']]
-    y_test = y[args['start']:args['start'] + args['size']]
+    y_test = y[50000:50000 + args['size']]
+    print("y shape {}".format(y.shape))
 
     # Convert values to hamming weight if asked for
     if args['use_hw']:

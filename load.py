@@ -16,7 +16,7 @@ if __name__ == "__main__":
     spread_factor = 1
     runs = [x for x in range(1)]
     train_size = 45000
-    epochs = 5
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['VGGNumLayers']
+    network_names = ['DenseNet']
     desync = 0
     num_exps = 10
     raw_traces = True

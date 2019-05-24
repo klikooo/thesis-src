@@ -6,7 +6,7 @@ import util
 path = "/media/rico/Data/TU/thesis/data/"
 path_ascad = path + "ASCAD/"
 
-desync = 0
+desync = 100
 subkey = 2
 
 traces_file = '{}/ASCAD_{}_desync{}.h5'.format(path_ascad, subkey, desync)
@@ -35,26 +35,29 @@ new_data = np.append(new_data, x_test, axis=0)
 
 # Save the traces
 path_normalized = path + "ASCAD_Normalized/"
-normalized_traces_filename = path_normalized + "traces/" + "traces_normalized_t{}_v{}.csv.npy".format(train_size,
-                                                                                                      validation_size)
+normalized_traces_filename = path_normalized + "traces/" + "traces_normalized_t{}_v{}_{}.csv.npy".format(
+    train_size,
+    validation_size,
+    desync)
 np.save(normalized_traces_filename, new_data)
 
-# Save the masked y values
-y_train_masked = y_train_traces
-y_test_masked = y_test_traces
-y_filename_masked = path_normalized + "Value/model_masked_{}".format(subkey)
+# Only save the y values when we have desync 0
+if desync == 0:
+    # Save the masked y values
+    y_train_masked = y_train_traces
+    y_test_masked = y_test_traces
+    y_filename_masked = path_normalized + "Value/model_masked_{}".format(subkey)
 
-y_masked = y_train_masked
-y_masked = np.append(y_masked, y_test_masked, axis=0)
-np.save(y_filename_masked, y_masked)
+    y_masked = y_train_masked
+    y_masked = np.append(y_masked, y_test_masked, axis=0)
+    np.save(y_filename_masked, y_masked)
 
+    y_train_unmasked = np.array([y_train_traces[i] ^ metadata_profiling[i]['masks'][subkey - 2] for i in range(50000)])
+    y_test_unmasked = np.array([y_test_traces[i] ^ metadata_attack[i]['masks'][subkey - 2] for i in range(10000)])
+    y_filename_unmasked = path_normalized + "Value/model_unmasked"
 
-y_train_unmasked = np.array([y_train_traces[i] ^ metadata_profiling[i]['masks'][subkey - 2] for i in range(50000)])
-y_test_unmasked = np.array([y_test_traces[i] ^ metadata_attack[i]['masks'][subkey - 2] for i in range(10000)])
-y_filename_unmasked = path_normalized + "Value/model_unmasked_{}".format(subkey)
-
-y_unmasked = y_train_unmasked
-y_unmasked = np.append(y_unmasked, y_test_unmasked, axis=0)
-np.save(y_filename_unmasked, y_unmasked)
+    y_unmasked = y_train_unmasked
+    y_unmasked = np.append(y_unmasked, y_test_unmasked, axis=0)
+    np.save(y_filename_unmasked, y_unmasked)
 
 

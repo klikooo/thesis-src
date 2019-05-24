@@ -15,8 +15,8 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
-train_size = 40000
+runs = [x for x in range(1)]
+train_size = 45000
 epochs = 75
 batch_size = 100
 lr = 0.0001
@@ -29,37 +29,29 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.05
+l2_penalty = 0
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
-    network_1: 9,
+    network_1: 3,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
+data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
 show_losses = True
-show_acc = False
 show_losses_all = False
 show_only_mean = True
 show_ge = False
 experiment = False
-show_loss = False
+show_acc = True
+show_loss = True
 colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
-plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
-# "8"	m11	octagon
-# "s"	m12	square
-# "p"	m13	pentagon
-# "P"	m23	plus (filled)
-# "*"	m14	star
-# "h"	m15	hexagon1
-# "H"	m16	hexagon2
-
+plot_markers = [" ", "*", ".", "o", "+", "D"]
 
 ###########################
 # SETTINGS FOR EACH MODEL #
@@ -100,77 +92,26 @@ for k, v in network_settings.items():
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
 network_settings[network_1][0].update({
-    "kernel_sizes": [100, 50, 25, 20, 15],
-    "num_layers": [1, 1, 1, 1, 1],
-    "l2_penalty": 0.005,
-    "title": " 1 layers l2 0.005",
+    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "num_layers": [1, 2, 3, 4, 5, 6],
+    "l2_penalty": 0.05,
+    "title": " l2 0.05 different kernels",
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
-    "kernel_sizes": [50, 25, 20, 15, 10],
-    "num_layers": [2, 2, 2, 2, 2],
-    "l2_penalty": 0.005,
-    "title": " 2 layers l2 0.005",
-    "plot_marker": "*",
-
+    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "num_layers": [1, 1, 1, 1, 1, 1],
+    "l2_penalty": 0.05,
+    "title": " l2 0.05 1 layer",
+    "plot_marker": " ",
 })
 network_settings[network_1][2].update({
-    "kernel_sizes": [26, 20, 15, 10, 7],
-    "num_layers": [3, 3, 3, 3, 3],
+    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "num_layers": [1, 2, 3, 4, 5, 6],
     "l2_penalty": 0.005,
-    "title": " 3 layers l2 0.005",
-    "plot_marker": ".",
-
+    "title": " l2 0.005 different kernels",
+    "plot_marker": " ",
 })
-network_settings[network_1][3].update({
-    "kernel_sizes": [21, 15, 10, 7, 5],
-    "num_layers": [4, 4, 4, 4, 4],
-    "l2_penalty": 0.005,
-    "title": " 4 layers l2 0.005",
-    "plot_marker": "o",
-
-})
-network_settings[network_1][4].update({
-    "kernel_sizes": [17, 10, 5, 7, 3],
-    "num_layers": [5] * 5,
-    "l2_penalty": 0.005,
-    "title": " 5 layers l2 0.005",
-    "plot_marker": "+",
-
-})
-network_settings[network_1][5].update({
-    "kernel_sizes": [15, 10, 7, 5, 3],
-    "num_layers": [6] * 5,
-    "l2_penalty": 0.005,
-    "title": " 6 layers l2 0.005",
-    "plot_marker": "8",
-
-})
-network_settings[network_1][6].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [7] * 4,
-    "l2_penalty": 0.005,
-    "title": " 7 layers l2 0.005",
-    "plot_marker": "s",
-
-})
-network_settings[network_1][7].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [8] * 4,
-    "l2_penalty": 0.005,
-    "title": " 8 layers l2 0.005",
-    "plot_marker": "p",
-
-})
-network_settings[network_1][8].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [9] * 4,
-    "l2_penalty": 0.005,
-    "title": " 9 layers l2 0.005",
-    "plot_marker": "P",
-
-})
-
 
 #####################################################################################
 
@@ -239,10 +180,12 @@ for network_name, network_setting in network_settings.items():
         name_models.append(get_save_name(network_name, model_params))
         n_settings.append(net_setting)
 
-        (lta, lva, ltl, lvl) = loss_acc
+        (lvl, ltl, lta, lva) = loss_acc
+        # loss_vali, loss_train, acc_train, acc_vali
 
         net_setting['ge_x'].append(ge_x[0])
         net_setting['ge_y'].append(mean_y)
+
         net_setting['ta'].append(np.mean(lta, axis=0))
         net_setting['va'].append(np.mean(lva, axis=0))
         net_setting['tl'].append(np.mean(ltl, axis=0))
@@ -268,115 +211,115 @@ for network_name, network_setting in network_settings.items():
 ###############################################
 line_marker = itertools.cycle(('+', '.', 'o', '*'))
 # colors = ["b", "g", "r", "c", "m", "y", "b"]
-if show_ge:
-    for i in range(len(rank_mean_y)):
-        plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
-        plt.xlabel('Number of traces', fontsize=16)
-        plt.ylabel('Guessing Entropy', fontsize=16)
-        plt.grid(True)
-        axes = plt.gca()
-        axes.set_ylim([0, 256])
-
-        # Plot the results
-        for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot(x, y)
-        figure = plt.gcf()
-        plt.figure()
-        figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
-
-###############################################
-# Plot the mean of the runs of a single model #
-###############################################
-plt.xlabel('Number of traces', fontsize=16)
-plt.ylabel('Guessing Entropy', fontsize=16)
-plt.grid(True)
-axes = plt.gca()
-axes.set_ylim([0, 256])
-for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], n_settings[i]['title']),
-             marker=n_settings[i]['plot_marker'], color=plot_colors[i])
-    plt.legend()
-
-    # plt.figure()
-figure = plt.gcf()
-figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
-
-################################
-# Show loss and accuracy plots #
-################################
-if show_losses or show_acc:
-    mean_mv = []
-    mean_lv = []
-
-    ############
-    # ACCURACY #
-    ############
-    for i in range(len(rank_mean_y)):
-        (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
-        if not show_only_mean:
-            plt.figure()
-            for r in range(len(loss_vali)):
-                plt.title('Accuracy during training {}'.format(name_models[i]))
-                plt.xlabel('Epoch')
-                plt.ylabel('Accuracy')
-                plt.grid(True)
-                # Plot the accuracy
-                # for x, y in zip(ranks_x[i], ranks_y[i]):
-                # pdb.set_trace()
-                plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
-                plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
-                plt.legend()
-        mt = np.mean(acc_train, axis=0) * 100
-        mv = np.mean(acc_vali, axis=0) * 100
-        if not show_only_mean:
-            plt.plot(mt, color='blue')
-            plt.plot(mv, color='red')
-        mean_mv.append(mv)
-
-    ########
-    # LOSS #
-    ########
-    for i in range(len(rank_mean_y)):
-        (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
-        if not show_only_mean:
-            plt.figure()
-            for r in range(len(loss_vali)):
-                plt.title('Loss during training {}'.format(name_models[i]))
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.grid(True)
-                # Plot the accuracy
-                # for x, y in zip(ranks_x[i], ranks_y[i]):
-                plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
-                plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
-                plt.legend()
-
-        lt = np.mean(loss_train, axis=0)
-        lv = np.mean(loss_vali, axis=0)
-        if not show_only_mean:
-            plt.plot(lt, color='blue', label='Train')
-            plt.plot(lv, color='red', label='Validation')
-        mean_lv.append(lv)
-
-    ##############
-    # SHOW MEANS #
-    ##############
-    plt.figure()
-    for i in range(len(mean_lv)):
-        plt.plot(mean_lv[i], label="Loss {} {}".format(name_models[i], n_settings[i]['title']),
-                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
-
-    plt.grid(True)
-    plt.title("Mean loss validation")
-    plt.legend()
-
-    plt.figure()
-    for i in range(len(mean_mv)):
-        plt.plot(mean_mv[i], label="Accuracy {} {}".format(name_models[i], n_settings[i]['title']),
-                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
-    plt.grid(True)
-    plt.title("Mean accuracy validation")
-    plt.legend()
+# if show_ge:
+#     for i in range(len(rank_mean_y)):
+#         plt.title('Performance of {}'.format(name_models[i]), fontsize=20)
+#         plt.xlabel('Number of traces', fontsize=16)
+#         plt.ylabel('Guessing Entropy', fontsize=16)
+#         plt.grid(True)
+#         axes = plt.gca()
+#         axes.set_ylim([0, 256])
+#
+#         # Plot the results
+#         for x, y in zip(ranks_x[i], ranks_y[i]):
+#             plt.plot(x, y)
+#         figure = plt.gcf()
+#         plt.figure()
+#         figure.savefig('/home/rico/Pictures/{}.png'.format(name_models[i]), dpi=100)
+#
+# ###############################################
+# # Plot the mean of the runs of a single model #
+# ###############################################
+# plt.xlabel('Number of traces', fontsize=16)
+# plt.ylabel('Guessing Entropy', fontsize=16)
+# plt.grid(True)
+# axes = plt.gca()
+# axes.set_ylim([0, 256])
+# for i in range(len(rank_mean_y)):
+#     plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], n_settings[i]['title']),
+#              marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+#     plt.legend()
+#
+#     # plt.figure()
+# figure = plt.gcf()
+# figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
+#
+# ################################
+# # Show loss and accuracy plots #
+# ################################
+# if show_losses or show_acc:
+#     mean_mv = []
+#     mean_lv = []
+#
+#     ############
+#     # ACCURACY #
+#     ############
+#     for i in range(len(rank_mean_y)):
+#         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
+#         if not show_only_mean:
+#             plt.figure()
+#             for r in range(len(loss_vali)):
+#                 plt.title('Accuracy during training {}'.format(name_models[i]))
+#                 plt.xlabel('Epoch')
+#                 plt.ylabel('Accuracy')
+#                 plt.grid(True)
+#                 # Plot the accuracy
+#                 # for x, y in zip(ranks_x[i], ranks_y[i]):
+#                 # pdb.set_trace()
+#                 plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+#                 plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
+#                 plt.legend()
+#         mt = np.mean(acc_train, axis=0) * 100
+#         mv = np.mean(acc_vali, axis=0) * 100
+#         if not show_only_mean:
+#             plt.plot(mt, color='blue')
+#             plt.plot(mv, color='red')
+#         mean_mv.append(mv)
+#
+#     ########
+#     # LOSS #
+#     ########
+#     for i in range(len(rank_mean_y)):
+#         (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
+#         if not show_only_mean:
+#             plt.figure()
+#             for r in range(len(loss_vali)):
+#                 plt.title('Loss during training {}'.format(name_models[i]))
+#                 plt.xlabel('Epoch')
+#                 plt.ylabel('Loss')
+#                 plt.grid(True)
+#                 # Plot the accuracy
+#                 # for x, y in zip(ranks_x[i], ranks_y[i]):
+#                 plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+#                 plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
+#                 plt.legend()
+#
+#         lt = np.mean(loss_train, axis=0)
+#         lv = np.mean(loss_vali, axis=0)
+#         if not show_only_mean:
+#             plt.plot(lt, color='blue', label='Train')
+#             plt.plot(lv, color='red', label='Validation')
+#         mean_lv.append(lv)
+#
+#     ##############
+#     # SHOW MEANS #
+#     ##############
+#     plt.figure()
+#     for i in range(len(mean_lv)):
+#         plt.plot(mean_lv[i], label="Loss {} {}".format(name_models[i], n_settings[i]['title']),
+#                  marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+#
+#     plt.grid(True)
+#     plt.title("Mean loss validation")
+#     plt.legend()
+#
+#     plt.figure()
+#     for i in range(len(mean_mv)):
+#         plt.plot(mean_mv[i], label="Accuracy {} {}".format(name_models[i], n_settings[i]['title']),
+#                  marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+#     plt.grid(True)
+#     plt.title("Mean accuracy validation")
+#     plt.legend()
 
 
 for model_name, model_settings in network_settings.items():
@@ -408,7 +351,7 @@ for model_name, model_settings in network_settings.items():
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ta'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
                          color='orange', marker=plot_markers[i])
-                plt.plot(model_setting['va'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
+                plt.plot(model_setting['va'][i] * 100, label="Validation {}".format(model_setting['line_title'][i]),
                          color='green', marker=plot_markers[i])
             plt.legend()
 
@@ -419,9 +362,9 @@ for model_name, model_settings in network_settings.items():
             plt.ylabel('Loss')
             plt.grid(True)
             for i in range(len(model_setting['ge_x'])):
-                plt.plot(model_setting['tl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
+                plt.plot(model_setting['tl'][i], label="Train {}".format(model_setting['line_title'][i]),
                          color='orange', marker=plot_markers[i])
-                plt.plot(model_setting['vl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
+                plt.plot(model_setting['vl'][i], label="Validation {}".format(model_setting['line_title'][i]),
                          color='green', marker=plot_markers[i])
             plt.legend()
 

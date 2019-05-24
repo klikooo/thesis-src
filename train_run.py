@@ -13,17 +13,17 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD
+    data_set = DataSet.ASCAD_NORMALIZED
     network_names = ["DenseNet"]
     use_hw = False
     runs = 1
-    train_sizes = [1000]
-    epochs = 5
+    train_sizes = [45000]
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False  # Only matters for ASCAD
+    unmask = True  # Only matters for ASCAD
     raw_traces = True
     desync = 0
     validation_size = 1000
