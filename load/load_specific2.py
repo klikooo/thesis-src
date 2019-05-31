@@ -16,8 +16,8 @@ use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(1)]
-train_size = 40000
-epochs = 15
+train_size = 45000
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
@@ -26,25 +26,24 @@ rank_step = 1
 unmask = True  # False if sub_kezy_index < 2 else True
 kernel_sizes = [20]
 num_layers = [2]
-channel_sizes = [16]
-l2_penalty = 0.05
+channel_sizes = [32]
+l2_penalty = 0.005
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'VGGNumLayers': 2,
+    'VGGNumLayers': 4,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.RANDOM_DELAY
+data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-show_losses = True
+show_losses = False
 show_acc = False
 show_losses_all = False
 show_only_mean = True
-experiment = True
-
+experiment = False
 ###########################
 # SETTINGS FOR EACH MODEL #
 ###########################
@@ -74,11 +73,22 @@ for k, v in network_settings.items():
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
 network_settings['VGGNumLayers'][0].update({
-    "data_set": util.DataSet.RANDOM_DELAY
+    "kernel_sizes": [100, 50, 21, 17, 15, ], #Missing 25,10,5
+    "num_layers": [1]
 })
 network_settings['VGGNumLayers'][1].update({
-    "data_set": util.DataSet.RANDOM_DELAY_NORMALIZED
+    "kernel_sizes": [100, 50, 21, 17, 15], #Missing 25,10,5
+    "num_layers": [2]
 })
+network_settings['VGGNumLayers'][2].update({
+    "kernel_sizes": [100, 50, 21, 17, 15],
+    "num_layers": [3]
+})
+network_settings['VGGNumLayers'][3].update({
+    "kernel_sizes": [100, 50, 21, 17, 15, ],
+    "num_layers": [4]
+})
+
 
 #####################################################################################
 

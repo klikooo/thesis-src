@@ -28,6 +28,7 @@ from models.CosNet import CosNet
 from models.Spread.DenseNet import DenseNet
 from models.Spread.DenseSpreadNet import DenseSpreadNet
 from models.SingleConv import SingleConv
+from models.Spread.SpreadFirstLayer import SpreadFirstLayer
 from models.Spread.SpreadNet import SpreadNet
 from models.Spread.SpreadV2 import SpreadV2
 from models.VGG.DK.KernelBigVGGDK import KernelBigVGGDK
@@ -62,7 +63,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2,
           NumLayersVGG2, KernelBigVGGDK, KernelBigVGGMDK, NumLayersVGG3,
           KernelBigTest, KernelBigTestM, KernelBigAlex, KernelBigAlexBN,
-          VGGNumLayers, VGGNumBlocks]
+          VGGNumLayers, VGGNumBlocks, SpreadFirstLayer]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 

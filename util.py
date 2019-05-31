@@ -511,6 +511,27 @@ def load_ascad_normalized_test_traces(args):
     return x_test, y_test, key_guesses, 224
 
 
+def load_sim_mask_test_traces(args):
+    print(args)
+
+    x = np.load('{}/{}/traces/traces_complete.csv.npy'.format
+                (args['traces_path'], str(args['data_set'])))
+    y = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+    key_guesses = np.load('{}/{}/Value/key_guesses_ALL_transposed.csv.npy'.format(args['traces_path'],
+                                                                                  str(args['data_set'])))
+
+    x_test = x[args['start']:args['start'] + args['size']]
+    y_test = y[args['start']:args['start'] + args['size']]
+    # print("y shape {}".format(y.shape))
+
+    # Convert values to hamming weight if asked for
+    # if args['use_hw']:
+    #     y_test = np.array([HW[val] for val in y_test])
+
+    return x_test, y_test, key_guesses, 23
+
+
+
 def load_random_delay_dk(args):
     print(args)
 
@@ -542,6 +563,7 @@ class DataSet(Enum):
     RANDOM_DELAY_DK = 6
     RANDOM_DELAY_NORMALIZED = 7
     ASCAD_NORMALIZED = 8
+    SIM_MASK = 9
 
     def __str__(self):
         if self.value == 1:
@@ -560,6 +582,8 @@ class DataSet(Enum):
             return "Random_Delay_Normalized"
         elif self.value == 8:
             return "ASCAD_Normalized"
+        elif self.value == 9:
+            return "Simulated_Mask"
         else:
             print("ERROR {}".format(self.value))
 
@@ -579,7 +603,8 @@ def load_data_set(data_set):
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
              DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
              DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
-             DataSet.ASCAD_NORMALIZED: load_ascad_normalized}
+             DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
+             DataSet.SIM_MASK: load_data_generic}
     return table[data_set]
 
 
@@ -677,6 +702,10 @@ def format_bytes(size):
         size /= power
         n += 1
     return size, power_labels[n] + 'bytes'
+
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 class EmptySpace(object):

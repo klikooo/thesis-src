@@ -13,19 +13,19 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = False
+args.use_hw = True
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
-args.train_size = 45000
+args.train_size = 40000
 args.epochs = 80
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
 args.unmask = False
-args.data_set = util.DataSet.ASCAD_NORMALIZED
-args.l2_penalty = 0
-args.desync = 50
+args.data_set = util.DataSet.SIM_MASK
+args.l2_penalty = 0.005
+args.desync = 0
 args.init_weights = ""
 
 ###################
@@ -33,11 +33,11 @@ args.init_weights = ""
 ###################
 runs = [x for x in range(1)]
 rank_step = 1
-kernel_sizes = [15]
-num_layers = [4]
+kernel_sizes = [3]
+num_layers = [2]
 channel_sizes = [32]
 
-network_names = ['DenseNet']
+network_names = ['VGGNumLayers']
 
 ##################
 # PLOT ARGUMENTS #

@@ -1,6 +1,6 @@
 from models.Spread.SpreadNet import SpreadNet
 
-from util import save_model, load_data_set, save_loss_acc, generate_folder_name
+from util import save_model, load_data_set, save_loss_acc, generate_folder_name, count_parameters
 from train import train, train_dk2
 
 import numpy as np

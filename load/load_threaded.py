@@ -64,10 +64,13 @@ def load_data(args, network_name):
             'sub_key_index': args.subkey_index,
             'desync': args.desync,
             'unmask': args.unmask}
+
     if args.data_set == util.DataSet.ASCAD:
         _x_attack, _y_attack, _plain, _real_key, _key_guesses = util.load_ascad_test_traces(argz)
     elif args.data_set == util.DataSet.ASCAD_NORMALIZED:
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
+    elif args.data_set == util.DataSet.SIM_MASK:
+        _x_attack, _y_attack, _key_guesses, _real_key = util.load_sim_mask_test_traces(argz)
     elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
         ###################
         # Load the traces #

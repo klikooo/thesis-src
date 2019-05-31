@@ -13,19 +13,19 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = False
+args.use_hw = True
 args.n_classes = 9 if args.use_hw else 256
-args.spread_factor = 1
+args.spread_factor = 6
 # args.runs = [x for x in range(5)]
-args.train_size = 20000
-args.epochs = 75
+args.train_size = 1000
+args.epochs = 80
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = True  # False if sub_key_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY_LARGE
-args.l2_penalty = 0.05
+args.unmask = False  # False if sub_key_index < 2 else True
+args.data_set = util.DataSet.ASCAD
+args.l2_penalty = 0
 args.desync = 0
 args.init_weights = ""
 
@@ -38,7 +38,7 @@ kernel_sizes = [10]
 num_layers = []
 channel_sizes = [8]
 
-network_names = ['KernelBigVGG']
+network_names = ['SpreadFirstLayer']
 
 ##################
 # PLOT ARGUMENTS #
@@ -55,7 +55,7 @@ type_network = 'HW' if args.use_hw else 'ID'
 
 # Function to load the GE of a single model
 def get_ge(net_name, model_parameters):
-    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs3/', util.generate_folder_name(args))
+    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs/', util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []

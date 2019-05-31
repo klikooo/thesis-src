@@ -29,13 +29,13 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.05
+l2_penalty = [0.05]
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
-    network_1: 9,
+    network_1: 6,
     # 'KernelBigVGGMDK': {}
 }
 data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
@@ -49,8 +49,9 @@ show_only_mean = True
 show_ge = False
 experiment = False
 show_loss = False
-colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
-          "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
+colors = ["aqua", "black", "brown", "red", "blue",
+          "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender", "firebrick",
+          "darksalmon", "tan", "seagreen", "lightseagreen"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
 # "8"	m11	octagon
 # "s"	m12	square
@@ -77,7 +78,7 @@ for k, v in network_settings.items():
                    "epochs": epochs,
                    "batch_size": batch_size,
                    "lr": '%.2E' % Decimal(lr),
-                   "l2_penalty": l2_penalty,
+                   "l2_penalties": l2_penalty,
                    "train_size": train_size,
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
@@ -100,76 +101,114 @@ for k, v in network_settings.items():
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
 network_settings[network_1][0].update({
-    "kernel_sizes": [100, 50, 25, 20, 15],
-    "num_layers": [1, 1, 1, 1, 1],
-    "l2_penalty": 0.05,
-    "title": " 1 layers l2 0.05",
+    "kernel_sizes": [50, 15, 10, 7, 5, 3, 3, 3],
+    "num_layers": [1, 2, 2, 4, 5, 7, 8, 9],
+    "l2_penalties": [0.05],
+    "title": " Same params [14768672.0, 14968672.0] 0.05",
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
-    "kernel_sizes": [50, 25, 20, 15, 10],
-    "num_layers": [2, 2, 2, 2, 2],
-    "l2_penalty": 0.05,
-    "title": " 2 layers l2 0.05",
-    "plot_marker": "*",
-
+    "kernel_sizes": [50, 15, 10, 7, 5, 3, 3, 3],
+    "num_layers": [1, 2, 2, 4, 5, 7, 8, 9],
+    "l2_penalties": [0.005],
+    "title": " Same params [14768672.0, 14968672.0] 0.005",
+    "plot_marker": " ",
 })
-network_settings[network_1][2].update({
-    "kernel_sizes": [26, 20, 15, 10, 7],
-    "num_layers": [3, 3, 3, 3, 3],
-    "l2_penalty": 0.05,
-    "title": " 3 layers l2 0.05",
-    "plot_marker": ".",
 
+network_settings[network_1][2].update({
+    "kernel_sizes": [100, 20, 15, 10, 7],
+    "num_layers": [1, 3, 4, 5, 8],
+    "l2_penalties": [0.05],
+    "title": " Same params min max: [15381184.0, 15581184.0] 0.05",
+    "plot_marker": "*",
 })
 network_settings[network_1][3].update({
-    "kernel_sizes": [21, 15, 10, 7, 5],
-    "num_layers": [4, 4, 4, 4, 4],
-    "l2_penalty": 0.05,
-    "title": " 4 layers l2 0.05",
-    "plot_marker": "o",
-
+    "kernel_sizes": [100, 20, 15, 10, 7],
+    "num_layers": [1, 3, 4, 5, 8],
+    "l2_penalties": [0.005],
+    "title": " Same params min max: [15381184.0, 15581184.0] 0.005",
+    "plot_marker": "*",
 })
-network_settings[network_1][4].update({
-    "kernel_sizes": [17, 10, 5, 7, 3],
-    "num_layers": [5] * 5,
-    "l2_penalty": 0.05,
-    "title": " 5 layers l2 0.05",
-    "plot_marker": "+",
 
+network_settings[network_1][4].update({
+    "kernel_sizes": [25, 20, 10, 7, 5, 3, 3],
+    "num_layers": [1, 1, 2, 3, 4, 5, 6],
+    "l2_penalties": [0.005],
+    "title": " Same params min max: [14576096.0, 14776096.0] 0.005",
+    "plot_marker": "*",
 })
 network_settings[network_1][5].update({
-    "kernel_sizes": [15, 10, 7, 5, 3],
-    "num_layers": [6] * 5,
-    "l2_penalty": 0.05,
-    "title": " 6 layers l2 0.05",
-    "plot_marker": "8",
-
+    "kernel_sizes": [25, 20, 10, 7, 5, 3, 3],
+    "num_layers": [1, 1, 2, 3, 4, 5, 6],
+    "l2_penalties": [0.05],
+    "title": " Same params min max: [14576096.0, 14776096.0] 0.05",
+    "plot_marker": "*",
 })
-network_settings[network_1][6].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [7] * 4,
-    "l2_penalty": 0.05,
-    "title": " 7 layers l2 0.05",
-    "plot_marker": "s",
 
-})
-network_settings[network_1][7].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [8] * 4,
-    "l2_penalty": 0.05,
-    "title": " 8 layers l2 0.05",
-    "plot_marker": "p",
-
-})
-network_settings[network_1][8].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [9] * 4,
-    "l2_penalty": 0.05,
-    "title": " 9 layers l2 0.05",
-    "plot_marker": "P",
-
-})
+# network_settings[network_1][1].update({
+#     "kernel_sizes": [50, 25, 20, 15, 10],
+#     "num_layers": [2, 2, 2, 2, 2],
+#     "l2_penalty": 0.005,
+#     "title": " 2 layers l2 0.005",
+#     "plot_marker": "*",
+#
+# })
+# network_settings[network_1][2].update({
+#     "kernel_sizes": [26, 20, 15, 10, 7],
+#     "num_layers": [3, 3, 3, 3, 3],
+#     "l2_penalty": 0.005,
+#     "title": " 3 layers l2 0.005",
+#     "plot_marker": ".",
+#
+# })
+# network_settings[network_1][3].update({
+#     "kernel_sizes": [21, 15, 10, 7, 5],
+#     "num_layers": [4, 4, 4, 4, 4],
+#     "l2_penalty": 0.005,
+#     "title": " 4 layers l2 0.005",
+#     "plot_marker": "o",
+#
+# })
+# network_settings[network_1][4].update({
+#     "kernel_sizes": [17, 10, 5, 7, 3],
+#     "num_layers": [5] * 5,
+#     "l2_penalty": 0.005,
+#     "title": " 5 layers l2 0.005",
+#     "plot_marker": "+",
+#
+# })
+# network_settings[network_1][5].update({
+#     "kernel_sizes": [15, 10, 7, 5, 3],
+#     "num_layers": [6] * 5,
+#     "l2_penalty": 0.005,
+#     "title": " 6 layers l2 0.005",
+#     "plot_marker": "8",
+#
+# })
+# network_settings[network_1][6].update({
+#     "kernel_sizes": [10, 7, 5, 3],
+#     "num_layers": [7] * 4,
+#     "l2_penalty": 0.005,
+#     "title": " 7 layers l2 0.005",
+#     "plot_marker": "s",
+#
+# })
+# network_settings[network_1][7].update({
+#     "kernel_sizes": [10, 7, 5, 3],
+#     "num_layers": [8] * 4,
+#     "l2_penalty": 0.005,
+#     "title": " 8 layers l2 0.005",
+#     "plot_marker": "p",
+#
+# })
+# network_settings[network_1][8].update({
+#     "kernel_sizes": [10, 7, 5, 3],
+#     "num_layers": [9] * 4,
+#     "l2_penalty": 0.005,
+#     "title": " 9 layers l2 0.005",
+#     "plot_marker": "P",
+#
+# })
 
 
 #####################################################################################
@@ -247,7 +286,7 @@ for network_name, network_setting in network_settings.items():
         net_setting['va'].append(np.mean(lva, axis=0))
         net_setting['tl'].append(np.mean(ltl, axis=0))
         net_setting['vl'].append(np.mean(lvl, axis=0))
-        net_setting['line_title'].append(get_save_name(network_name, model_params))
+        net_setting['line_title'].append(f"{get_save_name(network_name, model_params)}, l2{model_params['l2_penalty']}")
 
         all_loss_acc.append(loss_acc)
 
@@ -257,10 +296,13 @@ for network_name, network_setting in network_settings.items():
         for cs in setting['channel_sizes']:
             model_params.update({"channel_size": cs})
             for i in range(len(setting['num_layers'])):
-                model_params.update({"kernel_size": setting['kernel_sizes'][i]})
-                model_params.update({"num_layers": setting['num_layers'][i]})
-                plot_colors.append(setting['plot_colors'][i])
-                retrieve_ge(setting)
+                for l2 in setting['l2_penalties']:
+                    model_params.update({"kernel_size": setting['kernel_sizes'][i]})
+                    model_params.update({"num_layers": setting['num_layers'][i]})
+                    model_params.update({"l2_penalty": l2})
+                    setting.update({"l2_penalty": l2})
+                    plot_colors.append(setting['plot_colors'][i])
+                    retrieve_ge(setting)
 
 
 ###############################################

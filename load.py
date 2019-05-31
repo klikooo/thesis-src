@@ -11,27 +11,27 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
-    spread_factor = 1
+    spread_factor = 6
     runs = [x for x in range(1)]
-    train_size = 45000
+    train_size = 1000
     epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 1000
+    attack_size = 3000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
-    unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.ASCAD_NORMALIZED
-    kernel_sizes = [15]
+    unmask = False  # False if sub_key_index < 2 else True
+    data_set = DataSet.ASCAD
+    kernel_sizes = [3]
     channel_sizes = [32]
-    num_layers = [4]
+    num_layers = [1]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['DenseNet']
+    network_names = ['SpreadFirstLayer']
     desync = 0
     num_exps = 10
     raw_traces = True

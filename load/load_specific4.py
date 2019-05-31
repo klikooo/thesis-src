@@ -35,8 +35,7 @@ init_weights = "kaiming"
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
-    network_1: 3,
-    # 'KernelBigVGGMDK': {}
+    network_1: 4,
 }
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
@@ -47,8 +46,8 @@ show_losses_all = False
 show_only_mean = True
 show_ge = False
 experiment = False
-show_acc = True
-show_loss = True
+show_acc = False
+show_loss = False
 colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "D"]
@@ -91,25 +90,39 @@ for k, v in network_settings.items():
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
+# network_settings[network_1][0].update({
+#     "kernel_sizes": [100, 50, 26, 21, 17, 15],
+#     "num_layers": [1, 2, 3, 4, 5, 6],
+#     "l2_penalty": 0.05,
+#     "title": " l2 0.05 different kernels",
+#     "plot_marker": " ",
+# })
 network_settings[network_1][0].update({
     "kernel_sizes": [100, 50, 26, 21, 17, 15],
-    "num_layers": [1, 2, 3, 4, 5, 6],
-    "l2_penalty": 0.05,
-    "title": " l2 0.05 different kernels",
+    "num_layers": [1] * 6,
+    "l2_penalty": 0.0,
+    "title": " l2 0.005 1 layer",
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
     "kernel_sizes": [100, 50, 26, 21, 17, 15],
-    "num_layers": [1, 1, 1, 1, 1, 1],
-    "l2_penalty": 0.05,
-    "title": " l2 0.05 1 layer",
+    "num_layers": [2] * 6,
+    "l2_penalty": 0.,
+    "title": " l2 0.005 2 layers",
     "plot_marker": " ",
 })
 network_settings[network_1][2].update({
     "kernel_sizes": [100, 50, 26, 21, 17, 15],
-    "num_layers": [1, 2, 3, 4, 5, 6],
-    "l2_penalty": 0.005,
-    "title": " l2 0.005 different kernels",
+    "num_layers": [3] * 6,
+    "l2_penalty": 0.0,
+    "title": " l2 0.005 3 layer",
+    "plot_marker": " ",
+})
+network_settings[network_1][3].update({
+    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "num_layers": [4] * 6,
+    "l2_penalty": 0.0,
+    "title": " l2 0.005 4 layers",
     "plot_marker": " ",
 })
 
