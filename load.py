@@ -13,27 +13,27 @@ if __name__ == "__main__":
 
     use_hw = True
     n_classes = 9 if use_hw else 256
-    spread_factor = 6
+    spread_factor = 3
     runs = [x for x in range(1)]
-    train_size = 1000
+    train_size = 45000
     epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 3000
+    attack_size = 7000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
-    unmask = False  # False if sub_key_index < 2 else True
-    data_set = DataSet.ASCAD
-    kernel_sizes = [3]
-    channel_sizes = [32]
-    num_layers = [1]
+    unmask = True  # False if sub_key_index < 2 else True
+    data_set = DataSet.ASCAD_NORMALIZED
+    kernel_sizes = [25]
+    channel_sizes = [2]
+    num_layers = [2]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['SpreadFirstLayer']
+    network_names = ['DenseSpreadNet']
     desync = 0
-    num_exps = 10
+    num_exps = 20
     raw_traces = True
     validation_size = 1000
     use_noise_data = False

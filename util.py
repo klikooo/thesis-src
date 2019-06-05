@@ -674,7 +674,7 @@ def generate_folder_name(args):
     return '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}{}{}/train{}'.format(
         str(args.data_set),
         args.subkey_index,
-        '' if args.unmask or args.data_set is not DataSet.ASCAD else 'masked/',
+        '' if args.unmask else 'masked/',
         '' if args.desync is 0 else 'desync{}/'.format(args.desync),
         'HW' if args.use_hw else 'ID',
         args.spread_factor,

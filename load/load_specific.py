@@ -15,27 +15,27 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
-train_size = 45000
-epochs = 75
+runs = [x for x in range(5)]
+train_size = 40000
+epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_kezy_index < 2 else True
+unmask = False  # False if sub_kezy_index < 2 else True
 kernel_sizes = [50]
 num_layers = [2]
 channel_sizes = [32]
-l2_penalty = 0.05
-init_weights = "kaiming"
+l2_penalty = 0
+init_weights = ""
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'VGGNumLayers': 1,
+    'DenseNet': 1,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.ASCAD_NORMALIZED
+data_set = util.DataSet.ASCAD
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0

@@ -15,7 +15,7 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(1)]
+runs = [x for x in range(5)]
 train_size = 45000
 epochs = 75
 batch_size = 100
@@ -23,7 +23,7 @@ lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_kezy_index < 2 else True
+unmask = False  # False if sub_kezy_index < 2 else True
 kernel_sizes = []
 num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
@@ -40,11 +40,11 @@ network_settings = {
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 0
+desync = 100
 show_losses = True
-show_losses_all = False
-show_only_mean = True
-show_ge = False
+show_losses_all = True
+show_only_mean = False
+show_ge = True
 experiment = False
 show_acc = False
 show_loss = False
@@ -98,29 +98,29 @@ for k, v in network_settings.items():
 #     "plot_marker": " ",
 # })
 network_settings[network_1][0].update({
-    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "kernel_sizes": [100, 50, 25, 10, 5, 3],
     "num_layers": [1] * 6,
     "l2_penalty": 0.0,
     "title": " l2 0.005 1 layer",
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
-    "kernel_sizes": [100, 50, 26, 21, 17, 15],
+    "kernel_sizes": [100, 50, 25, 10, 5, 3],
     "num_layers": [2] * 6,
     "l2_penalty": 0.,
     "title": " l2 0.005 2 layers",
     "plot_marker": " ",
 })
 network_settings[network_1][2].update({
-    "kernel_sizes": [100, 50, 26, 21, 17, 15],
-    "num_layers": [3] * 6,
+    "kernel_sizes": [50, 25, 10, 5, 3],
+    "num_layers": [3] * 5,
     "l2_penalty": 0.0,
     "title": " l2 0.005 3 layer",
     "plot_marker": " ",
 })
 network_settings[network_1][3].update({
-    "kernel_sizes": [100, 50, 26, 21, 17, 15],
-    "num_layers": [4] * 6,
+    "kernel_sizes": [25, 10, 5, 3],
+    "num_layers": [4] * 4,
     "l2_penalty": 0.0,
     "title": " l2 0.005 4 layers",
     "plot_marker": " ",

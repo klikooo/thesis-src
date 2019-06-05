@@ -25,12 +25,15 @@ from models.ConvNetKernelMasked import ConvNetKernelMasked
 from models.ConvNetKernelSmall import ConvNetKernelSmall
 from models.ConvNetKernelSmallAvg import ConvNetKernelSmallAvg
 from models.CosNet import CosNet
+from models.Spread.DenseBatch import DenseBatch
 from models.Spread.DenseNet import DenseNet
+from models.Spread.DenseNorm import DenseNorm
 from models.Spread.DenseSpreadNet import DenseSpreadNet
 from models.SingleConv import SingleConv
 from models.Spread.SpreadFirstLayer import SpreadFirstLayer
 from models.Spread.SpreadNet import SpreadNet
 from models.Spread.SpreadV2 import SpreadV2
+from models.VGG.BigChannels import BigChannels
 from models.VGG.DK.KernelBigVGGDK import KernelBigVGGDK
 from models.VGG.DK.KernelBigVGGMDK import KernelBigVGGMDK
 from models.VGG.KBVGG import KBVGG
@@ -63,7 +66,8 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KernelBigVGGC, NumLayersVGG, AlexNet, KernelBigVGGRDLM, KernelBigVGGRDLM2,
           NumLayersVGG2, KernelBigVGGDK, KernelBigVGGMDK, NumLayersVGG3,
           KernelBigTest, KernelBigTestM, KernelBigAlex, KernelBigAlexBN,
-          VGGNumLayers, VGGNumBlocks, SpreadFirstLayer]
+          VGGNumLayers, VGGNumBlocks, SpreadFirstLayer, BigChannels,
+          DenseNorm, DenseBatch]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 

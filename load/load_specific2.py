@@ -12,12 +12,12 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = False
+use_hw = True
 n_classes = 9 if use_hw else 256
-spread_factor = 1
+spread_factor = 2
 runs = [x for x in range(1)]
 train_size = 45000
-epochs = 75
+epochs = 80
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
@@ -27,13 +27,16 @@ unmask = True  # False if sub_kezy_index < 2 else True
 kernel_sizes = [20]
 num_layers = [2]
 channel_sizes = [32]
-l2_penalty = 0.005
-init_weights = "kaiming"
+l2_penalty = 0
+init_weights = ""
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'VGGNumLayers': 4,
-    # 'KernelBigVGGMDK': {}
+    # 'DenseNorm': 3,
+    # 'SpreadNet': 1,
+    # 'DenseNet': 1,
+    # 'DenseBatch': 1
+    'DenseSpreadNet': 1
 }
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
@@ -43,7 +46,7 @@ show_losses = False
 show_acc = False
 show_losses_all = False
 show_only_mean = True
-experiment = False
+experiment = True
 ###########################
 # SETTINGS FOR EACH MODEL #
 ###########################
@@ -72,22 +75,26 @@ for k, v in network_settings.items():
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-network_settings['VGGNumLayers'][0].update({
-    "kernel_sizes": [100, 50, 21, 17, 15, ], #Missing 25,10,5
-    "num_layers": [1]
-})
-network_settings['VGGNumLayers'][1].update({
-    "kernel_sizes": [100, 50, 21, 17, 15], #Missing 25,10,5
-    "num_layers": [2]
-})
-network_settings['VGGNumLayers'][2].update({
-    "kernel_sizes": [100, 50, 21, 17, 15],
-    "num_layers": [3]
-})
-network_settings['VGGNumLayers'][3].update({
-    "kernel_sizes": [100, 50, 21, 17, 15, ],
-    "num_layers": [4]
-})
+# network_settings['DenseSpreadNet'][0]
+# network_settings['DenseNorm'][0].update({
+#     "spread_factor": 3
+# })
+# network_settings['DenseNorm'][1].update({
+#     "spread_factor": 6
+# })
+# network_settings['DenseNorm'][2].update({
+#     "spread_factor": 9
+# })
+# network_settings['SpreadNet'][0].update({
+#     "spread_factor": 6
+# })
+# network_settings['DenseNet'][0].update({
+#     "spread_factor": 1
+# })
+# network_settings['DenseBatch'][0].update({
+#     "spread_factor": 1
+# })
+
 
 
 #####################################################################################
