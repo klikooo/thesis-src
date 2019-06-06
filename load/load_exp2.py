@@ -1,6 +1,4 @@
 import itertools
-import pdb
-from decimal import Decimal
 
 import util
 import numpy as np
@@ -15,32 +13,32 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = False
+args.use_hw = True
 args.n_classes = 9 if args.use_hw else 256
-args.spread_factor = 1
-args.runs = [x for x in range(4)]
-args.train_size = 40000
-args.epochs = 120
+args.spread_factor = 6
+# args.runs = [x for x in range(5)]
+args.train_size = 1000
+args.epochs = 80
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY
-args.l2_penalty = 0.05
+args.unmask = True  # False if sub_key_index < 2 else True
+args.data_set = util.DataSet.ASCAD
+args.l2_penalty = 0
 args.desync = 0
 args.init_weights = ""
 
 ###################
 # MODEL ARGUMENTS #
 ###################
-runs = [x for x in range(4)]
+runs = [x for x in range(1)]
 rank_step = 1
-kernel_sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+kernel_sizes = [10]
 num_layers = []
-channel_sizes = [24]
+channel_sizes = [8]
 
-network_names = ['KernelBigAlex', 'KernelBigAlexBN']
+network_names = ['DenseNorm']
 
 ##################
 # PLOT ARGUMENTS #
@@ -57,7 +55,7 @@ type_network = 'HW' if args.use_hw else 'ID'
 
 # Function to load the GE of a single model
 def get_ge(net_name, model_parameters):
-    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs2/', util.generate_folder_name(args))
+    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs/', util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -159,48 +157,60 @@ figure.savefig('/home/rico/Pictures/{}.png'.format('mean'), dpi=100)
 if show_losses or show_acc:
     mean_mv = []
     mean_lv = []
+
+    ############
+    # ACCURACY #
+    ############
     for i in range(len(rank_mean_y)):
         (loss_vali, loss_train, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-
-        for r in range(len(loss_vali)):
-            plt.title('Accuracy during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Accuracy')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            # pdb.set_trace()
-            plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
-            plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
-            plt.legend()
+        if not show_only_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Accuracy during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Accuracy')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                # pdb.set_trace()
+                plt.plot([x for x in range(len(acc_train[r]))], acc_train[r] * 100, label="Train", color='orange')
+                plt.plot([x for x in range(len(acc_train[r]))], acc_vali[r] * 100, label="Vali", color='green')
+                plt.legend()
         mt = np.mean(acc_train, axis=0) * 100
         mv = np.mean(acc_vali, axis=0) * 100
-        plt.plot(mt, color='blue')
-        plt.plot(mv, color='red')
+        if not show_only_mean:
+            plt.plot(mt, color='blue')
+            plt.plot(mv, color='red')
         mean_mv.append(mv)
 
+    ########
+    # LOSS #
+    ########
     for i in range(len(rank_mean_y)):
         (loss_train, loss_vali, acc_train, acc_vali) = all_loss_acc[i]
-        plt.figure()
-        for r in range(len(loss_vali)):
-            plt.title('Loss during training {}'.format(name_models[i]))
-            plt.xlabel('Epoch')
-            plt.ylabel('Loss')
-            plt.grid(True)
-            # Plot the accuracy
-            # for x, y in zip(ranks_x[i], ranks_y[i]):
-            plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
-            plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
-            plt.legend()
+        if not show_only_mean:
+            plt.figure()
+            for r in range(len(loss_vali)):
+                plt.title('Loss during training {}'.format(name_models[i]))
+                plt.xlabel('Epoch')
+                plt.ylabel('Loss')
+                plt.grid(True)
+                # Plot the accuracy
+                # for x, y in zip(ranks_x[i], ranks_y[i]):
+                plt.plot([x for x in range(len(loss_train[r]))], loss_train[r], label="Train", color='orange')
+                plt.plot([x for x in range(len(loss_train[r]))], loss_vali[r], label="Vali", color='green')
+                plt.legend()
 
         lt = np.mean(loss_train, axis=0)
         lv = np.mean(loss_vali, axis=0)
-        plt.plot(lt, color='blue', label='Train')
-        plt.plot(lv, color='red', label='Validation')
-
+        if not show_only_mean:
+            plt.plot(lt, color='blue', label='Train')
+            plt.plot(lv, color='red', label='Validation')
         mean_lv.append(lv)
 
+    ##############
+    # SHOW MEANS #
+    ##############
     plt.figure()
     for i in range(len(mean_lv)):
         plt.plot(mean_lv[i], label="Loss {}".format(name_models[i]))

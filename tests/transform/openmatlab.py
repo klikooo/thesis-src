@@ -29,6 +29,11 @@ def leakage_function(ct, key_guess):
     return abs(ct - inverse_sbox)
 
 
+def leakage_function2(ct, key_guess):
+    inverse_sbox = util.SBOX_INV[ct ^ key_guess]
+    return ct ^ inverse_sbox
+
+
 # Convert matlab plaintext to hex
 def conv_to_plain(ptext):
     hex_string = "{}{}{}{}".format(hex(ptext[3])[2:].zfill(8), hex(ptext[2])[2:].zfill(8),
@@ -40,7 +45,7 @@ def conv_to_plain(ptext):
 def generate_key_guess(ct):
     key_guesses = []
     for key_guess in range(256):
-        key_guesses.append(leakage_function(ct, key_guess))
+        key_guesses.append(leakage_function2(ct, key_guess))
     return key_guesses
 
 
@@ -89,7 +94,7 @@ for file_step in range(int(num_traces / file_size)):
             ciphertexts.append(ct_byte)
 
             # Do inv sbox and calculate HD
-            leakage = leakage_function(ct_byte, last_r_key[sub_key])
+            leakage = leakage_function2(ct_byte, last_r_key[sub_key])
 
             # Store the HD for model file
             model_values.append(leakage)
@@ -138,3 +143,53 @@ for file_step in range(int(num_traces / file_size)):
 # plt.plot(real, label="Real key", marker="+", color='gold')
 # plt.legend()
 # plt.show()
+# 72
+# 32
+# 4
+# 61
+# 76
+# 40
+# 25
+# 93
+# 194
+# 154
+# 204
+# 138
+# 92
+# 178
+# 211
+# 55
+# 32
+# 214
+# 164
+# 254
+# 103
+# 129
+# 183
+# 9
+# 242
+# 105
+# 82
+# 176
+# 253
+# 254
+# 0
+# 54
+# 248
+# 18
+# 44
+# 135
+# 24
+# 40
+# 38
+# 165
+# 97
+# 38
+# 207
+# 204
+# 189
+# 191
+# 149
+# 1
+# 214
+# 6

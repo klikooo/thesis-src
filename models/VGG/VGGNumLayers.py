@@ -18,7 +18,7 @@ class VGGNumLayers(nn.Module):
         self.max_pool = 2
         self.channel_size = channel_size
         self.num_layers = num_layers
-        self.max_channels = 128
+        self.max_channels = 256
         self.num_blocks = 2
 
         num_features = input_shape
@@ -51,6 +51,9 @@ class VGGNumLayers(nn.Module):
     def conv_block(self, in_channels, num_layers):
         out_channels = in_channels * 2
         conv_layers = []
+        if out_channels > self.max_channels:
+            out_channels = self.max_channels
+
         for i in range(num_layers):
             conv_layers.append(nn.Conv1d(in_channels, out_channels, kernel_size=self.kernel_size, padding=self.padding))
             conv_layers.append(nn.ReLU())
@@ -66,8 +69,8 @@ class VGGNumLayers(nn.Module):
     def first_conv_block(self, out_channels, num_layers):
         conv_layers = []
         in_channels = 1
-        if out_channels > 128:
-            out_channels = 128
+        if out_channels > self.max_channels:
+            out_channels = self.max_channels
         for i in range(num_layers):
             conv_layers.append(nn.Conv1d(in_channels, out_channels, kernel_size=self.kernel_size, padding=self.padding))
             conv_layers.append(nn.ReLU())

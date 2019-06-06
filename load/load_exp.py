@@ -13,32 +13,31 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = False
+args.use_hw = True
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
-args.runs = [x for x in range(4)]
-args.train_size = 20000
-args.epochs = 75
+args.train_size = 40000
+args.epochs = 80
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = True  # False if sub_kezy_index < 2 else True
-args.data_set = util.DataSet.RANDOM_DELAY_LARGE
-args.l2_penalty = 0.05
+args.unmask = False
+args.data_set = util.DataSet.SIM_MASK
+args.l2_penalty = 0.005
 args.desync = 0
 args.init_weights = ""
 
 ###################
 # MODEL ARGUMENTS #
 ###################
-runs = [x for x in range(5)]
+runs = [x for x in range(1)]
 rank_step = 1
-kernel_sizes = [5, 10]
-num_layers = []
-channel_sizes = [8]
+kernel_sizes = [3]
+num_layers = [2]
+channel_sizes = [32]
 
-network_names = ['KernelBigVGG']
+network_names = ['VGGNumLayers']
 
 ##################
 # PLOT ARGUMENTS #
@@ -55,7 +54,7 @@ type_network = 'HW' if args.use_hw else 'ID'
 
 # Function to load the GE of a single model
 def get_ge(net_name, model_parameters):
-    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs3/', util.generate_folder_name(args))
+    folder = "{}/{}".format('/media/rico/Data/TU/thesis/runs/', util.generate_folder_name(args))
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -143,7 +142,7 @@ plt.grid(True)
 axes = plt.gca()
 axes.set_ylim([0, 256])
 for i in range(len(rank_mean_y)):
-    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker))
+    plt.plot(ranks_x[i][0], rank_mean_y[i], label=name_models[i], marker=next(line_marker), markevery=0.1)
     plt.legend()
 
     # plt.figure()

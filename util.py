@@ -245,7 +245,7 @@ def load_ascad_train_traces(args):
     print(args)
     traces_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args['traces_path'], args['sub_key_index'], args['desync'])
     print('Loading {}'.format(traces_file))
-    (x_train, y_train), (_, _), (metadata_profiling, metadata_attack) = load_ascad(traces_file, load_metadata=True)
+    (x_train, y_train), (_, _), (metadata_profiling, _) = load_ascad(traces_file, load_metadata=True)
 
     plain = None
     if args['domain_knowledge']:
@@ -264,6 +264,33 @@ def load_ascad_train_traces(args):
         y_train = np.array([HW[val] for val in y_train])
 
     return x_train, y_train, plain
+
+
+def load_ascad_test_traces(args):
+    print(args)
+    traces_file = '{}/ASCAD/ASCAD_{}_desync{}.h5'.format(args['traces_path'], args['sub_key_index'], args['desync'])
+    print('Loading {}'.format(traces_file))
+    (_, _), (x_test, y_test), (_, metadata_attack) = load_ascad(traces_file, load_metadata=True)
+
+    plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
+
+    if args['unmask']:
+        print(metadata_attack[:]['masks'][args['sub_key_index'] - 2])
+        y_test = np.array(
+            [y_test[i] ^ metadata_attack[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_test))])
+        # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
+
+    # Convert values to hamming weight if asked for
+    if args['use_hw']:
+        y_test = np.array([HW[val] for val in y_test])
+
+    key = metadata_attack[0]['key'][args['sub_key_index']]
+    key_guesses = np.load('{}/ASCAD/key_guesses_{}masked_{}.npy'.format(
+        args['traces_path'],
+        'un' if args['unmask'] else '',
+        args['desync']
+    ))
+    return x_test, y_test, plain, key, key_guesses
 
 
 def load_aes_hd(args):
@@ -300,20 +327,20 @@ def load_dpav4(args):
                        dtype=np.long,
                        start=args.get('start'),
                        size=args.get('size'))
-    if args['domain_knowledge']:
-        # TODO : add plain 0
-        if True:
-            plain = []
-        else:
-            plain = load_csv('{}/DPAv4/{}/plain_0.csv'.format(args['traces_path'], hw),
-                             delimiter=' ',
-                             dtype=np.int,
-                             start=args.get('start'),
-                             size=args.get('size'))
-            plain = hot_encode(plain, 9 if args['use_hw'] else 256, dtype=np.float)
-    else:
-        plain = None
-    return x_train, y_train, plain
+    return x_train, y_train, None
+
+
+def load_dpa_npy(args):
+    print(args)
+
+    x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+    import gc
+    gc.collect()
+    return x_train, y_train, None
 
 
 def load_random_delay(args):
@@ -352,20 +379,157 @@ def load_random_delay(args):
     return x_train, y_train, plain
 
 
+def load_random_delay_npy(args):
+    print(args)
+    x_train = np.load('{}/Random_Delay/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    y_train = np.load('{}/Random_Delay/Value/model.csv.npy'.format(args['traces_path']))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    y_train = np.reshape(y_train, (args.get('size')))
+    return x_train, y_train, None
+
+
 def load_random_delay_large(args):
     print(args)
+    traces_step = 20000
+    total_steps = np.math.ceil((args['start'] + args['size']) / traces_step)
+    x_train = np.zeros((args['size'], 6250))
+    y_train = np.zeros((args['size']))
+    start_step = int(args['start'] / traces_step)
 
-    x_train = load_csv('{}/Random_Delay_Large/traces/traces.csv'.format(args['traces_path']),
-                       delimiter=' ',
-                       start=args.get('start'),
-                       size=args.get('size'))
+    index_start = 0
+    for step in range(start_step, total_steps):
+        x_file = '{}/Random_Delay_Large/traces/traces_{}.csv.npy'.format(args['traces_path'], traces_step * (step + 1))
+        y_file = '{}/Random_Delay_Large/Value/model_{}.csv.npy'.format(args['traces_path'], traces_step * (step + 1))
+        x = np.load(x_file)
+        y = np.load(y_file)
 
-    y_train = load_csv('{}/Random_Delay_Large/Value/model.csv'.format(args['traces_path']),
-                       delimiter=' ',
-                       dtype=np.long,
-                       start=args.get('start'),
-                       size=args.get('size'))
+        # Begin step
+        if step == start_step:
+            # There is only one step
+            if step == total_steps - 1:
+                x_train[0:args['size']] = x[args['start'] % traces_step:(args['start'] + args['size']) % traces_step]
+                y_train[0:args['size']] = y[args['start'] % traces_step:(args['start'] + args['size']) % traces_step]
+            # More steps to come
+            else:
+                x_train[0:traces_step - (args['start'] % traces_step)] = x[(args['start'] % traces_step):traces_step]
+                y_train[0:traces_step - (args['start'] % traces_step)] = y[(args['start'] % traces_step):traces_step]
+                index_start = traces_step - (args['start'] % traces_step)
+        # Last step
+        elif step == total_steps - 1:
+            x_train[index_start:args['size']] = x[0:args['size'] - index_start]
+            y_train[index_start:args['size']] = y[0:args['size'] - index_start]
+        # More steps to come
+        else:
+            x_train[index_start:index_start + traces_step] = x[0:traces_step]
+            y_train[index_start:index_start + traces_step] = y[0:traces_step]
+            index_start += traces_step
     return x_train, y_train, None
+
+
+def load_random_delay_large_key_guesses(traces_path, start, size):
+    traces_step = 20000
+    total_steps = np.math.ceil((start + size) / traces_step)
+    key_guesses = np.zeros((size, 256))
+    start_step = int(start / traces_step)
+
+    index_start = 0
+    for step in range(start_step, total_steps):
+        file = '{}/Random_Delay_Large/Value/key_guesses_{}.csv.npy'.format(traces_path, traces_step * (step + 1))
+        step_key_guesses = np.load(file)
+
+        # Begin step
+        if step == start_step:
+            if step == total_steps - 1:
+                key_guesses[0:size] = step_key_guesses[start % traces_step:(start + size) % traces_step]
+            # More steps to come
+            else:
+                key_guesses[0:traces_step - (start % traces_step)] = step_key_guesses[(start % traces_step):traces_step]
+                index_start = traces_step - (start % traces_step)
+        # Last step
+        elif step == total_steps - 1:
+            key_guesses[index_start:size] = step_key_guesses[0:size - index_start]
+        # More steps to come
+        else:
+            key_guesses[index_start:index_start + traces_step] = step_key_guesses[0:traces_step]
+            index_start += traces_step
+    return key_guesses.astype(np.int)
+
+
+def load_data_generic(args):
+    print(args)
+
+    x_train = np.load('{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+    y_train = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    y_train = np.reshape(y_train, (args.get('size')))
+    return x_train, y_train, None
+
+
+def load_ascad_normalized(args):
+    print(args)
+
+    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
+                      (args['traces_path'], str(args['data_set']),
+                       args['train_size'], args['validation_size'], args['desync']))
+    y_train = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                              'un' if args['unmask'] else ''))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    y_train = np.reshape(y_train, (args.get('size')))
+    if args['use_hw']:
+        y_train = np.array([HW[val] for val in y_train])
+    return x_train, y_train, None
+
+
+def load_ascad_normalized_test_traces(args):
+    print(args)
+
+    x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
+                (args['traces_path'], str(args['data_set']),
+                 args['train_size'], args['validation_size'], args['desync']))
+    y = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                        'un' if args['unmask'] else ''))
+    key_guesses = np.load('{}/{}/Value/key_guesses_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
+                                                                        'un' if args['unmask'] else ''))
+
+    x_test = x[args['start']:args['start'] + args['size']]
+    y_test = y[50000:50000 + args['size']]
+    print("y shape {}".format(y.shape))
+
+    # Convert values to hamming weight if asked for
+    if args['use_hw']:
+        y_test = np.array([HW[val] for val in y_test])
+
+    return x_test, y_test, key_guesses, 224
+
+
+def load_sim_mask_test_traces(args):
+    print(args)
+
+    x = np.load('{}/{}/traces/traces_complete.csv.npy'.format
+                (args['traces_path'], str(args['data_set'])))
+    y = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+    key_guesses = np.load('{}/{}/Value/key_guesses_ALL_transposed.csv.npy'.format(args['traces_path'],
+                                                                                  str(args['data_set'])))
+
+    x_test = x[args['start']:args['start'] + args['size']]
+    y_test = y[args['start']:args['start'] + args['size']]
+    # print("y shape {}".format(y.shape))
+
+    # Convert values to hamming weight if asked for
+    # if args['use_hw']:
+    #     y_test = np.array([HW[val] for val in y_test])
+
+    return x_test, y_test, key_guesses, 23
+
 
 
 def load_random_delay_dk(args):
@@ -397,6 +561,9 @@ class DataSet(Enum):
     RANDOM_DELAY = 4
     RANDOM_DELAY_LARGE = 5
     RANDOM_DELAY_DK = 6
+    RANDOM_DELAY_NORMALIZED = 7
+    ASCAD_NORMALIZED = 8
+    SIM_MASK = 9
 
     def __str__(self):
         if self.value == 1:
@@ -411,6 +578,12 @@ class DataSet(Enum):
             return "Random_Delay_Large"
         elif self.value == 6:
             return "Random_Delay_DK"
+        elif self.value == 7:
+            return "Random_Delay_Normalized"
+        elif self.value == 8:
+            return "ASCAD_Normalized"
+        elif self.value == 9:
+            return "Simulated_Mask"
         else:
             print("ERROR {}".format(self.value))
 
@@ -425,10 +598,13 @@ class DataSet(Enum):
 def load_data_set(data_set):
     table = {DataSet.ASCAD: load_ascad_train_traces,
              DataSet.AES_HD: load_aes_hd,
-             DataSet.DPA_V4: load_dpav4,
-             DataSet.RANDOM_DELAY: load_random_delay,
+             DataSet.DPA_V4: load_dpa_npy,
+             DataSet.RANDOM_DELAY: load_random_delay_npy,
              DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
-             DataSet.RANDOM_DELAY_DK: load_random_delay_dk}
+             DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
+             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
+             DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
+             DataSet.SIM_MASK: load_data_generic}
     return table[data_set]
 
 
@@ -498,7 +674,7 @@ def generate_folder_name(args):
     return '{}/subkey_{}/{}{}{}_SF{}_E{}_BZ{}_LR{}{}{}/train{}'.format(
         str(args.data_set),
         args.subkey_index,
-        '' if args.unmask or args.data_set is not DataSet.ASCAD else 'masked/',
+        '' if args.unmask else 'masked/',
         '' if args.desync is 0 else 'desync{}/'.format(args.desync),
         'HW' if args.use_hw else 'ID',
         args.spread_factor,
@@ -511,7 +687,26 @@ def generate_folder_name(args):
     )
 
 
+def get_memory():
+    import os
+    import psutil
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss
+
+
+def format_bytes(size):
+    power = 2 ** 10
+    n = 0
+    power_labels = {0: '', 1: 'kilo', 2: 'mega', 3: 'giga', 4: 'tera'}
+    while size > power:
+        size /= power
+        n += 1
+    return size, power_labels[n] + 'bytes'
+
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
 class EmptySpace(object):
     pass
-
-

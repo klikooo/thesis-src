@@ -11,29 +11,29 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
-    spread_factor = 1
-    runs = [x for x in range(1)]
-    train_size = 1000
-    epochs = 10
+    spread_factor = 6
+    runs = [x for x in range(5)]
+    train_size = 40000
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 1000
+    attack_size = 3000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [3]
-    channel_sizes = [8]
-    num_layers = [1]
+    data_set = DataSet.ASCAD
+    kernel_sizes = [25]
+    channel_sizes = [2]
+    num_layers = [2]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['VGGNumLayers']
+    network_names = ['DenseNorm']
     desync = 0
-    num_exps = 20
+    num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-g', "--l2_penalty", default=0.0, type=float, help="L2 penalty")
+    parser.add_argument('-g', "--l2_penalty", default=0, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')

@@ -13,12 +13,12 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
-    network_names = ["VGGNumLayers"]
-    use_hw = False
-    runs = 1
-    train_sizes = [1000]
-    epochs = 10
+    data_set = DataSet.ASCAD
+    network_names = ["DenseNorm"]
+    use_hw = True
+    runs = 5
+    train_sizes = [40000]
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
@@ -27,10 +27,10 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 3
-    channel_size = 8
-    num_layers = 1
-    spread_factor = 1
+    kernel_size = 25
+    channel_size = 32
+    num_layers = 2
+    spread_factor = 6
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     ############################
@@ -81,7 +81,10 @@ if __name__ == "__main__":
         switcher = {DataSet.RANDOM_DELAY: 3500,
                     DataSet.DPA_V4: 3000,
                     DataSet.RANDOM_DELAY_LARGE: 6250,
-                    DataSet.RANDOM_DELAY_DK: 3500}
+                    DataSet.RANDOM_DELAY_DK: 3500,
+                    DataSet.RANDOM_DELAY_NORMALIZED: 3500,
+                    DataSet.ASCAD_NORMALIZED: 700,
+                    DataSet.SIM_MASK: 700}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50

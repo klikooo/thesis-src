@@ -7,6 +7,8 @@ from models.Spread.SpreadNetIn import SpreadNetIn
 import numpy as np
 
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams.update({'font.size': 30})
 
 
 from util import load_ascad, shuffle_permutation
@@ -52,7 +54,7 @@ def get_ranks(use_hw, runs, train_size,
     epochs_checkpoint = ['.1.pt', '.20.pt', '.40.pt', '.60.pt', '.80.pt', '.100.pt', '']
 
     for epoch in epochs_checkpoint:
-        model_path = '/media/rico/Data/TU/thesis/runs/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt{}'.format(
+        model_path = '/media/rico/Data/TU/thesis/runs/ASCAD/subkey_{}/{}_SF{}_E{}_BZ{}_LR{}/train{}/model_r{}_{}.pt{}'.format(
             sub_key_index,
             type_network,
             spread_factor,
@@ -66,7 +68,7 @@ def get_ranks(use_hw, runs, train_size,
         )
         print('path={}'.format(model_path))
 
-        model = SpreadNetIn.load_spread(model_path)
+        model = SpreadNetIn.load_model(model_path)
         print("Using {}".format(model))
         model.to(device)
 
@@ -100,13 +102,19 @@ def get_ranks(use_hw, runs, train_size,
             # Plot the distribution of each neuron right after the first fully connected layer
             for k in [53]:
                 plt.grid(True)
-                plt.axvline(x=model.tensor_min[k], color='green')
-                plt.axvline(x=model.tensor_max[k], color='green')
+                plt.axvline(x=model.tensor_min[k], color='green', lw=5)
+                plt.axvline(x=model.tensor_max[k], color='green', lw=5)
+                leg = plt.legend()
+                # get the individual lines inside legend and set line width
                 plt.hist(z[:][k], bins=40)
                 plt.xlim([-50, 400])
+                plt.xlabel("Value")
+                plt.ylabel("Frequency")
 
                 fig = plt.gcf()
-                fig.savefig('/home/rico/Pictures/spread-{}.png'.format(epoch.replace('.pt', '').replace('.', '')), dpi=100)
+                fig.set_size_inches(16, 9)
+                fig.savefig('/media/rico/Data/TU/thesis/report/img/spread/inter/spread-{}.png'.format(
+                    epoch.replace('.pt', '').replace('.', '')), dpi=100)
 
                 plt.show()
 

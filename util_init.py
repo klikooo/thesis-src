@@ -7,8 +7,14 @@ def kaiming_init(m):
         m.bias.data.fill_(0.0)
 
 
+def xavier_init(m):
+    if type(m) == torch.nn.Linear:
+        torch.nn.init.xavier_normal_(m.weight.data)
+
+
 INIT_WEIGHTS_MAP = {
-    "kaiming": kaiming_init
+    "kaiming": kaiming_init,
+    "xavier": xavier_init
 }
 
 
