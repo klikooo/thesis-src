@@ -36,12 +36,12 @@ class DenseNorm(nn.Module):
         min_tensor = self.bn.weight * self.min_constant + self.bn.bias
         max_tensor = self.bn.weight * self.max_constant + self.bn.bias
         x = self.spread(x, min_tensor, max_tensor, 100)
-        z = x.detach().cpu().numpy()
-        print(np.shape(z))
-        zm = np.mean(z, axis=0)
-        print(zm)
-        print(zm.shape)
-        exit()
+        # z = x.detach().cpu().numpy()
+        # print(np.shape(z))
+        # zm = np.mean(z, axis=0)
+        # print(zm)
+        # print(zm.shape)
+        # exit()
 
         x = self.fc2(x).to(device)
         # return F.softmax(x, dim=1).to(device)

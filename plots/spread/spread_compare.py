@@ -8,7 +8,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.rcParams.update({'font.size': 26})
+matplotlib.rcParams.update({'font.size': 30})
 
 
 from util import load_ascad, shuffle_permutation
@@ -102,8 +102,10 @@ def get_ranks(use_hw, runs, train_size,
             # Plot the distribution of each neuron right after the first fully connected layer
             for k in [53]:
                 plt.grid(True)
-                plt.axvline(x=model.tensor_min[k], color='green')
-                plt.axvline(x=model.tensor_max[k], color='green')
+                plt.axvline(x=model.tensor_min[k], color='green', lw=5)
+                plt.axvline(x=model.tensor_max[k], color='green', lw=5)
+                leg = plt.legend()
+                # get the individual lines inside legend and set line width
                 plt.hist(z[:][k], bins=40)
                 plt.xlim([-50, 400])
                 plt.xlabel("Value")

@@ -5,7 +5,6 @@ import plots.spread.plot as plot
 import matplotlib.pyplot as plt
 import util
 
-
 setting = {"experiment": '',
            "data_set": util.DataSet.ASCAD,
            "subkey_index": 2,
@@ -41,48 +40,90 @@ setting = {"experiment": '',
 
 def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size=1000, font_size=18):
     setting_spread = copy.deepcopy(setting)
-    setting_spread.update({"network_name": "DenseNorm",
-                           "line_title2": "$SpreadV2_{PH}$",
-                           "plot_colors": ["r", "g", "b"],
+    setting_spread.update({"network_name": "SpreadNet",
+                           "line_title2": "$Spread_{PH}$",
+                           "plot_colors": ["r", "g", "b", "g"],
                            "plot_marker": [" "],
                            "train_size": train_size,
                            })
 
-    setting_dense_spread = copy.deepcopy(setting)
-    setting_dense_spread.update({"network_name": "DenseBatch",
-                                 "line_title2": "$DenseBatch_{RT}$",
-                                 "plot_colors": ["r", "g", "b"],
-                                 "plot_marker": ["-"],
-                                 "train_size": train_size,
-                                 })
+    setting_spread_norm = copy.deepcopy(setting)
+    setting_spread_norm.update({"network_name": "DenseNorm",
+                                "line_title2": "$Spread_{V2}$",
+                                "plot_colors": ["r", "g", "b", "g"],
+                                "plot_marker": [" "],
+                                "train_size": train_size,
+                                })
+
+    setting_dense_batch = copy.deepcopy(setting)
+    setting_dense_batch.update({"network_name": "DenseBatch",
+                                "line_title2": "$DenseBatch_{RT}$",
+                                "plot_colors": ["r", "g", "b", "g"],
+                                "plot_marker": ["-"],
+                                "train_size": train_size,
+                                })
+
+    setting_mlp_best = copy.deepcopy(setting)
+    setting_mlp_best.update({"network_name": "DenseNet",
+                             "line_title2": "$MLP_{BEST}$",
+                             "plot_colors": ["r", "g", "b", "g"],
+                             "plot_marker": ["<"],
+                             "train_size": train_size,
+                             })
+
+    settings_spread_norm = []
     settings_spread = []
-    colors = ["r", "g", "b", "y", "g", "b"]
+    colors = ["r", "g", "b", "y", "g", "b", "g", "r"]
     for spread_factor, color in zip(spread_factors, colors):
         print(spread_factor)
-        s_spread = copy.deepcopy(setting_spread)
-        s_spread.update({
+        s_spread_norm = copy.deepcopy(setting_spread_norm)
+        s_spread_norm.update({
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": [" "],
+            "line_title2": s_spread_norm['line_title2'] + " sf " + str(spread_factor)
+        })
+        settings_spread_norm.append(s_spread_norm)
+
+        s_spread = copy.deepcopy(setting_spread)
+        s_spread.update({
+            "experiment": '3',
+            "spread_factor": spread_factor,
+            "plot_colors": [color],
+            "plot_markers": [">"],
             "line_title2": s_spread['line_title2'] + " sf " + str(spread_factor)
         })
         settings_spread.append(s_spread)
 
-    settings_dense_spread = []
-    s_dense_spread = copy.deepcopy(setting_dense_spread)
+    settings_dense_batch = []
+    s_dense_spread = copy.deepcopy(setting_dense_batch)
     s_dense_spread.update({
         "spread_factor": 1,
         "plot_colors": ['black'],
         "plot_markers": ["h"],
-        "line_title2": s_dense_spread['line_title2'] + " sf " + str(spread_factor)
+        "line_title2": s_dense_spread['line_title2']
     })
-    settings_dense_spread.append(s_dense_spread)
+    settings_dense_batch.append(s_dense_spread)
 
+    settings_mlp_best = []
+    s_mlp_best = copy.deepcopy(setting_mlp_best)
+    s_mlp_best.update({
+        "experiment": '3',
+        "spread_factor": 1,
+        "plot_colors": ['silver'],
+        "plot_markers": ["<"],
+        "line_title2": s_mlp_best['line_title2']
+    })
+    settings_mlp_best.append(s_mlp_best)
+
+    # TODO: Dense Batch should have spread factors right?
     network_settings = {
-        "DenseNorm": settings_spread,
-        "DenseBatch": settings_dense_spread
+        "DenseNorm": settings_spread_norm,
+        # "DenseBatch": settings_dense_batch,
+        "SpreadNet": settings_spread,
+        "DenseNet": settings_mlp_best
     }
-    plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size)
+    plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size, show_acc=False, show_loss=False)
     if show:
         plt.show()
 
@@ -103,6 +144,5 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
 hw_save_name = f"{path}/{data_set}_hw_" + "{}.png"
-plot_factors([3, 6, 9], hw_save_name.format(1000), [-1, 40], [0, 101], show=True, font_size=22)
-
-
+plot_factors([3, 6, 9], hw_save_name.format(1000), [-1, 40], [0, 101], show=False, font_size=22)
+plot_factors([6], hw_save_name.format(40000), [-1, 40], [0, 200], show=False, font_size=22, train_size=40000, )

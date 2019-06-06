@@ -13,24 +13,24 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_NORMALIZED
-    network_names = ["DenseSpreadNet"]
+    data_set = DataSet.ASCAD
+    network_names = ["DenseNorm"]
     use_hw = True
-    runs = 1
-    train_sizes = [45000]
+    runs = 5
+    train_sizes = [40000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False  # Only matters for ASCAD
+    unmask = True  # Only matters for ASCAD
     raw_traces = True
     desync = 0
     validation_size = 1000
     kernel_size = 25
     channel_size = 32
     num_layers = 2
-    spread_factor = 1
+    spread_factor = 6
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     ############################

@@ -36,7 +36,7 @@ setting = {"experiment": '3',
            }
 
 
-def plot_train_size(train_size, save_name, x_lim, y_lim, show=False):
+def plot_train_size(train_size, save_name, x_lim, y_lim, show=False, font_size=18):
     setting_spread = copy.deepcopy(setting)
     setting_spread.update({"network_name": "SpreadNet",
                            "line_title2": "$Spread_{PH}$",
@@ -62,7 +62,7 @@ def plot_train_size(train_size, save_name, x_lim, y_lim, show=False):
         "DenseNet": [setting_dense],
         "DenseSpreadNet": [setting_dense_spread]
     }
-    plot.create_plot(network_settings, save_name, x_lim, y_lim)
+    plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size)
     if show:
         plt.plot()
 
@@ -77,10 +77,10 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/ASCAD_masked"
 hw_save_name = f"{path}/hw_" + "{}.png"
-plot_train_size(1000, hw_save_name.format(1000), [-1, 4000], [0, 256])
-plot_train_size(5000, hw_save_name.format(5000), [-1, 4000], [0, 256])
-plot_train_size(20000, hw_save_name.format(20000), [-1, 4000], [0, 256])
-plot_train_size(40000, hw_save_name.format(40000), [-1, 4000], [0, 256])
+plot_train_size(1000, hw_save_name.format(1000), [-1, 9000], [0, 256])
+plot_train_size(5000, hw_save_name.format(5000), [-1, 9000], [0, 256])
+plot_train_size(20000, hw_save_name.format(20000), [-1, 9000], [0, 256])
+plot_train_size(40000, hw_save_name.format(40000), [-1, 9000], [0, 256])
 
 
 ###############
@@ -92,8 +92,8 @@ setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
 id_save_name = f"{path}/id_" + "{}.png"
-plot_train_size(1000, id_save_name.format(1000), [-1, 4000], [0, 256])
-plot_train_size(5000, id_save_name.format(5000), [-1, 4000], [0, 256])
-plot_train_size(20000, id_save_name.format(20000), [-1, 4000], [0, 256])
-plot_train_size(40000, id_save_name.format(40000), [-1, 4000], [0, 256])
+plot_train_size(1000, id_save_name.format(1000), [-1, 9000], [0, 256])
+plot_train_size(5000, id_save_name.format(5000), [-1, 9000], [0, 256])
+plot_train_size(20000, id_save_name.format(20000), [-1, 9000], [0, 256])
+plot_train_size(40000, id_save_name.format(40000), [-1, 9000], [0, 256])
 

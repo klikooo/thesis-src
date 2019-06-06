@@ -23,7 +23,7 @@ args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = False  # False if sub_key_index < 2 else True
+args.unmask = True  # False if sub_key_index < 2 else True
 args.data_set = util.DataSet.ASCAD
 args.l2_penalty = 0
 args.desync = 0
@@ -38,7 +38,7 @@ kernel_sizes = [10]
 num_layers = []
 channel_sizes = [8]
 
-network_names = ['SpreadFirstLayer']
+network_names = ['DenseNorm']
 
 ##################
 # PLOT ARGUMENTS #
