@@ -73,6 +73,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
     settings_spread_norm = []
     settings_spread = []
+    settings_dense_batch = []
     colors = ["r", "g", "b", "y", "g", "b", "g", "r"]
     for spread_factor, color in zip(spread_factors, colors):
         print(spread_factor)
@@ -95,15 +96,14 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
         })
         settings_spread.append(s_spread)
 
-    settings_dense_batch = []
-    s_dense_spread = copy.deepcopy(setting_dense_batch)
-    s_dense_spread.update({
-        "spread_factor": 1,
-        "plot_colors": ['black'],
-        "plot_markers": ["h"],
-        "line_title2": s_dense_spread['line_title2']
-    })
-    settings_dense_batch.append(s_dense_spread)
+        s_dense_spread = copy.deepcopy(setting_dense_batch)
+        s_dense_spread.update({
+            "spread_factor": spread_factor,
+            "plot_colors": [color],
+            "plot_markers": ["h"],
+            "line_title2": s_dense_spread['line_title2'] + " sf " + str(spread_factor)
+        })
+        settings_dense_batch.append(s_dense_spread)
 
     settings_mlp_best = []
     s_mlp_best = copy.deepcopy(setting_mlp_best)
@@ -119,9 +119,9 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
     # TODO: Dense Batch should have spread factors right?
     network_settings = {
         "DenseNorm": settings_spread_norm,
-        # "DenseBatch": settings_dense_batch,
-        "SpreadNet": settings_spread,
-        "DenseNet": settings_mlp_best
+        "DenseBatch": settings_dense_batch,
+        # "SpreadNet": settings_spread,
+        # "DenseNet": settings_mlp_best
     }
     plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size, show_acc=False, show_loss=False)
     if show:
@@ -145,4 +145,4 @@ setting.update({"use_hw": True})
 path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
 hw_save_name = f"{path}/{data_set}_hw_" + "{}.png"
 plot_factors([3, 6, 9], hw_save_name.format(1000), [-1, 40], [0, 101], show=False, font_size=22)
-plot_factors([6], hw_save_name.format(40000), [-1, 40], [0, 200], show=False, font_size=22, train_size=40000, )
+# plot_factors([6], hw_save_name.format(40000), [-1, 40], [0, 200], show=False, font_size=22, train_size=40000, )

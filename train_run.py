@@ -14,10 +14,10 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD
-    network_names = ["DenseNorm"]
+    network_names = ["SpreadNet"]
     use_hw = True
     runs = 5
-    train_sizes = [40000]
+    train_sizes = [200]
     epochs = 80
     batch_size = 100
     lr = 0.0001
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     kernel_size = 25
     channel_size = 32
     num_layers = 2
-    spread_factor = 6
+    spread_factor = 3
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     ############################

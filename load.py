@@ -13,14 +13,14 @@ if __name__ == "__main__":
 
     use_hw = True
     n_classes = 9 if use_hw else 256
-    spread_factor = 6
+    spread_factor = 3
     runs = [x for x in range(5)]
-    train_size = 40000
+    train_size = 200
     epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 3000
+    attack_size = 5000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # False if sub_key_index < 2 else True
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['DenseNorm']
+    network_names = ['SpreadNet']
     desync = 0
     num_exps = 100
     raw_traces = True
