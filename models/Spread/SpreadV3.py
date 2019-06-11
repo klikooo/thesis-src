@@ -55,7 +55,7 @@ class SpreadV3(nn.Module):
         max_tensor = self.bn.weight * self.max_constant + self.bn.bias
 
         x = self.spread(x, min_tensor, max_tensor, batch_size, self.bn.weight, self.bn.bias)
-        self.intermediate_values.append(x.detach().cpu().numpy())
+        # self.intermediate_values.append(x.detach().cpu().numpy())
 
         x = self.fc2(x).to(device)
         return x

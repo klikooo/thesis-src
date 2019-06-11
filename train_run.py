@@ -14,23 +14,23 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD
-    network_names = ["SpreadNet"]
+    network_names = ["SpreadV3"]
     use_hw = True
     runs = 5
-    train_sizes = [200]
+    train_sizes = [1000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = True  # Only matters for ASCAD
+    unmask = False  # Only matters for ASCAD
     raw_traces = True
     desync = 0
     validation_size = 1000
     kernel_size = 25
     channel_size = 32
     num_layers = 2
-    spread_factor = 3
+    spread_factor = 6
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     ############################
