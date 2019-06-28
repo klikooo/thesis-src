@@ -50,7 +50,8 @@ def run(args):
                  "n_classes": 9 if args.use_hw else 256,
                  "kernel_size": args.kernel_size,
                  "channel_size": args.channel_size,
-                 "num_layers": args.num_layers
+                 "num_layers": args.num_layers,
+                 "max_pool": args.max_pool
                  }
 
     # Do the runs

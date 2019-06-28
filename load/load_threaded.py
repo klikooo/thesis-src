@@ -178,6 +178,8 @@ def run_load(args):
 
         def layers_lambda(x): model_params.update({"num_layers": x})
 
+        model_params.update({"max_pool": args.max_pool})
+
         util.loop_at_least_once(args.kernel_sizes, kernel_lambda, lambda: (
             util.loop_at_least_once(args.channel_sizes, channel_lambda, lambda: (
                 util.loop_at_least_once(args.num_layers, layers_lambda, lambda: (

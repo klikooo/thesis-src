@@ -13,11 +13,11 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD
-    network_names = ["SpreadV3"]
-    use_hw = True
-    runs = 5
-    train_sizes = [1000]
+    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    network_names = ["SmallCNN"]
+    use_hw = False
+    runs = 1
+    train_sizes = [40000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
@@ -27,12 +27,14 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 25
-    channel_size = 32
+    kernel_size = 100
+    channel_size = 256
     num_layers = 2
-    spread_factor = 6
+    spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
+    max_pool = 100
+    l2_penal = 0
     ############################
 
     ###################
@@ -48,7 +50,8 @@ if __name__ == "__main__":
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
     parser.add_argument('-g', "--channel_size", default=channel_size, type=int, help="Channel size for a CNN")
-    parser.add_argument('-i', "--l2_penalty", default=0, type=float, help="L2 penalty")
+    parser.add_argument('-i', "--l2_penalty", default=l2_penal, type=float, help="L2 penalty")
+    parser.add_argument('-j', "--max_pool", default=max_pool, type=int, help="Max pool to be used")
 
     parser.add_argument('-k', "--kernel_size", default=kernel_size, type=int, help="Kernel size for a CNN")
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")

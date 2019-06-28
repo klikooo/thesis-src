@@ -8,22 +8,23 @@ import pdb
 
 import matplotlib.pyplot as plt
 
-settings = {"experiment": '3',
+settings = {"experiment": '',
             "data_set": util.DataSet.RANDOM_DELAY_NORMALIZED,
             "subkey_index": 2,
-            "unmask": True,
+            "unmask": False,
             "desync": 0,
             "use_hw": False,
             "spread_factor": 1,
-            "epochs": 75,
+            "epochs": 80,
             "batch_size": 100,
             "lr": '%.2E' % Decimal(0.0001),
-            "l2_penalty": 0.005,
+            "l2_penalty": 0.0005,
             "train_size": 40000,
-            "kernel_size": 15,
+            "kernel_size": 100,
             "num_layers": 1,
-            "channel_size": 32,
-            "network_name": "VGGNumLayers",
+            "channel_size": 128,
+            "max_pool": 50,
+            "network_name": "SmallCNN",
             "init_weights": "kaiming",
             "run": 0
             }
@@ -36,12 +37,12 @@ filename = folder + f"/model_r{args.run}_" + util_classes.get_save_name(args.net
 model = load_model(args.network_name, filename)
 print(model)
 
-c = model.block3[0][0]
+c = model.cnn[0]
 print(c)
 # print(model.block1[0][0].weights)
 w = c.weight
 print(c.bias.size())
-exit()
+# exit()
 shape_weight = w.size()
 print(f"Shape weight: {shape_weight}")
 
@@ -50,7 +51,7 @@ for channel_index in range(shape_weight[1]):
     for filter_index in range(shape_weight[0]):
         kernel = w[filter_index][channel_index].detach().cpu().numpy()
 
-        plt.plot(abs(kernel))
+        plt.plot(kernel)
 
 
     # while True:

@@ -11,32 +11,33 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = True
+    use_hw = False
     n_classes = 9 if use_hw else 256
-    spread_factor = 6
-    runs = [x for x in range(5)]
-    train_size = 1000
+    spread_factor = 1
+    runs = [x for x in range(1)]
+    train_size = 40000
     epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 9000
+    attack_size = 5000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = False  # False if sub_key_index < 2 else True
-    data_set = DataSet.ASCAD
-    kernel_sizes = [25]
-    channel_sizes = [2]
+    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    kernel_sizes = [100]
+    channel_sizes = [128]
     num_layers = [2]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['SpreadV3']
+    network_names = ['SmallCNN']
     desync = 0
     num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
+    max_pool = 50
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
@@ -51,6 +52,7 @@ if __name__ == "__main__":
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')
+    parser.add_argument('-j', "--max_pool", default=max_pool, type=int, help="Max pooling")
 
     parser.add_argument('-k', "--kernel_sizes", nargs='+', default=kernel_sizes, type=int, help='List of kernel sizes')
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
