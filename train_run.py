@@ -13,11 +13,11 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY_NORMALIZED
-    network_names = ["SmallCNN"]
+    data_set = DataSet.RANDOM_DELAY
+    network_names = ["MakeSomeNoiseReal"]
     use_hw = False
     runs = 1
-    train_sizes = [40000]
+    train_sizes = [5000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
