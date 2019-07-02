@@ -14,10 +14,10 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.RANDOM_DELAY
-    network_names = ["MakeSomeNoiseReal"]
+    network_names = ["SmallCNN"]
     use_hw = False
     runs = 1
-    train_sizes = [5000]
+    train_sizes = [1000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
-    max_pool = 100
+    max_pool = 128
     l2_penal = 0
     ############################
 

@@ -85,4 +85,5 @@ class SmallCNN(nn.Module):
         return SmallCNN(out_shape=args['n_classes'],
                         input_shape=args['input_shape'],
                         kernel_size=args['kernel_size'],
-                        max_pool=args['max_pool'])
+                        max_pool=args['max_pool'],
+                        channel_size=args['channel_size'])
