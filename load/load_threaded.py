@@ -36,17 +36,21 @@ def get_ranks(args, network_name, model_params):
         prediction = accuracy(model, x_attack, y_attack, dk_plain)
         predictions.append(prediction.cpu().numpy())
 
-    # Start a thread for each run
-    processes = []
-    for i, run in enumerate(args.runs):
-        p = Process(target=threaded_run_test, args=(args, predictions[i], folder, run,
-                                                    network_name, model_params, real_key))
-        processes.append(p)
-        p.start()
-    # Wait for them to finish
-    for p in processes:
-        p.join()
-        print('Joined process')
+    # Check if it is only one run, if so don't do multi threading
+    if len(args.runs) == 1:
+        threaded_run_test(args, predictions[0], folder, args.runs[0], network_name, model_params, real_key)
+    else:
+        # Start a thread for each run
+        processes = []
+        for i, run in enumerate(args.runs):
+            p = Process(target=threaded_run_test, args=(args, predictions[i], folder, run,
+                                                        network_name, model_params, real_key))
+            processes.append(p)
+            p.start()
+        # Wait for them to finish
+        for p in processes:
+            p.join()
+            print('Joined process')
 
 
 def load_data(args, network_name):

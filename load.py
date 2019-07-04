@@ -15,17 +15,17 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 40000
+    train_size = 45000
     epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 5000
+    attack_size = 3000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = False  # False if sub_key_index < 2 else True
-    data_set = DataSet.RANDOM_DELAY_NORMALIZED
-    kernel_sizes = [100]
+    data_set = DataSet.ASCAD_NORMALIZED
+    kernel_sizes = [25]
     channel_sizes = [128]
     num_layers = [2]
     init_weights = ""
@@ -33,11 +33,12 @@ if __name__ == "__main__":
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
     network_names = ['SmallCNN']
     desync = 0
-    num_exps = 100
+    num_exps = 20
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 50
+    max_pool = 64
+    l2_penalty = 0
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
@@ -48,7 +49,7 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-g', "--l2_penalty", default=0, type=float, help="L2 penalty")
+    parser.add_argument('-g', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')

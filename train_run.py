@@ -13,21 +13,21 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.RANDOM_DELAY
+    data_set = DataSet.ASCAD_NORMALIZED
     network_names = ["SmallCNN"]
     use_hw = False
     runs = 1
-    train_sizes = [1000]
+    train_sizes = [45000]
     epochs = 80
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False  # Only matters for ASCAD
+    unmask = False
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 100
+    kernel_size = 25
     channel_size = 256
     num_layers = 2
     spread_factor = 1
