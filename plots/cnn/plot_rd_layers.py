@@ -157,7 +157,7 @@ network_settings[network_1][6].update({
 network_settings[network_1][7].update({
     "kernel_sizes": [10, 7, 5, 3],
     "num_layers": [8] * 4,
-    "l2_penalty": 0.05,
+    "l2_penalty": l2_penalty,
     "title": " 8 layers l2 0.05",
     "plot_marker": "p",
 
@@ -192,7 +192,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}.exp__'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))

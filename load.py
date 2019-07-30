@@ -14,7 +14,7 @@ if __name__ == "__main__":
     use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [2,3,4] #[x for x in range(5)]
+    runs = [x for x in range(5)]
     train_size = 40000
     epochs = 75
     batch_size = 100
