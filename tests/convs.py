@@ -13,6 +13,12 @@ x = torch.ones(batch_size, channels, n_features)
 conv1 = nn.Conv1d(channels, 3, kernel_size=kernel_size, padding=padding)
 conv2 = nn.Conv1d(3, 3, kernel_size=kernel_size, padding=0)
 
+
+print("conv2 kernel weights test")
+w = conv2.weight.data
+print(w.size())
+print(w)
+
 conv1.weight.data.fill_(1.0)
 conv1.bias.data.fill_(0.0)
 conv2.bias.data.fill_(0.0)

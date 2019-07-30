@@ -1,4 +1,6 @@
 import math
+import pdb
+
 import numpy as np
 from test import test_with_key_guess_p, accuracy
 from util import shuffle_permutation, save_np, generate_folder_name
@@ -84,6 +86,115 @@ def disable_filter2(model):
     return predictions
 
 
+def disable_filter3(model):
+    model.to(util.device)
+    conv_layer = model.cnn[0]
+    print(model)
+
+    weights = conv_layer.weight.clone()
+    biases = conv_layer.bias.clone()
+
+    conv_layer.weight = torch.nn.Parameter(
+        torch.zeros(weights.size()[0], weights.size()[1], weights.size()[2]).float().to(util.device))
+    conv_layer.bias = torch.nn.Parameter(
+        torch.zeros(weights.size()[0]).float().to(util.device))
+    conv_layer.weight.to(util.device)
+    conv_layer.bias.to(util.device)
+
+    predictions = []
+    correct_indices = []
+    sum_indices = [0] * len(y_attack)
+
+    for i in range(weights.size()[0]):
+        if i != 0:
+            conv_layer.weight[i - 1] = torch.zeros(weights.size()[1], weights.size()[2])
+            conv_layer.bias[i - 1] = torch.zeros(weights.size()[1])
+
+        conv_layer.weight[i] = weights[i]
+        conv_layer.bias[i] = biases[i]
+
+        print(f"Index {i}")
+        prediction = accuracy(model, x_attack, y_attack, dk_plain)
+
+        max_values, indices = prediction.max(1)
+        res = indices.long() == torch.from_numpy(y_attack.reshape(len(y_attack))).long().to(util.device)
+
+        sum_indices += res.cpu().numpy()
+        correct_index = res.nonzero().view(-1)
+
+        correct_indices.append(correct_index)
+        predictions.append(prediction.cpu().numpy())
+
+    return predictions, correct_indices, sum_indices
+
+
+def disable_filter4(model):
+    model.to(util.device)
+    conv_layer = model.cnn[0]
+    conv_layer2 = model.cnn[4]
+    bn_layer = model.cnn[3]
+    print(model)
+
+    weights = conv_layer.weight.clone()
+    biases = conv_layer.bias.clone()
+
+    weights_cnn_layer2 = conv_layer2.weight.clone()
+    biases_cnn_layer2 = conv_layer2.bias.clone()
+
+    biases_bn_layer = bn_layer.bias
+
+    conv_layer.weight = torch.nn.Parameter(
+        torch.zeros(weights.size()[0], weights.size()[1], weights.size()[2]).float().to(util.device))
+    conv_layer.bias = torch.nn.Parameter(
+        torch.zeros(weights.size()[0]).float().to(util.device))
+    conv_layer.weight.to(util.device)
+    conv_layer.bias.to(util.device)
+
+    conv_layer2.weight = torch.nn.Parameter(
+        torch.zeros(weights_cnn_layer2.size()[0], weights_cnn_layer2.size()[1],
+                    weights_cnn_layer2.size()[2]).float().to(util.device))
+    conv_layer2.bias = torch.nn.Parameter(
+        torch.zeros(biases_cnn_layer2.size()[0]).float().to(util.device))
+    conv_layer2.weight.to(util.device)
+    conv_layer2.bias.to(util.device)
+
+    # biases_cnn_layer2.bias = torch.nn.Parameter(
+    #     torch.zeros(biases_cnn_layer2.size()[0]).float().to(util.device))
+    # biases_cnn_layer2.bias.to(util.device)
+
+    predictions = []
+    correct_indices = []
+    sum_indices = [0] * len(y_attack)
+
+    for i in range(weights.size()[0]):
+        if i != 0:
+            conv_layer.weight[i - 1] = torch.zeros(weights.size()[1], weights.size()[2])
+            conv_layer2.weight[i - 1] = torch.zeros(weights_cnn_layer2.size()[1], weights_cnn_layer2.size()[2])
+            conv_layer.bias[i - 1] = torch.zeros(weights.size()[1])
+            conv_layer2.bias[i - 1] = torch.zeros(1)
+            # bn_layer.bias[i - 1] = torch.zeros(1)
+
+        conv_layer.weight[i] = weights[i]
+        conv_layer2.weight[i] = weights_cnn_layer2[i]
+        conv_layer.bias[i] = biases[i]
+        conv_layer2.bias[i] = biases_cnn_layer2[i]
+        # bn_layer.bias[i] = biases_bn_layer[i]
+
+        print(f"Index {i}")
+        prediction = accuracy(model, x_attack, y_attack, dk_plain)
+
+        max_values, indices = prediction.max(1)
+        res = indices.long() == torch.from_numpy(y_attack.reshape(len(y_attack))).long().to(util.device)
+
+        sum_indices += res.cpu().numpy()
+        correct_index = res.nonzero().view(-1)
+
+        correct_indices.append(correct_index)
+        predictions.append(prediction.cpu().numpy())
+
+    return predictions, correct_indices, sum_indices
+
+
 def get_ranks(args, network_name, model_params, edit_model=disable_filter):
     folder = "{}/{}/".format(args.models_path, generate_folder_name(args))
 
@@ -91,11 +202,11 @@ def get_ranks(args, network_name, model_params, edit_model=disable_filter):
     # TODO: for multiple runs
     model_path = '{}/model_r{}_{}.pt'.format(
         folder,
-        0,
+        args.run,
         get_save_name(network_name, model_params))
     print('path={}'.format(model_path))
 
-    if not os.path.exists(f"{model_path}.predictions.npy"):
+    if not os.path.exists(f"{model_path}.predictions1.npy"):
 
         # Load the data and make it global
         global x_attack, y_attack, dk_plain, key_guesses
@@ -109,12 +220,12 @@ def get_ranks(args, network_name, model_params, edit_model=disable_filter):
         np_predictions = np.array(predictions)
         np_correct_indices = np.array(correct_indices)
         np_sum_indices = np.array(sum_indices)
-        np.save(f"{model_path}.predictions", np_predictions)
+        np.save(f"{model_path}.predictions1", np_predictions)
         np.save(f"{model_path}.correct_indices", np_correct_indices)
         np.save(f"{model_path}.sum_indices", np_sum_indices)
         print(sum_indices)
     else:
-        predictions = np.load(f"{model_path}.predictions.npy")
+        predictions = np.load(f"{model_path}.predictions1.npy")
         real_key = util.load_csv('{}/{}/secret_key.csv'.format(args.traces_path, str(load_args.data_set)),
                                  dtype=np.int)
         key_guesses = util.load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
@@ -125,9 +236,8 @@ def get_ranks(args, network_name, model_params, edit_model=disable_filter):
             start=load_args.train_size + load_args.validation_size,
             size=load_args.attack_size)
 
-
     # Start a thread for each prediction
-    groups_of = 6
+    groups_of = 7
     for k in range(math.ceil(len(predictions) / float(groups_of))):
 
         # Start groups of processes
@@ -137,7 +247,7 @@ def get_ranks(args, network_name, model_params, edit_model=disable_filter):
                 break
             print(f"i: {i}")
 
-            p = Process(target=threaded_run_test, args=(args, predictions[i], folder, 0,
+            p = Process(target=threaded_run_test, args=(args, predictions[i], folder, args.run,
                                                         network_name, model_params, real_key, i))
             processes.append(p)
             p.start()
@@ -195,11 +305,12 @@ load_args.l2_penalty = 0.0005
 load_args.init_weights = "kaiming"
 load_args.num_exps = 20
 load_args.permutations = util.generate_permutations(load_args.num_exps, load_args.attack_size)
+load_args.run = 1
 
 model_params = {
-    "kernel_size": 50,
+    "kernel_size": 100,
     "channel_size": 128,
     "max_pool": 64,
 }
 
-get_ranks(load_args, "SmallCNN", model_params, disable_filter)
+get_ranks(load_args, "SmallCNN", model_params, disable_filter4)
