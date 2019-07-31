@@ -103,14 +103,14 @@ network_settings[network_1][0].update({
     "kernel_sizes": [100, 50, 25, 20, 15],
     "num_layers": [1, 1, 1, 1, 1],
     "l2_penalty": l2_penalty,
-    "title": " 1 layers l2 0.05",
+    "title": " 1 layers l2 {}".format(l2_penalty),
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
     "kernel_sizes": [50, 25, 20, 15, 10],
     "num_layers": [2, 2, 2, 2, 2],
     "l2_penalty": l2_penalty,
-    "title": " 2 layers l2 0.05",
+    "title": " 2 layers l2 {}".format(l2_penalty),
     "plot_marker": "*",
 
 })
@@ -118,7 +118,7 @@ network_settings[network_1][2].update({
     "kernel_sizes": [26, 20, 15, 10, 7],
     "num_layers": [3, 3, 3, 3, 3],
     "l2_penalty": l2_penalty,
-    "title": " 3 layers l2 0.05",
+    "title": " 3 layers l2 {}".format(l2_penalty),
     "plot_marker": ".",
 
 })
@@ -126,7 +126,7 @@ network_settings[network_1][3].update({
     "kernel_sizes": [21, 15, 10, 7, 5],
     "num_layers": [4, 4, 4, 4, 4],
     "l2_penalty": l2_penalty,
-    "title": " 4 layers l2 0.05",
+    "title": " 4 layers l2 {}".format(l2_penalty),
     "plot_marker": "o",
 
 })
@@ -134,7 +134,7 @@ network_settings[network_1][4].update({
     "kernel_sizes": [17, 10, 5, 7, 3],
     "num_layers": [5] * 5,
     "l2_penalty": l2_penalty,
-    "title": " 5 layers l2 0.05",
+    "title": " 5 layers l2 {}".format(l2_penalty),
     "plot_marker": "+",
 
 })
@@ -142,7 +142,7 @@ network_settings[network_1][5].update({
     "kernel_sizes": [15, 10, 7, 5, 3],
     "num_layers": [6] * 5,
     "l2_penalty": l2_penalty,
-    "title": " 6 layers l2 0.05",
+    "title": " 6 layers l2 {}".format(l2_penalty),
     "plot_marker": "8",
 
 })
@@ -150,7 +150,7 @@ network_settings[network_1][6].update({
     "kernel_sizes": [10, 7, 5, 3],
     "num_layers": [7] * 4,
     "l2_penalty": l2_penalty,
-    "title": " 7 layers l2 0.05",
+    "title": " 7 layers l2 {}".format(l2_penalty),
     "plot_marker": "s",
 
 })
@@ -192,7 +192,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp__'.format(filename)
+        ge_path = '{}.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
