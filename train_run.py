@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_NORMALIZED
-    network_names = ["SmallCNN"]
+    network_names = ["VGGNumLayers"]
     use_hw = False
     runs = 1
     train_sizes = [45000]
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     desync = 0
     validation_size = 1000
     kernel_size = 25
-    channel_size = 256
+    channel_size = 32
     num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()

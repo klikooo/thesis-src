@@ -192,7 +192,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}.exp__'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))

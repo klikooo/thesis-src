@@ -23,7 +23,7 @@ args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
 args.unmask = False
-args.data_set = util.DataSet.SIM_MASK
+args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
 args.l2_penalty = 0.005
 args.desync = 0
 args.init_weights = ""
@@ -37,7 +37,7 @@ kernel_sizes = [3]
 num_layers = [2]
 channel_sizes = [32]
 
-network_names = ['VGGNumLayers']
+network_names = ['KernelBig']
 
 ##################
 # PLOT ARGUMENTS #

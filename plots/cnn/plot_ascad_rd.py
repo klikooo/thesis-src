@@ -29,7 +29,7 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.005
+l2_penalty = 0
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
@@ -41,7 +41,7 @@ network_settings = {
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 50
+desync = 100
 show_losses = False
 show_acc = False
 show_losses_all = False

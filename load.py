@@ -7,16 +7,16 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs3/'
+    models_path = '/media/rico/Data/TU/thesis/runs/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
     use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(5)]
-    train_size = 40000
-    epochs = 75
+    runs = [x for x in range(1)]
+    train_size = 20000
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
@@ -24,21 +24,21 @@ if __name__ == "__main__":
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # If False then it is masked
-    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    data_set = DataSet.RANDOM_DELAY
     kernel_sizes = [50]
     channel_sizes = [32]
     num_layers = [1]
-    init_weights = "kaiming"
+    init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['VGGNumLayers']
+    network_names = ['MakeSomeNoiseReal']
     desync = 0
     num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
     max_pool = 50
-    l2_penalty = 0.005
+    l2_penalty = 0
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
