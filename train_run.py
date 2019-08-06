@@ -13,27 +13,27 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_NORMALIZED
-    network_names = ["VGGNumLayers"]
+    data_set = DataSet.RANDOM_DELAY
+    network_names = ["VGGNumLayers2"]
     use_hw = False
     runs = 1
-    train_sizes = [45000]
-    epochs = 80
+    train_sizes = [1000]
+    epochs = 75
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False
+    unmask = True
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 25
+    kernel_size = 3
     channel_size = 32
-    num_layers = 2
+    num_layers = 1
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
-    max_pool = 128
+    max_pool = 4
     l2_penal = 0
     ############################
 

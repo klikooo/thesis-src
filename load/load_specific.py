@@ -26,9 +26,9 @@ rank_step = 1
 unmask = True
 kernel_sizes = [3, 10, 25, 50, 100]
 num_layers = [2]
-channel_sizes = [256]
-l2_penalty = 0
-max_pool = 128
+channel_sizes = [128]
+l2_penalty = 0.00
+max_pool = 64
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']

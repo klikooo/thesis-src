@@ -15,8 +15,8 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 20000
-    epochs = 80
+    train_size = 1000
+    epochs = 75
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
@@ -25,19 +25,19 @@ if __name__ == "__main__":
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # If False then it is masked
     data_set = DataSet.RANDOM_DELAY
-    kernel_sizes = [50]
+    kernel_sizes = [3]
     channel_sizes = [32]
     num_layers = [1]
     init_weights = ""
 
     # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['MakeSomeNoiseReal']
+    network_names = ['VGGNumLayers2']
     desync = 0
     num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 50
+    max_pool = 4
     l2_penalty = 0
     #####################################################################################
 

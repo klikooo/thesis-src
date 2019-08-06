@@ -12,23 +12,23 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = True
+use_hw = False
 n_classes = 9 if use_hw else 256
-spread_factor = 2
-runs = [x for x in range(1)]
-train_size = 45000
-epochs = 80
+spread_factor = 1
+runs = [x for x in range(5)]
+train_size = 40000
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_kezy_index < 2 else True
-kernel_sizes = [20]
+unmask = True  # False if sub_key_index < 2 else True
+kernel_sizes = [25]
 num_layers = [2]
 channel_sizes = [32]
-l2_penalty = 0
-init_weights = ""
+l2_penalty = 0.05
+init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
@@ -36,17 +36,17 @@ network_settings = {
     # 'SpreadNet': 1,
     # 'DenseNet': 1,
     # 'DenseBatch': 1
-    'DenseSpreadNet': 1
+    'VGGNumLayers': 1
 }
-data_set = util.DataSet.ASCAD_NORMALIZED
+data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-show_losses = False
+show_losses = True
 show_acc = False
 show_losses_all = False
 show_only_mean = True
-experiment = True
+experiment = False
 ###########################
 # SETTINGS FOR EACH MODEL #
 ###########################
@@ -114,7 +114,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}.exp__'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
