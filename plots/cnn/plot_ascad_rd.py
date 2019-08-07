@@ -41,7 +41,7 @@ network_settings = {
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 100
+desync = 50
 show_losses = False
 show_acc = False
 show_losses_all = False
@@ -99,7 +99,7 @@ for k, v in network_settings.items():
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-l2 = 0
+l2 = 0.005
 network_settings[network_1][0].update({
     "kernel_sizes": [100, 50, 25, 10, 5, 3],
     "num_layers": [1] * 6,
@@ -153,7 +153,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}.exp__'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))

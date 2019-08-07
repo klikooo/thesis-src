@@ -29,7 +29,7 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0
+l2_penalty = 0.005
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
