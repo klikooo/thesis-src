@@ -5,6 +5,7 @@ import util
 import numpy as np
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 from util_classes import get_save_name
 
@@ -29,19 +30,20 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.005
+l2_penalty = 0.0
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-network_1 = "VGGNumLayers"
+network_1 = "VGGNumLayers2"
 network_settings = {
-    network_1: 9,
+    network_1: 5,
     # 'KernelBigVGGMDK': {}
 }
 data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
+load_loss_acc = True
 show_losses = False
 show_acc = False
 show_losses_all = False
@@ -52,6 +54,7 @@ show_loss = False
 colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
+max_pool = 4
 # "8"	m11	octagon
 # "s"	m12	square
 # "p"	m13	pentagon
@@ -92,7 +95,8 @@ for k, v in network_settings.items():
                    "va": [],
                    "tl": [],
                    "vl": [],
-                   "line_title": []
+                   "line_title": [],
+                   "max_pool": max_pool
                    }
         network_settings[k].append(setting)
 
@@ -101,21 +105,21 @@ for k, v in network_settings.items():
 #####################################
 network_settings[network_1][0].update({
     "kernel_sizes": [100, 50, 25, 20, 15],
-    "num_layers": [1, 1, 1, 1, 1],
+    "num_layers": [1] * 5,
     "l2_penalty": l2_penalty,
     "title": " 1 layers l2 {}".format(l2_penalty),
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
-    "kernel_sizes": [50, 25, 20, 15, 10],
-    "num_layers": [2, 2, 2, 2, 2],
+    "kernel_sizes": [100, 50, 25, 20, 15, 10],
+    "num_layers": [2] * 6,
     "l2_penalty": l2_penalty,
     "title": " 2 layers l2 {}".format(l2_penalty),
     "plot_marker": "*",
 
 })
 network_settings[network_1][2].update({
-    "kernel_sizes": [26, 20, 15, 10, 7],
+    "kernel_sizes": [50, 25, 20, 15, 10, 7],
     "num_layers": [3, 3, 3, 3, 3],
     "l2_penalty": l2_penalty,
     "title": " 3 layers l2 {}".format(l2_penalty),
@@ -123,54 +127,21 @@ network_settings[network_1][2].update({
 
 })
 network_settings[network_1][3].update({
-    "kernel_sizes": [21, 15, 10, 7, 5],
-    "num_layers": [4, 4, 4, 4, 4],
+    "kernel_sizes": [25, 20, 15, 10, 7, 5],
+    "num_layers": [4] * 6,
     "l2_penalty": l2_penalty,
     "title": " 4 layers l2 {}".format(l2_penalty),
     "plot_marker": "o",
 
 })
 network_settings[network_1][4].update({
-    "kernel_sizes": [17, 10, 5, 7, 3],
-    "num_layers": [5] * 5,
+    "kernel_sizes": [20, 15, 10, 5, 7, 3],
+    "num_layers": [5] * 6,
     "l2_penalty": l2_penalty,
     "title": " 5 layers l2 {}".format(l2_penalty),
     "plot_marker": "+",
 
 })
-network_settings[network_1][5].update({
-    "kernel_sizes": [15, 10, 7, 5, 3],
-    "num_layers": [6] * 5,
-    "l2_penalty": l2_penalty,
-    "title": " 6 layers l2 {}".format(l2_penalty),
-    "plot_marker": "8",
-
-})
-network_settings[network_1][6].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [7] * 4,
-    "l2_penalty": l2_penalty,
-    "title": " 7 layers l2 {}".format(l2_penalty),
-    "plot_marker": "s",
-
-})
-network_settings[network_1][7].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [8] * 4,
-    "l2_penalty": l2_penalty,
-    "title": " 8 layers l2 0.05",
-    "plot_marker": "p",
-
-})
-network_settings[network_1][8].update({
-    "kernel_sizes": [10, 7, 5, 3],
-    "num_layers": [9] * 4,
-    "l2_penalty": l2_penalty,
-    "title": " 9 layers l2 0.05",
-    "plot_marker": "P",
-
-})
-
 
 #####################################################################################
 
@@ -192,14 +163,14 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp__'.format(filename)
+        ge_path = '{}.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
         ge_x.append(x_r)
         ge_y.append(y_r)
 
-        if show_losses or show_acc:
+        if load_loss_acc:
             ta, va, tl, vl = util.load_loss_acc(filename)
             lta.append(ta)
             lva.append(va)
@@ -220,15 +191,6 @@ model_params = {}
 all_loss_acc = []  # ([], [], [], [])
 plot_colors = []
 for network_name, network_setting in network_settings.items():
-    def lambda_kernel(x): model_params.update({"kernel_size": x})
-
-
-    def lambda_channel(x): model_params.update({"channel_size": x})
-
-
-    def lambda_layers(x): model_params.update({"num_layers": x})
-
-
     def retrieve_ge(net_setting):
         print(model_params)
         ge_x, ge_y, loss_acc = get_ge(network_name, model_params, net_setting)
@@ -253,9 +215,9 @@ for network_name, network_setting in network_settings.items():
 
     for setting in network_setting:
         print(setting)
-        # exit()
         for cs in setting['channel_sizes']:
             model_params.update({"channel_size": cs})
+            model_params.update({"max_pool": setting['max_pool']})
             for i in range(len(setting['num_layers'])):
                 model_params.update({"kernel_size": setting['kernel_sizes'][i]})
                 model_params.update({"num_layers": setting['num_layers'][i]})
@@ -388,7 +350,7 @@ for model_name, model_settings in network_settings.items():
         plt.grid(True)
         axes = plt.gca()
         axes.set_ylim([0, 120])
-        axes.set_xlim([-10, 500])
+        axes.set_xlim([-10, 50])
 
         plt.title("{} - {}".format(model_name, model_setting['title']))
 
@@ -426,6 +388,80 @@ for model_name, model_settings in network_settings.items():
                 plt.plot(model_setting['vl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
                          color='green', marker=plot_markers[i])
             plt.legend()
+
+if True:
+    validation_marker = "H"
+    training_marker = " "
+    for model_name, model_settings in network_settings.items():
+        for model_setting in model_settings:
+            line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
+            ks_training_loss = model_setting['ta']
+            ks_training_acc = model_setting['tl']
+            ks_validation_acc = model_setting['vl']
+            ks_validation_loss = model_setting['va']
+
+            # Show loss
+            ks = model_setting['kernel_sizes']
+            labels = [f"Kernel size {k}" for k in ks]
+
+            iter_colors = itertools.cycle(colors)
+            line_labels = [Line2D([0], [0], color=next(iter_colors), lw=2) for _ in ks]
+            # line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
+
+            # SHOW LOSS
+            fig, ax = plt.subplots()
+            ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
+                       Line2D([0], [0], color='black', lw=2, marker=validation_marker),
+                       *line_labels],
+                      ['Training', 'Validation', *labels])
+            plt.grid(True)
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.title("Loss {} - {}".format(model_name, model_setting['title']))
+            iter_colors = itertools.cycle(colors)
+            for i in range(len(ks_validation_loss)):
+                color = next(iter_colors)
+                plt.plot(ks_validation_loss[i],
+                         marker=validation_marker,
+                         color=color, markevery=0.1)
+                plt.plot(ks_training_loss[i],
+                         marker=training_marker,
+                         color=color, markevery=0.1)
+
+            # file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/loss"
+            # file_name = f"loss_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+            #             f"_l2_{l2_penalty}.png"
+            # figure = plt.gcf()
+            # figure.set_size_inches(16, 9)
+            # figure.savefig(f"{file_path}/{file_name}", dpi=100)
+
+            # SHOW ACCURACY
+            fig, ax = plt.subplots()
+            ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
+                       Line2D([0], [0], color='black', lw=2, marker=validation_marker),
+                       *line_labels],
+                      ['Training', 'Validation', *labels])
+            plt.grid(True)
+            plt.xlabel('Epoch')
+            plt.ylabel('Accuracy')
+            plt.title("Accuracy {} - {}".format(model_name, model_setting['title']))
+            iter_colors = itertools.cycle(colors)
+            for i in range(len(ks_validation_acc)):
+                color = next(iter_colors)
+                plt.plot(ks_validation_acc[i],
+                         marker=validation_marker,
+                         color=color, markevery=0.1)
+                plt.plot(ks_training_acc[i],
+                         marker=training_marker,
+                         color=color, markevery=0.1)
+
+            # file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/acc"
+            # file_name = f"acc_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+            #             f"_l2_{l2_penalty}.png"
+            # figure = plt.gcf()
+            # figure.set_size_inches(16, 9)
+            # figure.savefig(f"{file_path}/{file_name}", dpi=100)
+
 
 
 plt.show()

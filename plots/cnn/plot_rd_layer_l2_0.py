@@ -48,7 +48,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     show_loss = False
     show_per_layer = True
     colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
-              "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
+              "fuchsia", "goldenrod", "grey", "indigo", "lavender"]
     plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
     # "8"	m11	octagon
     # "s"	m12	square
@@ -97,31 +97,31 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     # UPDATE SETTINGS FOR DESIRED MODEL #
     #####################################
     network_settings[network_1][0].update({
-        "kernel_sizes": [100, 50, 25, 20, 15],
-        "num_layers": [1, 1, 1, 1, 1],
+        "kernel_sizes": [100, 50, 25, 20, 15, 5, 3],
+        "num_layers": [1] * 7,
         "l2_penalty": l2_penalty,
         "title": " 1 layers l2 {}".format(l2_penalty),
         "plot_marker": " ",
     })
     network_settings[network_1][1].update({
-        "kernel_sizes": [50, 25, 20, 15, 10],
-        "num_layers": [2, 2, 2, 2, 2],
+        "kernel_sizes": [100, 50, 25, 20, 15, 10, 5, 3],
+        "num_layers": [2] * 8,
         "l2_penalty": l2_penalty,
         "title": " 2 layers l2 {}".format(l2_penalty),
         "plot_marker": "*",
 
     })
     network_settings[network_1][2].update({
-        "kernel_sizes": [50, 25, 26, 20, 15, 10, 7],
-        "num_layers": [3, 3, 3, 3, 3],
+        "kernel_sizes": [50, 25, 26, 20, 15, 10, 7, 5, 3],
+        "num_layers": [3] * 9,
         "l2_penalty": l2_penalty,
         "title": " 3 layers l2 {}".format(l2_penalty),
         "plot_marker": ".",
 
     })
     network_settings[network_1][3].update({
-        "kernel_sizes": [25, 20, 21, 15, 10, 7, 5],
-        "num_layers": [4, 4, 4, 4, 4, 4, 4],
+        "kernel_sizes": [25, 20, 21, 15, 10, 7, 5, 3],
+        "num_layers": [4] * 8,
         "l2_penalty": l2_penalty,
         "title": " 4 layers l2 {}".format(l2_penalty),
         "plot_marker": "o",
