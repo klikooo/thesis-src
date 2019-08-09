@@ -161,7 +161,9 @@ def threaded_run_test(args, prediction, folder, run, network_name, model_params,
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)
     if args.use_noise_data:
-        save_path = '{}model_r{}_{}_noise.exp'.format(folder, run, get_save_name(network_name, model_params))
+        save_path = '{}model_r{}_{}_noise{}.exp'.format(folder, run,
+                                                        get_save_name(network_name, model_params),
+                                                        args.noise_level)
     else:
         save_path = '{}model_r{}_{}.exp'.format(folder, run, get_save_name(network_name, model_params))
     print("Save path {}".format(save_path))

@@ -13,31 +13,32 @@ path = '/media/rico/Data/TU/thesis'
 # TRAINING ARGUMENTS #
 ######################
 args = util.EmptySpace()
-args.use_hw = True
+args.use_hw = False
 args.n_classes = 9 if args.use_hw else 256
 args.spread_factor = 1
-args.train_size = 40000
-args.epochs = 80
+args.train_size = 45000
+args.epochs = 75
 args.batch_size = 100
 args.lr = 0.0001
 args.subkey_index = 2
 args.rank_step = 1
-args.unmask = False
-args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
-args.l2_penalty = 0.005
-args.desync = 0
+args.unmask = True
+args.data_set = util.DataSet.ASCAD_NORMALIZED
+args.l2_penalty = 0.0
+args.desync = 50
 args.init_weights = ""
+args.max_pool = 4
 
 ###################
 # MODEL ARGUMENTS #
 ###################
 runs = [x for x in range(1)]
 rank_step = 1
-kernel_sizes = [3]
+kernel_sizes = [15]
 num_layers = [2]
 channel_sizes = [32]
 
-network_names = ['KernelBig']
+network_names = ['VGGNumLayers2']
 
 ##################
 # PLOT ARGUMENTS #
@@ -48,7 +49,7 @@ show_losses = True
 show_acc = False
 show_losses_all = False
 show_only_mean = True
-experiment = False
+experiment = True
 type_network = 'HW' if args.use_hw else 'ID'
 
 
@@ -63,7 +64,7 @@ def get_ge(net_name, model_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}_noise0.5.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
@@ -92,7 +93,6 @@ all_loss_acc = []  # ([], [], [], [])
 for network_name in network_names:
     def lambda_kernel(x): model_params.update({"kernel_size": x})
 
-
     def lambda_channel(x): model_params.update({"channel_size": x})
 
     def lambda_layers(x): model_params.update({"num_layers": x})
@@ -108,6 +108,7 @@ for network_name in network_names:
 
         all_loss_acc.append(loss_acc)
 
+    model_params.update({"max_pool": args.max_pool})
     util.loop_at_least_once(kernel_sizes, lambda_kernel, lambda: (
         util.loop_at_least_once(channel_sizes, lambda_channel, lambda: (
             util.loop_at_least_once(num_layers, lambda_layers, retrieve_ge)

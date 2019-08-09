@@ -163,7 +163,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}_noise.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
@@ -349,8 +349,8 @@ for model_name, model_settings in network_settings.items():
         plt.ylabel('Guessing Entropy', fontsize=16)
         plt.grid(True)
         axes = plt.gca()
-        axes.set_ylim([0, 120])
-        axes.set_xlim([-10, 50])
+        axes.set_ylim([0, 256])
+        axes.set_xlim([-10, 3000])
 
         plt.title("{} - {}".format(model_name, model_setting['title']))
 

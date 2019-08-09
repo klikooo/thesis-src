@@ -465,7 +465,8 @@ def load_data_generic(args):
     print(args)
 
     if args['use_noise_data']:
-        x_train = np.load('{}/{}/traces/traces_noise.npy'.format(args['traces_path'], str(args['data_set'])))
+        x_train = np.load('{}/{}/traces/traces_noise_.npy'.format(
+            args['traces_path'], str(args['data_set'], args['noise_level'])))
     else:
         x_train = np.load('{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set'])))
 

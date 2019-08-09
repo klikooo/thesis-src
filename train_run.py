@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_NORMALIZED
-    network_names = ["VGGMasked"]
+    network_names = ["VGGNumLayers2"]
     use_hw = False
     runs = 1
     train_sizes = [45000]
@@ -23,18 +23,19 @@ if __name__ == "__main__":
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False
+    unmask = True
     raw_traces = True
-    desync = 0
+    desync = 50
     validation_size = 1000
-    kernel_size = 25
+    kernel_size = 5
     channel_size = 32
     num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
-    max_pool = 6
-    l2_penal = 0.005
+    max_pool = 4
+    l2_penal = 0.00
+    use_noise_data = False
     ############################
 
     ###################
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
     parser.add_argument('-m', "--model_save_path", default=model_save_path, type=str,
                         help="Path were the models are saved")
-    parser.add_argument('-n', "--use_noise_data", default=False, action=BoolAction, type=bool,
+    parser.add_argument('-n', "--use_noise_data", default=use_noise_data, action=BoolAction, type=bool,
                         help="Use noise in the data set for RD")
 
     parser.add_argument('-p', "--traces_path", default=traces_path, type=str, help="Path to the traces")

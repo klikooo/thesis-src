@@ -15,9 +15,10 @@ args = {
 x_train, _, _ = util.load_data_generic(args)
 
 # Create noise
+noise_level = 0.75
 sigma = 10
 mu = 0
-noise = np.random.normal(0, 1, 50000 * 3500) * 1.0
+noise = np.random.normal(0, 1, 50000 * 3500) * noise_level
 noise = noise.reshape(50000, 3500)
 print(x_train.shape)
 print(noise.shape)
@@ -29,7 +30,7 @@ noise_data = x_train + noise
 print(f"x: {x_train[0][0]}\nn: {noise[0][0]}\nr: {noise_data[0][0]}")
 
 # Save noise data
-np.save(f"{path}/{str(data_set)}/traces/traces_noise", noise_data)
+np.save(f"{path}/{str(data_set)}/traces/traces_noise_{noise_level}", noise_data)
 
 # Perform some tests if needed
 # import pdb
