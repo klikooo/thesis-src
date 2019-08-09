@@ -464,11 +464,12 @@ def load_random_delay_large_key_guesses(traces_path, start, size):
 def load_data_generic(args):
     print(args)
 
+    x_train_file = '{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set']))
     if args['use_noise_data']:
-        x_train = np.load('{}/{}/traces/traces_noise_.npy'.format(
-            args['traces_path'], str(args['data_set'], args['noise_level'])))
-    else:
-        x_train = np.load('{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+        x_train_file = '{}/{}/traces/traces_noise_{}.npy'.format(
+            args['traces_path'], str(args['data_set']), args['noise_level'])
+    print(f"Loading {x_train_file}")
+    x_train = np.load(x_train_file)
 
     y_train = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
 

@@ -115,7 +115,8 @@ def load_data(args, network_name):
                                                         'size': args.attack_size,
                                                         'domain_knowledge': True,
                                                         'use_noise_data': args.use_noise_data,
-                                                        'data_set': args.data_set})
+                                                        'data_set': args.data_set,
+                                                        'noise_level': args.noise_level})
         if plain is not None:
             _dk_plain = torch.from_numpy(plain).cuda()
         print('Loading key guesses')

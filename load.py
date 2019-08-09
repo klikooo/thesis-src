@@ -15,7 +15,7 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 45000
+    train_size = 40000
     epochs = 75
     batch_size = 100
     lr = 0.0001
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # If False then it is masked
-    data_set = DataSet.ASCAD_NORMALIZED
+    data_set = DataSet.RANDOM_DELAY_NORMALIZED
     kernel_sizes = [15]
     channel_sizes = [32]
     num_layers = [2]
