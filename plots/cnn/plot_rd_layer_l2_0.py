@@ -100,14 +100,14 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [100, 50, 25, 20, 15, 5, 3],
         "num_layers": [1] * 7,
         "l2_penalty": l2_penalty,
-        "title": " 1 layers l2 {}".format(l2_penalty),
+        "title": " 1 layers L2 {}".format(l2_penalty),
         "plot_marker": " ",
     })
     network_settings[network_1][1].update({
         "kernel_sizes": [100, 50, 25, 20, 15, 10, 5, 3],
         "num_layers": [2] * 8,
         "l2_penalty": l2_penalty,
-        "title": " 2 layers l2 {}".format(l2_penalty),
+        "title": " 2 layers L2 {}".format(l2_penalty),
         "plot_marker": "*",
 
     })
@@ -115,7 +115,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [50, 25, 26, 20, 15, 10, 7, 5, 3],
         "num_layers": [3] * 9,
         "l2_penalty": l2_penalty,
-        "title": " 3 layers l2 {}".format(l2_penalty),
+        "title": " 3 layers L2 {}".format(l2_penalty),
         "plot_marker": ".",
 
     })
@@ -123,7 +123,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [25, 20, 21, 15, 10, 7, 5, 3],
         "num_layers": [4] * 8,
         "l2_penalty": l2_penalty,
-        "title": " 4 layers l2 {}".format(l2_penalty),
+        "title": " 4 layers L2 {}".format(l2_penalty),
         "plot_marker": "o",
 
     })
@@ -131,7 +131,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [17, 15, 10, 7, 5, 3],
         "num_layers": [5] * 6,
         "l2_penalty": l2_penalty,
-        "title": " 5 layers l2 {}".format(l2_penalty),
+        "title": " 5 layers L2 {}".format(l2_penalty),
         "plot_marker": "+",
 
     })
@@ -139,7 +139,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [15, 10, 7, 5, 3],
         "num_layers": [6] * 5,
         "l2_penalty": l2_penalty,
-        "title": " 6 layers l2 {}".format(l2_penalty),
+        "title": " 6 layers L2 {}".format(l2_penalty),
         "plot_marker": "8",
 
     })
@@ -147,7 +147,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [10, 7, 5, 3],
         "num_layers": [7] * 4,
         "l2_penalty": l2_penalty,
-        "title": " 7 layers l2 {}".format(l2_penalty),
+        "title": " 7 layers L2 {}".format(l2_penalty),
         "plot_marker": "s",
 
     })
@@ -155,7 +155,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [10, 7, 5, 3],
         "num_layers": [8] * 4,
         "l2_penalty": l2_penalty,
-        "title": " 8 layers l2 {}".format(l2_penalty),
+        "title": " 8 layers L2 {}".format(l2_penalty),
         "plot_marker": "p",
 
     })
@@ -163,7 +163,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "kernel_sizes": [10, 7, 5, 3],
         "num_layers": [9] * 4,
         "l2_penalty": l2_penalty,
-        "title": " 9 layers l2 {}".format(l2_penalty),
+        "title": " 9 layers L2 {}".format(l2_penalty),
         "plot_marker": "P",
 
     })
@@ -350,7 +350,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
 
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
-                         label="{} - {}".format(model_name, model_setting['line_title'][i]),
+                         # label="{} - {}".format(model_name, model_setting['line_title'][i]),
+                         label=f"Kernel size {model_setting['kernel_sizes'][i]}",
                          color=model_setting['plot_colors'][i])
             plt.legend()
             figure = plt.gcf()
@@ -406,9 +407,9 @@ if __name__ == "__main__":
     limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
     plot_rd(0, limits_x, limits_y, show=False, file_extension="fitting")
 
-    #               1       2        3        4         5        6             7             8             9
-    limits_x = [[-1, 5], [-1, 4], [-1, 4], [-1, 5], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
-    limits_y = [[-1, 10], [-1, 5], [-1, 10], [-5, 80], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
+    #               1       2         3          4         5        6             7             8             9
+    limits_x = [[-1, 30], [-1, 20], [-1, 20], [-1, 10], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
+    limits_y = [[-1, 60], [-1, 60], [-1, 55], [-5, 70], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
     plot_rd(0.05, limits_x, limits_y, show=False, file_extension="fitting")
 
     #               1       2           3         4         5        6          7         8         9

@@ -55,6 +55,8 @@ colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
 max_pool = 4
+use_noise_data = True
+noise_level = 0.5
 # "8"	m11	octagon
 # "s"	m12	square
 # "p"	m13	pentagon
@@ -163,7 +165,10 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}_noise.exp'.format(filename)
+
+        ge_path = f'{filename}.exp'
+        if use_noise_data:
+            ge_path = f'{filename}_noise{noise_level}.exp'
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
@@ -389,7 +394,7 @@ for model_name, model_settings in network_settings.items():
                          color='green', marker=plot_markers[i])
             plt.legend()
 
-if True:
+if False:
     validation_marker = "H"
     training_marker = " "
     for model_name, model_settings in network_settings.items():

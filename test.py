@@ -47,6 +47,8 @@ def test(x_attack, y_attack, metadata_attack, network, sub_key_index, use_hw=Tru
 def accuracy(network, x_test, y_test, plain=None, batch_size=100):
     with torch.no_grad():
         data = torch.from_numpy(x_test.astype(np.float32)).to(device)
+        if plain is not None:
+            plain = torch.from_numpy(plain.astype(np.float32)).to(device)
         size = np.shape(x_test)[0]
         predi = torch.from_numpy(np.array([]).astype(np.float32)).to(device)
         for i in range(0, size, batch_size):

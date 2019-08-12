@@ -33,8 +33,12 @@ def get_ranks(args, network_name, model_params):
         model.to(args.device)
 
         # Calculate predictions
-        prediction = accuracy(model, x_attack, y_attack, dk_plain)
-        predictions.append(prediction.cpu().numpy())
+        if require_domain_knowledge(network_name):
+            prediction = accuracy(model, x_attack, y_attack, dk_plain)
+            predictions.append(prediction.cpu().numpy())
+        else:
+            prediction = accuracy(model, x_attack, y_attack, None)
+            predictions.append(prediction.cpu().numpy())
 
     # Check if it is only one run, if so don't do multi threading
     if len(args.runs) == 1:
@@ -75,6 +79,8 @@ def load_data(args, network_name):
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
     elif args.data_set == util.DataSet.SIM_MASK:
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_sim_mask_test_traces(argz)
+    elif args.data_set == util.DataSet.ASCAD_KEYS:
+        _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain = util.load_ascad_keys_test(argz)
     elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
         ###################
         # Load the traces #

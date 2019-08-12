@@ -15,28 +15,28 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 40000
-    epochs = 75
+    train_size = 10000
+    epochs = 30
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 3000
+    attack_size = 1000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True  # If False then it is masked
-    data_set = DataSet.RANDOM_DELAY_NORMALIZED
-    kernel_sizes = [15]
+    data_set = DataSet.ASCAD_KEYS
+    kernel_sizes = [7]
     channel_sizes = [32]
     num_layers = [2]
     init_weights = ""
 
-    network_names = ['VGGNumLayers2']
-    desync = 50
+    network_names = ['VGGNumLayers4DK']
+    desync = 0
     num_exps = 30
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 4
+    max_pool = 5
     l2_penalty = 0.0
     noise_level = 0
     #####################################################################################

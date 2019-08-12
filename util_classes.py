@@ -38,6 +38,7 @@ from models.Spread.SpreadV3 import SpreadV3
 from models.VGG.BigChannels import BigChannels
 from models.VGG.DK.KernelBigVGGDK import KernelBigVGGDK
 from models.VGG.DK.KernelBigVGGMDK import KernelBigVGGMDK
+from models.VGG.DK.VGGNumLayers4DK import VGGNumLayers4DK
 from models.VGG.KBVGG import KBVGG
 from models.VGG.KernelBigSmallVGG import KernelBigSmallVGG
 from models.VGG.KernelBigSmallVGGM import KernelBigSmallVGGM
@@ -56,6 +57,8 @@ from models.VGG.VGGMasked import VGGMasked
 from models.VGG.VGGNumBlocks import VGGNumBlocks
 from models.VGG.VGGNumLayers import VGGNumLayers
 from models.VGG.VGGNumLayers2 import VGGNumLayers2
+from models.VGG.VGGNumLayers3 import VGGNumLayers3
+from models.VGG.VGGNumLayers4 import VGGNumLayers4
 from models.makesomenoise.MakeSomeNoise import MakeSomeNoiseReal
 
 MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
@@ -73,7 +76,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KernelBigTest, KernelBigTestM, KernelBigAlex, KernelBigAlexBN,
           VGGNumLayers, VGGNumBlocks, SpreadFirstLayer, BigChannels,
           DenseNorm, DenseBatch, SpreadV3, SmallCNN, MakeSomeNoiseReal,
-          VGGNumLayers2, VGGMasked]
+          VGGNumLayers2, VGGMasked, VGGNumLayers3, VGGNumLayers4, VGGNumLayers4DK]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
@@ -88,7 +91,7 @@ def get_save_name(basename, args):
 ###########################
 # DOMAIN KNOWLEDGE TABLES #
 ###########################
-MODELS_DK = [ConvNetDK, KernelBigVGGDK, ConvNetDPA, KernelBigVGGMDK]
+MODELS_DK = [ConvNetDK, KernelBigVGGDK, ConvNetDPA, KernelBigVGGMDK, VGGNumLayers4DK]
 MODELS_DK_TABLE = dict(zip([model.basename() for model in MODELS_DK], MODELS_DK))
 
 

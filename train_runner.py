@@ -81,7 +81,6 @@ def run(args):
                                      save_path=model_save_file,
                                      loss_function=args.loss_function,
                                      l2_penalty=args.l2_penalty,
-
                                      )
         else:
             network, res = train(x_train, y_train,
