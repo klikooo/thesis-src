@@ -55,8 +55,8 @@ colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
 max_pool = 4
-use_noise_data = True
-noise_level = 0.5
+use_noise_data = False
+noise_level = 0.0
 # "8"	m11	octagon
 # "s"	m12	square
 # "p"	m13	pentagon

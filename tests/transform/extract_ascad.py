@@ -50,9 +50,11 @@ y_test_hw_masked = np.array([util.HW[y_test_masked[i]] for i in range(test_size)
 
 # Keys + plaintext
 test_keys = np.array([test_metadata[i]['key'][subkey] for i in range(test_size)])
-test_masks = np.array([test_metadata[i]['masks'][subkey - 2] for i in range(test_size)])
 test_plaintexts = np.array([test_metadata[i]['plaintext'][subkey] for i in range(test_size)])
 
+# Masks
+train_masks = np.array([train_metadata[i]['masks'][subkey - 2] for i in range(train_size)])
+test_masks = np.array([test_metadata[i]['masks'][subkey - 2] for i in range(test_size)])
 
 # print("Testing unmasked")
 # for i in range(100):
@@ -102,6 +104,10 @@ test_plaintexts_path = path_data_set + "Value/test_plaintexts"
 # Secret key path
 secret_key_path = path_data_set + "/secret_key.csv"
 
+# Masks path
+test_masks_path = path_ascad + "/Value/test_masks"
+train_masks_path = path_ascad + "/Value/train_masks"
+
 pdb.set_trace()
 
 save = False
@@ -129,6 +135,10 @@ if save:
     # Save the plaintexts
     np.save(train_plaintexts_path, train_plaintexts)
     np.save(test_plaintexts_path, test_plaintexts)
+
+    # Save the masks
+    np.save(test_masks_path, test_masks)
+    np.save(train_masks_path, train_masks)
 
     # Save the secret key
     with open(secret_key_path, mode="w") as csv_file:

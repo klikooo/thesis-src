@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     validation_size = 1000
     use_noise_data = False
     max_pool = 5
-    l2_penalty = 0.0
+    l2_penalty = 0.00005
     noise_level = 0
     #####################################################################################
 

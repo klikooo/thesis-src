@@ -501,6 +501,8 @@ def load_ascad_keys(args):
     x_train = x_train[args['start']:args['start'] + args.get('size')]
     y_train = y_train[args['start']:args['start'] + args.get('size')]
     plaintexts = plaintexts[args['start']:args['start'] + args.get('size')]
+    if args['use_hw']:
+        plaintexts = [HW[plaintexts[i]] for i in range(len(plaintexts))]
     plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
 
     y_train = np.reshape(y_train, (args.get('size')))
@@ -535,6 +537,8 @@ def load_ascad_keys_test(args):
     key_guesses = np.load(key_guesses_file)
     plaintexts = np.load(f"{path}/Value/test_plaintexts.npy")
     plaintexts = plaintexts[0:args.get('size')]
+    if args['use_hw']:
+        plaintexts = [HW[plaintexts[i]] for i in range(len(plaintexts))]
     plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
     return x_test, y_test, key_guesses, 34, plaintexts
 

@@ -15,16 +15,16 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_KEYS_NORMALIZED
-    network_names = ["DenseNet"]
+    network_names = ["VGGNumLayers2"]
     use_hw = False
     runs = 1
-    train_sizes = [100000]
+    train_sizes = [20000]
     epochs = 75
     batch_size = 100
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = True
+    unmask = False
     raw_traces = True
     desync = 0
     validation_size = 1000
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     max_pool = 5
-    l2_penal = 0.0
+    l2_penal = 0.0005
     use_noise_data = False
     ############################
 
