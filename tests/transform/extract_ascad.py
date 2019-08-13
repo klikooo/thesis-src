@@ -61,13 +61,6 @@ test_plaintexts = np.array([test_metadata[i]['plaintext'][subkey] for i in range
 #     z = util.SBOX[p ^ k]
 #     print(f"{z} = {y_train_masked[i]}, key={k}")
 
-
-normalized = False
-if normalized:
-    print("TODO")
-    exit()
-
-
 # Generate key guesses
 key_guesses_masked = np.empty((test_size, 256), dtype=np.uint8)
 key_guesses_unmasked = np.empty((test_size, 256), dtype=np.uint8)
@@ -111,62 +104,50 @@ secret_key_path = path_data_set + "/secret_key.csv"
 
 pdb.set_trace()
 
+save = False
+if save:
+    # Save the traces,
+    np.save(train_traces_path, x_train_traces)
+    np.save(test_traces_path, x_test_traces)
 
-# Save the traces,
-np.save(train_traces_path, x_train_traces)
-np.save(test_traces_path, x_test_traces)
+    # Save the key guesses
+    np.save(key_guesses_masked_path, key_guesses_masked)
+    np.save(key_guesses_unmasked_path, key_guesses_unmasked)
 
-# Save the key guesses
-np.save(key_guesses_masked_path, key_guesses_masked)
-np.save(key_guesses_unmasked_path, key_guesses_unmasked)
+    # Save the train model values
+    np.save(train_model_unmasked_path, y_train_unmasked)
+    np.save(train_model_unmasked_hw_path, y_train_hw_unmasked)
+    np.save(train_model_masked_path, y_train_masked)
+    np.save(train_model_masked_hw_path, y_train_hw_masked)
 
-# Save the train model values
-np.save(train_model_unmasked_path, y_train_unmasked)
-np.save(train_model_unmasked_hw_path, y_train_hw_unmasked)
-np.save(train_model_masked_path, y_train_masked)
-np.save(train_model_masked_hw_path, y_train_hw_masked)
+    # Save the test model values
+    np.save(test_model_unmasked_path, y_test_unmasked)
+    np.save(test_model_unmasked_hw_path, y_test_hw_unmasked)
+    np.save(test_model_masked_path, y_test_masked)
+    np.save(test_model_masked_hw_path, y_test_hw_masked)
 
-# Save the test model values
-np.save(test_model_unmasked_path, y_test_unmasked)
-np.save(test_model_unmasked_hw_path, y_test_hw_unmasked)
-np.save(test_model_masked_path, y_test_masked)
-np.save(test_model_masked_hw_path, y_test_hw_masked)
+    # Save the plaintexts
+    np.save(train_plaintexts_path, train_plaintexts)
+    np.save(test_plaintexts_path, test_plaintexts)
 
-# Save the plaintexts
-np.save(train_plaintexts_path, train_plaintexts)
-np.save(test_plaintexts_path, test_plaintexts)
-
-# Save the secret key
-with open(secret_key_path, mode="w") as csv_file:
-    writer = csv.writer(csv_file, delimiter=' ')
-    writer.writerow([test_keys[0]])
+    # Save the secret key
+    with open(secret_key_path, mode="w") as csv_file:
+        writer = csv.writer(csv_file, delimiter=' ')
+        writer.writerow([test_keys[0]])
 
 
-# Save the traces
-# path_normalized = path + "ASCAD_Normalized/"
-# normalized_traces_filename = path_normalized + "traces/" + "traces_normalized_t{}_v{}_{}.csv.npy".format(
-#     train_size,
-#     validation_size,
-#     desync)
-# np.save(normalized_traces_filename, new_data)
-#
-# # Only save the y values when we have desync 0
-# if desync == 0:
-#     # Save the masked y values
-#     y_train_masked = y_train_traces
-#     y_test_masked = y_test_traces
-#     y_filename_masked = path_normalized + "Value/model_masked_{}".format(subkey)
-#
-#     y_masked = y_train_masked
-#     y_masked = np.append(y_masked, y_test_masked, axis=0)
-#     np.save(y_filename_masked, y_masked)
-#
-#     y_train_unmasked = np.array([y_train_traces[i] ^ metadata_profiling[i]['masks'][subkey - 2] for i in range(50000)])
-#     y_test_unmasked = np.array([y_test_traces[i] ^ metadata_attack[i]['masks'][subkey - 2] for i in range(10000)])
-#     y_filename_unmasked = path_normalized + "Value/model_unmasked"
-#
-#     y_unmasked = y_train_unmasked
-#     y_unmasked = np.append(y_unmasked, y_test_unmasked, axis=0)
-#     np.save(y_filename_unmasked, y_unmasked)
-#
-#
+normalized = True
+if normalized:
+    # Scale the data
+    scale = StandardScaler()
+    x_train_normalized = scale.fit_transform(x_train_traces)
+    x_test_normalized = scale.transform(x_test_traces)
+
+    # Set the paths
+    path_data_set = path + "/ASCAD_Keys_Normalized/"
+    path_x_train_normalized = path_data_set + "/traces/train_traces"
+    path_x_test_normalized = path_data_set + "/traces/test_traces"
+
+    # Save the traces
+    np.save(path_x_train_normalized, x_train_normalized)
+    np.save(path_x_test_normalized, x_test_normalized)

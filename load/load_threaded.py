@@ -79,7 +79,7 @@ def load_data(args, network_name):
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
     elif args.data_set == util.DataSet.SIM_MASK:
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_sim_mask_test_traces(argz)
-    elif args.data_set == util.DataSet.ASCAD_KEYS:
+    elif args.data_set == util.DataSet.ASCAD_KEYS or args.data_set == util.DataSet.ASCAD_KEYS_NORMALIZED:
         _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain = util.load_ascad_keys_test(argz)
     elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
         ###################
