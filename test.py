@@ -70,6 +70,30 @@ def accuracy(network, x_test, y_test, plain=None, batch_size=100):
         return predi
 
 
+def accuracy2(network, x_test, y_test, plain=None, batch_size=100):
+    with torch.no_grad():
+        data = torch.from_numpy(x_test.astype(np.float32)).to(device)
+        if plain is not None:
+            plain = torch.from_numpy(plain.astype(np.float32)).to(device)
+        size = np.shape(x_test)[0]
+        predi = torch.from_numpy(np.array([]).astype(np.float32)).to(device)
+        for i in range(0, size, batch_size):
+            d = data[i:i+batch_size]
+            if plain is None:
+                predictions = F.softmax(network(d).to(device), dim=-1).to(device)
+            else:
+                p = plain[i:i+batch_size]
+                predictions = F.softmax(network(d, p).to(device), dim=-1).to(device)
+            predi = torch.cat((predi, predictions), 0)
+
+        _, pred = predi.max(1)
+        z = pred.long() == torch.from_numpy(y_test.reshape(len(y_test))).long().to(device)
+
+        num_correct = z.sum().item()
+        acc = num_correct / len(y_test)
+        return predi, acc
+
+
 def test_with_key_guess(x_attack, y_attack, key_guesses, network, use_hw, real_key,
                         attack_size=10000,
                         plain=None):

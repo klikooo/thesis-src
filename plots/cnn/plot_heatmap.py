@@ -3,18 +3,20 @@ import os
 import util
 import numpy as np
 
+hit_worst = False
 
-def load_ge():
+
+def load_ge(kernel):
     combinations = {
-        1: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        2: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        3: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        4: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        5: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        6: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        7: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        8: {100, 50, 25, 20, 15, 10, 7, 5, 3},
-        9: {100, 50, 25, 20, 15, 10, 7, 5, 3}
+        1: kernel,
+        2: kernel,
+        3: kernel,
+        4: kernel,
+        5: kernel,
+        6: kernel,
+        7: kernel,
+        8: kernel,
+        9: kernel,
     }
     l2_penal = 0.0
 
@@ -59,13 +61,19 @@ def get_first_min(data):
                 min_per_layer.update({kernel_size: [mean_ge]})
                 continue
 
-            indices = np.where(mean_ge == 0.0)
-            index = 3000
-            print(np.shape(indices))
-            if np.shape(indices) != (1, 0):
-                index = indices[0][0]
+            index = find_sequence(mean_ge)
             min_per_layer.update({kernel_size: index})
     return all_min
+
+
+def find_sequence(data, epsilon=0.001, threshold=5, err=-100):
+    global hit_worst
+    joined = "".join(map(lambda x: '0' if x < epsilon else '1', data))
+    index = joined.find("0" * threshold)
+    if index == -1:
+        hit_worst = True
+        return err
+    return index
 
 
 def get_first(data):
@@ -102,20 +110,26 @@ def get_x_labels(data):
 
 
 if __name__ == "__main__":
-    data_ge = load_ge()
+
+    kernels = {i for i in range(5, 105, 5)}
+    kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
+    data_ge = load_ge(kernels)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
 
     x_labels = get_x_labels(minimal)
-    y_labels = ['K3', 'K5', 'K7', 'K10', 'K15', 'K20', 'K25', 'K50', 'K100']
+    y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
     print(get_sorted(first))
+
+    color_worst = "#000000" if hit_worst else "#4CC01F"
+    z = np.transpose(get_sorted(minimal))
     fig = go.Figure(data=go.Heatmap(
-        z=np.transpose(get_sorted(minimal)),
+        z=z,
         x=x_labels,
         y=y_labels,
         colorscale=[
-            [0.0,  "#4CC01F"],
+            [0.0,  color_worst],
             [0.05, "#5EC321"],
             [0.1,  "#70C623"],
             [0.15, "#83C924"],
@@ -137,15 +151,18 @@ if __name__ == "__main__":
             [0.95, "#F76BE8"],
             [1,    "#EE72F8"]
         ],
-
     ))
     fig.update_layout(
         title='Convergence point',
         xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers")
+            title=go.layout.xaxis.Title(text="Stacked layers"),
+            linecolor='black'
         ),
         yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(text="Kernel size")
-        )
+            title=go.layout.yaxis.Title(text="Kernel size"),
+            linecolor='black'
+        ),
     )
+    fig.update_xaxes(showgrid=False, zeroline=False)
+    fig.update_yaxes(showgrid=False, zeroline=False)
     fig.show()
