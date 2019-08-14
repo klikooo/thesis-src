@@ -1,16 +1,15 @@
-from multiprocessing import Process
-
 import torch
 
 import util
 import numpy as np
 
 from models.load_model import load_model
-from util import shuffle_permutation, generate_folder_name
-from test import accuracy2, test_with_key_guess_p
+from util import generate_folder_name
+from test import accuracy2
 from util_classes import get_save_name, require_domain_knowledge
 import os
 import json
+import sys
 
 
 def get_ranks(args):
@@ -107,7 +106,7 @@ def load_data(args):
     return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
 
 
-def run_load():
+def run_load(l2_penal):
     args = util.EmptySpace()
     args.use_hw = False
     args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
@@ -123,7 +122,7 @@ def run_load():
     args.epochs = 75
     args.batch_size = 100
     args.lr = 0.0001
-    args.l2_penalty = 0.0
+    args.l2_penalty = float(l2_penal)
     args.init_weights = "kaiming"
     args.noise_level = 0.0
     args.type_network = 'HW' if args.use_hw else 'ID'
@@ -143,4 +142,5 @@ def run_load():
     get_ranks(args)
 
 
-run_load()
+if __name__ == "__main__":
+    run_load(sys.argv[1])
