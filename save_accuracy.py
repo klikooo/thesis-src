@@ -110,8 +110,8 @@ def run_load(l2_penal):
     args = util.EmptySpace()
     args.use_hw = False
     args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
-    args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
-    args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
+    args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
+    args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
     # args.traces_path = "/media/rico/Data/TU/thesis/data/"
     # args.models_path = "/media/rico/Data/TU/thesis/runs3/"
     args.raw_traces = True
