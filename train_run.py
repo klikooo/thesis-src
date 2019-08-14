@@ -35,7 +35,7 @@ if __name__ == "__main__":
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
     max_pool = 5
-    l2_penal = 0.0005
+    l2_penal = 0.0
     use_noise_data = False
     ############################
 
