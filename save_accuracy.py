@@ -60,12 +60,10 @@ def get_ranks(args):
                     map_accuracy.update({f"c_{channel_size}_l{layers}_k{kernel}": mean_acc})
                     print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
 
-    acc_filename = f"{folder}/acc_{args.network_name}.json"
+    acc_filename = f"{folder}/acc2_{args.network_name}.json"
     print(acc_filename)
     with open(acc_filename, "w") as acc_file:
         acc_file.write(json.dumps(map_accuracy))
-    import pdb
-    pdb.set_trace()
 
 
 def load_data(args):
@@ -110,10 +108,10 @@ def run_load(l2_penal):
     args = util.EmptySpace()
     args.use_hw = False
     args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
-    args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
-    args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
-    # args.traces_path = "/media/rico/Data/TU/thesis/data/"
-    # args.models_path = "/media/rico/Data/TU/thesis/runs3/"
+    # args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
+    # args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
+    args.traces_path = "/media/rico/Data/TU/thesis/data/"
+    args.models_path = "/media/rico/Data/TU/thesis/runs3/"
     args.raw_traces = True
     args.train_size = 40000
     args.validation_size = 1000
@@ -134,13 +132,17 @@ def run_load(l2_penal):
     args.spread_factor = 1
     args.runs = 5
 
-    args.kernels = [100, 50, 25, 20, 15, 17, 10, 7, 5, 3]
-    # args.kernels = [7, 5, 3]
-    args.layers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    args.kernels = [20]
+    args.layers = [5]
+    # args.kernels = [100, 50, 25, 20, 15, 17, 10, 7, 5, 3]
+    # args.layers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     args.channels = [32]
 
     get_ranks(args)
 
 
 if __name__ == "__main__":
-    run_load(sys.argv[1])
+    if len(sys.argv) == 1:
+        run_load(0.005)
+    else:
+        run_load(sys.argv[1])

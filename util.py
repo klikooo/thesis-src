@@ -275,7 +275,6 @@ def load_ascad_test_traces(args):
     plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
 
     if args['unmask']:
-        print(metadata_attack[:]['masks'][args['sub_key_index'] - 2])
         y_test = np.array(
             [y_test[i] ^ metadata_attack[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_test))])
         # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])

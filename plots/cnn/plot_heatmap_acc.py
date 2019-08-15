@@ -1,6 +1,4 @@
 import plotly.graph_objects as go
-import os
-import util
 import numpy as np
 import json
 
@@ -8,7 +6,6 @@ hit_worst = False
 
 
 def load_acc(l2_penal):
-
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
@@ -43,7 +40,7 @@ if __name__ == "__main__":
     layers = {1, 2, 3, 4, 5, 6, 7, 8, 9}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     channels = 32
-    l2_penal = 0.0
+    l2_penal = 0.005
     data_acc = load_acc(l2_penal)
 
     x_labels = [f'L{i}' for i in sorted(list(layers))]

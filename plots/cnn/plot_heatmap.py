@@ -18,7 +18,7 @@ def load_ge(kernel):
         8: kernel,
         9: kernel,
     }
-    l2_penal = 0.0
+    l2_penal = 0.005
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(

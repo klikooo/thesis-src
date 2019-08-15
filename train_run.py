@@ -14,11 +14,11 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_KEYS_NORMALIZED
-    network_names = ["VGGNumLayers2"]
+    data_set = DataSet.ASCAD_KEYS
+    network_names = ["AscadCnn"]
     use_hw = False
     runs = 1
-    train_sizes = [20000]
+    train_sizes = [45000]
     epochs = 75
     batch_size = 100
     lr = 0.0001

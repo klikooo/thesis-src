@@ -13,6 +13,7 @@ from models.Alex.KernelBigAvg import KernelBigAvg
 from models.Alex.KernelBigSmall import KernelBigSmall
 from models.Alex.KernelBigSmallAvg import KernelBigSmallAvg
 from models.Alex.NumLayers import NumLayers
+from models.CNN.AscadCnn import AscadCnn
 from models.CNN.NIN import NIN
 from models.CNN.SmallCNN import SmallCNN
 from models.ConvNet import ConvNet
@@ -76,7 +77,8 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           KernelBigTest, KernelBigTestM, KernelBigAlex, KernelBigAlexBN,
           VGGNumLayers, VGGNumBlocks, SpreadFirstLayer, BigChannels,
           DenseNorm, DenseBatch, SpreadV3, SmallCNN, MakeSomeNoiseReal,
-          VGGNumLayers2, VGGMasked, VGGNumLayers3, VGGNumLayers4, VGGNumLayers4DK]
+          VGGNumLayers2, VGGMasked, VGGNumLayers3, VGGNumLayers4, VGGNumLayers4DK,
+          AscadCnn]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 
