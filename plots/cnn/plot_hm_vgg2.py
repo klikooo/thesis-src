@@ -155,7 +155,7 @@ if __name__ == "__main__":
         ],
     ))
     fig.update_layout(
-        title=f'Convergence point, noise {noise}',
+        title=f'Convergence point, noise {noise}, L2 {l2_penal}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'

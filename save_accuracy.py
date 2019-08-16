@@ -146,5 +146,8 @@ def run_load(model, l2_penal, noise_level):
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         run_load("VGGNumLayers2", l2_penal=0.005, noise_level=0.5)
+    if len(sys.argv) == 3:
+        for n_level in [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]:
+            run_load(sys.argv[1], sys.argv[2], n_level)
     else:
         run_load(sys.argv[1], sys.argv[2], sys.argv[3])

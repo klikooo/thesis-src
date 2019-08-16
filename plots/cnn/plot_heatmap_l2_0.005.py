@@ -129,7 +129,7 @@ if __name__ == "__main__":
                     [1.0, "rgb(49,54,149)"]]
     ))
     fig.update_layout(
-        title='Convergence point',
+        title='Convergence point L2 0.005',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers")
         ),

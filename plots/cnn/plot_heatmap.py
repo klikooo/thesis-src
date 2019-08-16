@@ -6,7 +6,7 @@ import numpy as np
 hit_worst = False
 
 
-def load_ge(kernel):
+def load_ge(kernel, l2_penal):
     combinations = {
         1: kernel,
         2: kernel,
@@ -18,7 +18,6 @@ def load_ge(kernel):
         8: kernel,
         9: kernel,
     }
-    l2_penal = 0.0
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
@@ -113,12 +112,14 @@ if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    data_ge = load_ge(kernels)
+    data_ge = load_ge(kernels, l2_penal=0)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
 
     x_labels = get_x_labels(minimal)
     y_labels = [f'K{i}' for i in sorted(list(kernels))]
+
+    l2_penal = 0.0
 
     print(get_sorted(first))
 
@@ -153,7 +154,7 @@ if __name__ == "__main__":
         ],
     ))
     fig.update_layout(
-        title='Convergence point',
+        title=f'Convergence point L2 {l2_penal}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'
