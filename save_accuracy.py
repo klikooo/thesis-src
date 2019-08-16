@@ -21,6 +21,7 @@ def get_ranks(args):
     map_accuracy = {}
 
     folder = "{}/{}/".format(args.models_path, generate_folder_name(args))
+    model_params.update({"max_pool": args.max_pool})
     for channel_size in args.channels:
         model_params.update({"channel_size": channel_size})
         for layers in args.layers:
@@ -60,7 +61,7 @@ def get_ranks(args):
                     map_accuracy.update({f"c_{channel_size}_l{layers}_k{kernel}": mean_acc})
                     print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
 
-    acc_filename = f"{folder}/acc2_{args.network_name}.json"
+    acc_filename = f"{folder}/acc_{args.network_name}_noise{args.noise_level}.json"
     print(acc_filename)
     with open(acc_filename, "w") as acc_file:
         acc_file.write(json.dumps(map_accuracy))
@@ -104,7 +105,7 @@ def load_data(args):
     return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
 
 
-def run_load(l2_penal):
+def run_load(model, l2_penal, noise_level):
     args = util.EmptySpace()
     args.use_hw = False
     args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
@@ -116,16 +117,16 @@ def run_load(l2_penal):
     args.train_size = 40000
     args.validation_size = 1000
     args.attack_size = 9000
-    args.use_noise_data = False
+    args.use_noise_data = True if noise_level > 0 else False
     args.epochs = 75
     args.batch_size = 100
     args.lr = 0.0001
     args.l2_penalty = float(l2_penal)
     args.init_weights = "kaiming"
-    args.noise_level = 0.0
+    args.noise_level = float(noise_level)
     args.type_network = 'HW' if args.use_hw else 'ID'
     args.device = torch.device("cuda")
-    args.network_name = "VGGNumLayers"
+    args.network_name = model
     args.subkey_index = 2
     args.unmask = True
     args.desync = 0
@@ -137,12 +138,13 @@ def run_load(l2_penal):
     # args.kernels = [100, 50, 25, 20, 15, 17, 10, 7, 5, 3]
     # args.layers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     args.channels = [32]
+    args.max_pool = 4
 
     get_ranks(args)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        run_load(0.005)
+        run_load("VGGNumLayers2", l2_penal=0.005, noise_level=0.5)
     else:
-        run_load(sys.argv[1])
+        run_load(sys.argv[1], sys.argv[2], sys.argv[3])

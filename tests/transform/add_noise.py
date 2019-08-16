@@ -15,8 +15,8 @@ args = {
 x_train, _, _ = util.load_data_generic(args)
 
 # Create noise
-noise_level = 0.75
-sigma = 10
+noise_level = 0.1
+sigma = 1
 mu = 0
 noise = np.random.normal(0, 1, 50000 * 3500) * noise_level
 noise = noise.reshape(50000, 3500)

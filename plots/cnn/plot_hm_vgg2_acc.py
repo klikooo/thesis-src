@@ -10,7 +10,7 @@ def load_acc(l2_penal):
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
-    model = "VGGNumLayers"
+    model = "VGGNumLayers2"
 
     acc_path = f"{path}/acc_{model}.json"
     with open(acc_path, "r") as f:

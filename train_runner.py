@@ -95,7 +95,8 @@ def run(args):
                                  checkpoints=args.checkpoints,
                                  save_path=model_save_file,
                                  loss_function=args.loss_function,
-                                 l2_penalty=args.l2_penalty
+                                 l2_penalty=args.l2_penalty,
+                                 optimizer=args.optimizer
                                  )
         # Save the results of the accuracy and loss during training
         save_loss_acc(model_save_file, filename, res)

@@ -6,7 +6,7 @@ import numpy as np
 hit_worst = False
 
 
-def load_ge(kernel):
+def load_ge(kernel, l2_penal, noise):
     combinations = {
         1: kernel,
         2: kernel,
@@ -18,13 +18,13 @@ def load_ge(kernel):
         8: kernel,
         9: kernel,
     }
-    l2_penal = 0.0
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
-    model = "VGGNumLayers"
+    model = "VGGNumLayers2"
+    noise_string = f'_noise{noise}' if noise > 0 else ''
 
     all_ge = {}
     for layers, kernel_sizes in combinations.items():
@@ -32,7 +32,7 @@ def load_ge(kernel):
         all_ge.update({layers: kernel_size_dict})
         for kernel_size in kernel_sizes:
             ge_runs = []
-            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}.exp"
+            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}_m4{noise_string}.exp"
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
@@ -113,7 +113,9 @@ if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    data_ge = load_ge(kernels)
+    l2_penal = 0.005
+    noise = 1.0
+    data_ge = load_ge(kernels, l2_penal, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
 
@@ -153,7 +155,7 @@ if __name__ == "__main__":
         ],
     ))
     fig.update_layout(
-        title='Convergence point',
+        title=f'Convergence point, noise {noise}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'

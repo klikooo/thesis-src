@@ -6,15 +6,16 @@ from torch.utils.data import DataLoader
 from DataLoaders.DataAscad import DataAscad
 from DataLoaders.DataDK import DataDK
 from util import HW, device, save_model
+import util_optimizer
 
 
 def train(x_profiling, y_profiling, train_size,
           x_validation, y_validation, validation_size,
           network, loss_function, epochs=80, batch_size=1000, lr=0.00001,
-          checkpoints=None, save_path=None, l2_penalty=0.0):
+          checkpoints=None, save_path=None, l2_penalty=0.0, optimizer="Adam"):
     # Cut to the correct training size
-    x_profiling = x_profiling[0:train_size]
-    y_profiling = y_profiling[0:train_size]
+    # x_profiling = x_profiling[0:train_size]
+    # y_profiling = y_profiling[0:train_size]
 
     train_data_set = DataAscad(x_profiling, y_profiling, train_size)
     validation_data_set = DataAscad(x_validation, y_validation, validation_size)
@@ -25,7 +26,15 @@ def train(x_profiling, y_profiling, train_size,
     # optimizer = torch.optim.RMSprop(network.parameters(), lr=lr)
     # optimizer = torch.optim.Adam(net.parameters(), lr=lr)
     # optimizer = Nadam(network.parameters(), lr=lr)
-    optimizer = torch.optim.Adam(network.parameters(), lr=lr, weight_decay=l2_penalty)
+    # optimizer = torch.optim.Adam(network.parameters(), lr=lr, weight_decay=l2_penalty)
+    optimizer_args = {
+        "lr": lr,
+        "l2": l2_penalty
+    }
+    print(f"Using optimizer {optimizer}")
+    optimizer_func = util_optimizer.get_optimizer(optimizer)
+    optimizer = optimizer_func(network.parameters(), optimizer_args)
+
 
     # Loss function
     # criterion = nn.CrossEntropyLoss().to(device)

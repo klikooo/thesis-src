@@ -14,17 +14,17 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_KEYS
+    data_set = DataSet.ASCAD_KEYS_NORMALIZED
     network_names = ["AscadCnn"]
     use_hw = False
     runs = 1
-    train_sizes = [45000]
-    epochs = 75
-    batch_size = 100
-    lr = 0.0001
+    train_sizes = [1000]
+    epochs = 200
+    batch_size = 200
+    lr = 0.00001
     subkey_index = 2
     checkpoints = None
-    unmask = False
+    unmask = True
     raw_traces = True
     desync = 0
     validation_size = 1000
@@ -37,6 +37,7 @@ if __name__ == "__main__":
     max_pool = 5
     l2_penal = 0.0
     use_noise_data = False
+    optimizer = "Adam"
     ############################
 
     ###################
@@ -73,7 +74,7 @@ if __name__ == "__main__":
                         help="Mask the data with a the mask r[-s]", action=BoolAction)
     parser.add_argument('-v', "--validation_size", default=validation_size, type=int, help="Validation size")
     parser.add_argument('-w', '--network_names', nargs='+', help='List of networks', default=network_names)
-
+    parser.add_argument('-x', "--optimizer", default=optimizer, type=str, help="The optimizer")
     parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
     parser.add_argument('-z', "--init_weights", default=init_weights, type=str,
                         help="Specify how the weights are initialized")
