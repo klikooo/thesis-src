@@ -133,10 +133,10 @@ def run_load(model, l2_penal, noise_level):
     args.spread_factor = 1
     args.runs = 5
 
-    args.kernels = [20]
-    args.layers = [5]
-    # args.kernels = [100, 50, 25, 20, 15, 17, 10, 7, 5, 3]
-    # args.layers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # args.kernels = [20]
+    # args.layers = [5]
+    args.kernels = [100, 50, 25, 20, 15, 17, 10, 7, 5, 3]
+    args.layers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     args.channels = [32]
     args.max_pool = 4
 
