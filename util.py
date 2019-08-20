@@ -275,7 +275,6 @@ def load_ascad_test_traces(args):
     plain = metadata_attack[:]['plaintext'][:, args['sub_key_index']]
 
     if args['unmask']:
-        print(metadata_attack[:]['masks'][args['sub_key_index'] - 2])
         y_test = np.array(
             [y_test[i] ^ metadata_attack[i]['masks'][args['sub_key_index'] - 2] for i in range(len(y_test))])
         # [y_profiling[i] ^ metadata_profiling[i]['masks'][15] for i in range(len(y_profiling))])
@@ -334,9 +333,12 @@ def load_dpa_npy(args):
     print(args)
 
     x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
-    y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
-
     x_train = x_train[args['start']:args['start'] + args.get('size')]
+    import gc
+    gc.collect()
+
+    print("Loaded and cut x")
+    y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
     y_train = y_train[args['start']:args['start'] + args.get('size')]
     import gc
     gc.collect()
@@ -461,7 +463,13 @@ def load_random_delay_large_key_guesses(traces_path, start, size):
 def load_data_generic(args):
     print(args)
 
-    x_train = np.load('{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set'])))
+    x_train_file = '{}/{}/traces/traces_complete.csv.npy'.format(args['traces_path'], str(args['data_set']))
+    if args['use_noise_data']:
+        x_train_file = '{}/{}/traces/traces_noise_{}.npy'.format(
+            args['traces_path'], str(args['data_set']), args['noise_level'])
+    print(f"Loading {x_train_file}")
+    x_train = np.load(x_train_file)
+
     y_train = np.load('{}/{}/Value/model.csv.npy'.format(args['traces_path'], str(args['data_set'])))
 
     x_train = x_train[args['start']:args['start'] + args.get('size')]
@@ -471,9 +479,71 @@ def load_data_generic(args):
     return x_train, y_train, None
 
 
-def load_ascad_normalized(args):
+def load_ascad_keys(args):
     print(args)
 
+    path = f"{args['traces_path']}/{str(args['data_set'])}/"
+    x_train_file = f'{path}traces/train_traces.npy'
+    print(f"Loading {x_train_file}")
+    x_train = np.load(x_train_file)
+
+    y_file = '{}/Value/train_model{}_{}masked.csv.npy'.format(
+        path,
+        '_hw' if args['use_hw'] else '',
+        'un' if args['unmask'] else ''
+    )
+    print(f"Loading y file {y_file}")
+    y_train = np.load(y_file)
+
+    plaintexts = np.load(f"{path}/Value/train_plaintexts.npy")
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+    plaintexts = plaintexts[args['start']:args['start'] + args.get('size')]
+    if args['use_hw']:
+        plaintexts = [HW[plaintexts[i]] for i in range(len(plaintexts))]
+    plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
+
+    y_train = np.reshape(y_train, (args.get('size')))
+
+    return x_train, y_train, plaintexts
+
+
+def load_ascad_keys_test(args):
+    print(args)
+
+    path = f"{args['traces_path']}/{str(args['data_set'])}/"
+    x_test_file = f'{path}/traces/test_traces.npy'
+    print(f"Loading {x_test_file}")
+    x_test = np.load(x_test_file)
+
+    y_file = '{}/Value/test_model{}_{}masked.csv.npy'.format(
+        path,
+        '_hw' if args['use_hw'] else '',
+        'un' if args['unmask'] else ''
+    )
+    print(f"Loading y file {y_file}")
+    y_test = np.load(y_file)
+
+    x_test = x_test[0:args.get('size')]
+    y_test = y_test[0:args.get('size')]
+    y_test = np.reshape(y_test, (args.get('size')))
+
+    key_guesses_file = '{}/Value/key_guesses_{}masked.csv.npy'.format(
+        path,
+        'un' if args['unmask'] else ''
+    )
+    key_guesses = np.load(key_guesses_file)
+    plaintexts = np.load(f"{path}/Value/test_plaintexts.npy")
+    plaintexts = plaintexts[0:args.get('size')]
+    if args['use_hw']:
+        plaintexts = [HW[plaintexts[i]] for i in range(len(plaintexts))]
+    plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
+    return x_test, y_test, key_guesses, 34, plaintexts
+
+
+def load_ascad_normalized(args):
+    print(args)
     x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
                       (args['traces_path'], str(args['data_set']),
                        args['train_size'], args['validation_size'], args['desync']))
@@ -564,6 +634,8 @@ class DataSet(Enum):
     RANDOM_DELAY_NORMALIZED = 7
     ASCAD_NORMALIZED = 8
     SIM_MASK = 9
+    ASCAD_KEYS = 10
+    ASCAD_KEYS_NORMALIZED = 11
 
     def __str__(self):
         if self.value == 1:
@@ -584,6 +656,10 @@ class DataSet(Enum):
             return "ASCAD_Normalized"
         elif self.value == 9:
             return "Simulated_Mask"
+        elif self.value == 10:
+            return "ASCAD_Keys"
+        elif self.value == 11:
+            return "ASCAD_Keys_Normalized"
         else:
             print("ERROR {}".format(self.value))
 
@@ -604,7 +680,9 @@ def load_data_set(data_set):
              DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
              DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
              DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
-             DataSet.SIM_MASK: load_data_generic}
+             DataSet.SIM_MASK: load_data_generic,
+             DataSet.ASCAD_KEYS: load_ascad_keys,
+             DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys}
     return table[data_set]
 
 
@@ -710,3 +788,14 @@ def count_parameters(model):
 
 class EmptySpace(object):
     pass
+
+
+class BColors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'

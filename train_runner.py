@@ -50,7 +50,8 @@ def run(args):
                  "n_classes": 9 if args.use_hw else 256,
                  "kernel_size": args.kernel_size,
                  "channel_size": args.channel_size,
-                 "num_layers": args.num_layers
+                 "num_layers": args.num_layers,
+                 "max_pool": args.max_pool
                  }
 
     # Do the runs
@@ -80,7 +81,6 @@ def run(args):
                                      save_path=model_save_file,
                                      loss_function=args.loss_function,
                                      l2_penalty=args.l2_penalty,
-
                                      )
         else:
             network, res = train(x_train, y_train,
@@ -95,7 +95,8 @@ def run(args):
                                  checkpoints=args.checkpoints,
                                  save_path=model_save_file,
                                  loss_function=args.loss_function,
-                                 l2_penalty=args.l2_penalty
+                                 l2_penalty=args.l2_penalty,
+                                 optimizer=args.optimizer
                                  )
         # Save the results of the accuracy and loss during training
         save_loss_acc(model_save_file, filename, res)

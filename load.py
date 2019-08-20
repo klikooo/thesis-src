@@ -11,32 +11,34 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = True
+    use_hw = False
     n_classes = 9 if use_hw else 256
-    spread_factor = 6
-    runs = [x for x in range(5)]
+    spread_factor = 1
+    runs = [x for x in range(1)]
     train_size = 40000
-    epochs = 80
+    epochs = 75
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 3000
+    attack_size = 1000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
-    unmask = True  # False if sub_key_index < 2 else True
-    data_set = DataSet.ASCAD
-    kernel_sizes = [25]
-    channel_sizes = [2]
-    num_layers = [2]
+    unmask = True  # If False then it is masked
+    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    kernel_sizes = [15]
+    channel_sizes = [32]
+    num_layers = [1]
     init_weights = ""
 
-    # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
-    network_names = ['DenseNorm']
+    network_names = ['VGGNumLayers2']
     desync = 0
-    num_exps = 100
+    num_exps = 30
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
+    max_pool = 4
+    l2_penalty = 0.0
+    noise_level = 0.0
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
@@ -47,10 +49,11 @@ if __name__ == "__main__":
                         help="The data set to use")
     parser.add_argument('-e', "--epochs", default=epochs, type=int, help='Number of epochs')
     parser.add_argument('-f', "--spread_factor", default=spread_factor, type=int, help="The spread factor")
-    parser.add_argument('-g', "--l2_penalty", default=0, type=float, help="L2 penalty")
+    parser.add_argument('-g', "--l2_penalty", default=l2_penalty, type=float, help="L2 penalty")
 
     parser.add_argument('-i', "--channel_sizes", nargs='+', default=channel_sizes, type=int,
                         help='List of kernel sizes')
+    parser.add_argument('-j', "--max_pool", default=max_pool, type=int, help="Max pooling")
 
     parser.add_argument('-k', "--kernel_sizes", nargs='+', default=kernel_sizes, type=int, help='List of kernel sizes')
     parser.add_argument('-l', "--lr", default=lr, type=float, help="The learning rate")
@@ -73,6 +76,8 @@ if __name__ == "__main__":
     parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
     parser.add_argument('-z', "--init_weights", default=init_weights, type=str,
                         help="Specify how the weights are initialized")
+
+    parser.add_argument("--noise_level", default=noise_level, type=float, help="Noise level")
 
     args = parser.parse_args()
     print(args)

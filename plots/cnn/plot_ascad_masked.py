@@ -26,13 +26,9 @@ rank_step = 1
 unmask = False  # False if sub_kezy_index < 2 else True
 kernel_sizes = []
 num_layers = []
-# kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
-# num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.005
 init_weights = "kaiming"
 
-# network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
     network_1: 4,
@@ -42,7 +38,7 @@ data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
-show_losses = False
+show_losses = True
 show_acc = False
 show_losses_all = False
 show_only_mean = True
@@ -77,7 +73,7 @@ for k, v in network_settings.items():
                    "epochs": epochs,
                    "batch_size": batch_size,
                    "lr": '%.2E' % Decimal(lr),
-                   "l2_penalty": l2_penalty,
+                   "l2_penalty": 0,
                    "train_size": train_size,
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
@@ -153,7 +149,7 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+        ge_path = '{}.exp__'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))

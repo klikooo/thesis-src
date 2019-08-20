@@ -23,7 +23,7 @@ def plot(num):
     return True
 
 
-for i in range(200):
+for i in range(5):
     res = plot((i + 1) * 20000)
     # if res:
     #     break

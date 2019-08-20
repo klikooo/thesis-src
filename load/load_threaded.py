@@ -33,20 +33,28 @@ def get_ranks(args, network_name, model_params):
         model.to(args.device)
 
         # Calculate predictions
-        prediction = accuracy(model, x_attack, y_attack, dk_plain)
-        predictions.append(prediction.cpu().numpy())
+        if require_domain_knowledge(network_name):
+            prediction = accuracy(model, x_attack, y_attack, dk_plain)
+            predictions.append(prediction.cpu().numpy())
+        else:
+            prediction = accuracy(model, x_attack, y_attack, None)
+            predictions.append(prediction.cpu().numpy())
 
-    # Start a thread for each run
-    processes = []
-    for i, run in enumerate(args.runs):
-        p = Process(target=threaded_run_test, args=(args, predictions[i], folder, run,
-                                                    network_name, model_params, real_key))
-        processes.append(p)
-        p.start()
-    # Wait for them to finish
-    for p in processes:
-        p.join()
-        print('Joined process')
+    # Check if it is only one run, if so don't do multi threading
+    if len(args.runs) == 1:
+        threaded_run_test(args, predictions[0], folder, args.runs[0], network_name, model_params, real_key)
+    else:
+        # Start a thread for each run
+        processes = []
+        for i, run in enumerate(args.runs):
+            p = Process(target=threaded_run_test, args=(args, predictions[i], folder, run,
+                                                        network_name, model_params, real_key))
+            processes.append(p)
+            p.start()
+        # Wait for them to finish
+        for p in processes:
+            p.join()
+            print('Joined process')
 
 
 def load_data(args, network_name):
@@ -71,6 +79,8 @@ def load_data(args, network_name):
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
     elif args.data_set == util.DataSet.SIM_MASK:
         _x_attack, _y_attack, _key_guesses, _real_key = util.load_sim_mask_test_traces(argz)
+    elif args.data_set == util.DataSet.ASCAD_KEYS or args.data_set == util.DataSet.ASCAD_KEYS_NORMALIZED:
+        _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain = util.load_ascad_keys_test(argz)
     elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
         ###################
         # Load the traces #
@@ -111,7 +121,8 @@ def load_data(args, network_name):
                                                         'size': args.attack_size,
                                                         'domain_knowledge': True,
                                                         'use_noise_data': args.use_noise_data,
-                                                        'data_set': args.data_set})
+                                                        'data_set': args.data_set,
+                                                        'noise_level': args.noise_level})
         if plain is not None:
             _dk_plain = torch.from_numpy(plain).cuda()
         print('Loading key guesses')
@@ -156,7 +167,12 @@ def threaded_run_test(args, prediction, folder, run, network_name, model_params,
 
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)
-    save_path = '{}model_r{}_{}.exp'.format(folder, run, get_save_name(network_name, model_params))
+    if args.use_noise_data:
+        save_path = '{}model_r{}_{}_noise{}.exp'.format(folder, run,
+                                                        get_save_name(network_name, model_params),
+                                                        args.noise_level)
+    else:
+        save_path = '{}model_r{}_{}.exp'.format(folder, run, get_save_name(network_name, model_params))
     print("Save path {}".format(save_path))
     util.save_np(save_path, y, f="%f")
 
@@ -177,6 +193,8 @@ def run_load(args):
         def channel_lambda(x): model_params.update({"channel_size": x})
 
         def layers_lambda(x): model_params.update({"num_layers": x})
+
+        model_params.update({"max_pool": args.max_pool})
 
         util.loop_at_least_once(args.kernel_sizes, kernel_lambda, lambda: (
             util.loop_at_least_once(args.channel_sizes, channel_lambda, lambda: (

@@ -5,8 +5,10 @@ import util
 import numpy as np
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 from util_classes import get_save_name
+import os
 
 path = '/media/rico/Data/TU/thesis'
 
@@ -29,7 +31,8 @@ num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
-l2_penalty = 0.005
+l2 = 0.0
+desync = 50
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
@@ -41,14 +44,14 @@ network_settings = {
 data_set = util.DataSet.ASCAD_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
-desync = 50
 show_losses = False
 show_acc = False
 show_losses_all = False
-show_only_mean = True
+show_only_mean = False
 show_ge = False
 experiment = False
 show_loss = False
+load_loss_acc = True
 colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
           "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
@@ -77,7 +80,6 @@ for k, v in network_settings.items():
                    "epochs": epochs,
                    "batch_size": batch_size,
                    "lr": '%.2E' % Decimal(lr),
-                   "l2_penalty": l2_penalty,
                    "train_size": train_size,
                    "kernel_sizes": kernel_sizes,
                    "num_layers": num_layers,
@@ -99,7 +101,6 @@ for k, v in network_settings.items():
 #####################################
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
-l2 = 0
 network_settings[network_1][0].update({
     "kernel_sizes": [100, 50, 25, 10, 5, 3],
     "num_layers": [1] * 6,
@@ -153,14 +154,17 @@ def get_ge(net_name, model_parameters, load_parameters):
             folder,
             run,
             get_save_name(net_name, model_parameters))
-        ge_path = '{}.exp'.format(filename)
+
+        ge_path = '{}.exp__'.format(filename)
+        if not os.path.exists(ge_path):
+            ge_path = '{}.exp'.format(filename)
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
         ge_x.append(x_r)
         ge_y.append(y_r)
 
-        if show_losses or show_acc:
+        if load_loss_acc:
             ta, va, tl, vl = util.load_loss_acc(filename)
             lta.append(ta)
             lva.append(va)
@@ -255,7 +259,7 @@ axes = plt.gca()
 axes.set_ylim([0, 256])
 for i in range(len(rank_mean_y)):
     plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], n_settings[i]['title']),
-             marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+             marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
     plt.legend()
 
     # plt.figure()
@@ -325,7 +329,7 @@ if show_losses or show_acc:
     plt.figure()
     for i in range(len(mean_lv)):
         plt.plot(mean_lv[i], label="Loss {} {}".format(name_models[i], n_settings[i]['title']),
-                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
 
     plt.grid(True)
     plt.title("Mean loss validation")
@@ -334,7 +338,7 @@ if show_losses or show_acc:
     plt.figure()
     for i in range(len(mean_mv)):
         plt.plot(mean_mv[i], label="Accuracy {} {}".format(name_models[i], n_settings[i]['title']),
-                 marker=n_settings[i]['plot_marker'], color=plot_colors[i])
+                 marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
     plt.grid(True)
     plt.title("Mean accuracy validation")
     plt.legend()
@@ -368,9 +372,9 @@ for model_name, model_settings in network_settings.items():
             plt.grid(True)
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ta'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                         color='orange', marker=plot_markers[i])
+                         color='orange', marker=plot_markers[i], markevery=0.1)
                 plt.plot(model_setting['va'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                         color='green', marker=plot_markers[i])
+                         color='green', marker=plot_markers[i], markevery=0.1)
             plt.legend()
 
         if show_loss:
@@ -381,10 +385,82 @@ for model_name, model_settings in network_settings.items():
             plt.grid(True)
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['tl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                         color='orange', marker=plot_markers[i])
+                         color='orange', marker=plot_markers[i], markevery=0.1)
                 plt.plot(model_setting['vl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                         color='green', marker=plot_markers[i])
+                         color='green', marker=plot_markers[i], markevery=0.1)
             plt.legend()
+if True:
+    validation_marker = "H"
+    training_marker = " "
+    for model_name, model_settings in network_settings.items():
+        for model_setting in model_settings:
+            line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
+            ks_training_loss = model_setting['ta']
+            ks_training_acc = model_setting['tl']
+            ks_validation_acc = model_setting['vl']
+            ks_validation_loss = model_setting['va']
+
+            # Show loss
+            ks = model_setting['kernel_sizes']
+            labels = [f"Kernel size {k}" for k in ks]
+
+            iter_colors = itertools.cycle(colors)
+            line_labels = [Line2D([0], [0], color=next(iter_colors), lw=2) for _ in ks]
+            # line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
+
+            # SHOW LOSS
+            fig, ax = plt.subplots()
+            ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
+                       Line2D([0], [0], color='black', lw=2, marker=validation_marker),
+                       *line_labels],
+                      ['Training', 'Validation', *labels])
+            plt.grid(True)
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.title("Loss {} - {}".format(model_name, model_setting['title']))
+            iter_colors = itertools.cycle(colors)
+            for i in range(len(ks_validation_loss)):
+                color = next(iter_colors)
+                plt.plot(ks_validation_loss[i],
+                         marker=validation_marker,
+                         color=color, markevery=0.1)
+                plt.plot(ks_training_loss[i],
+                         marker=training_marker,
+                         color=color, markevery=0.1)
+
+            # file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/loss"
+            # file_name = f"loss_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+            #             f"_l2_{l2_penalty}.png"
+            # figure = plt.gcf()
+            # figure.set_size_inches(16, 9)
+            # figure.savefig(f"{file_path}/{file_name}", dpi=100)
+
+            # SHOW ACCURACY
+            fig, ax = plt.subplots()
+            ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
+                       Line2D([0], [0], color='black', lw=2, marker=validation_marker),
+                       *line_labels],
+                      ['Training', 'Validation', *labels])
+            plt.grid(True)
+            plt.xlabel('Epoch')
+            plt.ylabel('Accuracy')
+            plt.title("Accuracy {} - {}".format(model_name, model_setting['title']))
+            iter_colors = itertools.cycle(colors)
+            for i in range(len(ks_validation_acc)):
+                color = next(iter_colors)
+                plt.plot(ks_validation_acc[i],
+                         marker=validation_marker,
+                         color=color, markevery=0.1)
+                plt.plot(ks_training_acc[i],
+                         marker=training_marker,
+                         color=color, markevery=0.1)
+
+            # file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/acc"
+            # file_name = f"acc_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+            #             f"_l2_{l2_penalty}.png"
+            # figure = plt.gcf()
+            # figure.set_size_inches(16, 9)
+            # figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
 
 plt.show()

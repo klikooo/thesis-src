@@ -15,27 +15,28 @@ path = '/media/rico/Data/TU/thesis'
 use_hw = False
 n_classes = 9 if use_hw else 256
 spread_factor = 1
-runs = [x for x in range(5)]
+runs = [x for x in range(1)]
 train_size = 40000
-epochs = 80
+epochs = 75
 batch_size = 100
 lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = False  # False if sub_kezy_index < 2 else True
-kernel_sizes = [50]
+unmask = True
+kernel_sizes = [3, 10, 25, 50, 100]
 num_layers = [2]
-channel_sizes = [32]
-l2_penalty = 0
-init_weights = ""
+channel_sizes = [128]
+l2_penalty = 0.00
+max_pool = 64
+init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_settings = {
-    'DenseNet': 1,
+    'SmallCNN': 1,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.ASCAD
+data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 desync = 0
@@ -67,7 +68,8 @@ for k, v in network_settings.items():
                    "num_layers": num_layers,
                    "channel_sizes": channel_sizes,
                    "network_name": k,
-                   "init_weights": init_weights}
+                   "init_weights": init_weights,
+                   "max_pool": max_pool}
         network_settings[k].append(setting)
 
 #####################################
@@ -145,6 +147,7 @@ for network_name, network_setting in network_settings.items():
         all_loss_acc.append(loss_acc)
 
     for setting in network_setting:
+        model_params.update({"max_pool": setting['max_pool']})
         util.loop_at_least_once(setting['kernel_sizes'], lambda_kernel, lambda: (
             util.loop_at_least_once(setting['channel_sizes'], lambda_channel, lambda: (
                 util.loop_at_least_once_with_arg(setting['num_layers'], lambda_layers, retrieve_ge,
