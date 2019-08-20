@@ -13,10 +13,10 @@ def load_ge(kernel, l2_penal, noise):
         3: kernel,
         4: kernel,
         5: kernel,
-        6: kernel,
-        7: kernel,
-        8: kernel,
-        9: kernel,
+        # 6: kernel,
+        # 7: kernel,
+        # 8: kernel,
+        # 9: kernel,
     }
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
@@ -113,8 +113,8 @@ if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.005
-    noise = 1.0
+    l2_penal = 0.0
+    noise = 0.25
     data_ge = load_ge(kernels, l2_penal, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)

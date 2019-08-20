@@ -5,14 +5,14 @@ import json
 hit_worst = False
 
 
-def load_acc(l2_penal):
+def load_acc(l2_penal, noise_level):
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
     model = "VGGNumLayers2"
 
-    acc_path = f"{path}/acc_{model}.json"
+    acc_path = f"{path}/acc_{model}_noise{float(noise_level)}.json"
     with open(acc_path, "r") as f:
         return json.loads(f.read())
 
@@ -37,11 +37,12 @@ def get_x_labels(data):
 if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
-    layers = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+    layers = {1, 2, 3, 4, 5}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     channels = 32
     l2_penal = 0.0
-    data_acc = load_acc(l2_penal)
+    noise = 0.25
+    data_acc = load_acc(l2_penal, noise)
 
     x_labels = [f'L{i}' for i in sorted(list(layers))]
     y_labels = [f'K{i}' for i in sorted(list(kernels))]
@@ -89,7 +90,7 @@ if __name__ == "__main__":
         # ],
     ))
     fig.update_layout(
-        title=f'Accuracy, l2 {l2_penal}',
+        title=f'Accuracy, l2 {l2_penal}, noise {float(noise)}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'

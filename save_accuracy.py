@@ -61,7 +61,10 @@ def get_ranks(args):
                     map_accuracy.update({f"c_{channel_size}_l{layers}_k{kernel}": mean_acc})
                     print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
 
-    acc_filename = f"{folder}/acc_{args.network_name}_noise{args.noise_level}.json"
+    if args.noise_level >= 0:
+        acc_filename = f"{folder}/acc_{args.network_name}_noise{args.noise_level}.json"
+    else:
+        acc_filename = f"{folder}/acc_{args.network_name}.json"
     print(acc_filename)
     with open(acc_filename, "w") as acc_file:
         acc_file.write(json.dumps(map_accuracy))
@@ -105,10 +108,10 @@ def load_data(args):
     return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
 
 
-def run_load(model, l2_penal, noise_level):
+def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DELAY_NORMALIZED):
     args = util.EmptySpace()
     args.use_hw = False
-    args.data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
+    args.data_set = data_set
     # args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
     # args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
     args.traces_path = "/media/rico/Data/TU/thesis/data/"
@@ -145,9 +148,16 @@ def run_load(model, l2_penal, noise_level):
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        run_load("VGGNumLayers2", l2_penal=0.005, noise_level=0.5)
-    if len(sys.argv) == 3:
+        run_load("VGGNumLayers2", l2_penal=0.005)
+    elif len(sys.argv) == 2:
+        run_load(sys.argv[1], sys.argv[2], data_set=util.DataSet.ASCAD_NORMALIZED)
+    elif len(sys.argv) == 3:
         for n_level in [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]:
-            run_load(sys.argv[1], sys.argv[2], n_level)
+            run_load(sys.argv[1], sys.argv[2], n_level,
+                     data_set=util.DataSet.RANDOM_DELAY_NORMALIZED)
     else:
-        run_load(sys.argv[1], sys.argv[2], sys.argv[3])
+        print(sys.argv)
+        run_load(model=sys.argv[1],
+                 l2_penal=sys.argv[2],
+                 noise_level=sys.argv[3],
+                 data_set=util.DataSet.from_string(sys.argv[4]))

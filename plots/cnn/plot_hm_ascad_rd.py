@@ -6,21 +6,24 @@ import numpy as np
 hit_worst = False
 
 
-def load_ge(kernel, l2_penal):
+def load_ge(kernel, l2_penal, desync, hw):
     combinations = {
         1: kernel,
         2: kernel,
         3: kernel,
         4: kernel,
         5: kernel,
-        6: kernel,
-        7: kernel,
-        8: kernel,
-        9: kernel,
+        # 6: kernel,
+        # 7: kernel,
+        # 8: kernel,
+        # 9: kernel,
     }
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
-           "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
+           "ASCAD_Normalized/subkey_2/desync{}/" \
+           "{}_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train45000/".format(
+            desync,
+            'HW' if hw else 'ID',
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
     model = "VGGNumLayers"
@@ -35,9 +38,6 @@ def load_ge(kernel, l2_penal):
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
-            # if kernel_size == 3 and layers == 6:
-            #     kernel_size_dict.update({kernel_size: float("nan")})
-            #     continue
             for run in range(5):
                 file = file.format(run)
                 if os.path.exists(f"{file}__"):
@@ -113,7 +113,9 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    data_ge = load_ge(kernels, l2_penal=l2_penal)
+    desync = 50
+    hw = True
+    data_ge = load_ge(kernels, l2_penal, desync, hw)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
 
@@ -153,7 +155,7 @@ if __name__ == "__main__":
         ],
     ))
     fig.update_layout(
-        title=f'Convergence point L2 {l2_penal}',
+        title=f'Convergence point, hw {hw}, L2 {l2_penal}, desync {desync}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'
