@@ -635,6 +635,7 @@ class DataSet(Enum):
     SIM_MASK = 9
     ASCAD_KEYS = 10
     ASCAD_KEYS_NORMALIZED = 11
+    ASCAD_NORM = 12
 
     def __str__(self):
         if self.value == 1:
@@ -659,6 +660,8 @@ class DataSet(Enum):
             return "ASCAD_Keys"
         elif self.value == 11:
             return "ASCAD_Keys_Normalized"
+        elif self.value == 12:
+            return "ASCAD_NORM"
         else:
             print("ERROR {}".format(self.value))
 
@@ -681,7 +684,8 @@ def load_data_set(data_set):
              DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
              DataSet.SIM_MASK: load_data_generic,
              DataSet.ASCAD_KEYS: load_ascad_keys,
-             DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys}
+             DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys,
+             DataSet.ASCAD_NORM: load_ascad_normalized}
     return table[data_set]
 
 

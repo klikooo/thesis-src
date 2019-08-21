@@ -14,21 +14,21 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_KEYS_NORMALIZED
-    network_names = ["AscadCnn"]
+    data_set = DataSet.ASCAD_NORM
+    network_names = ["VGGNumLayers4"]
     use_hw = False
     runs = 1
-    train_sizes = [1000]
-    epochs = 200
-    batch_size = 200
-    lr = 0.00001
+    train_sizes = [45000]
+    epochs = 75
+    batch_size = 100
+    lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = True
+    unmask = False
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 7
+    kernel_size = 15
     channel_size = 32
     num_layers = 2
     spread_factor = 1
@@ -92,7 +92,8 @@ if __name__ == "__main__":
                     DataSet.ASCAD_NORMALIZED: 700,
                     DataSet.SIM_MASK: 700,
                     DataSet.ASCAD_KEYS: 1400,
-                    DataSet.ASCAD_KEYS_NORMALIZED: 1400}
+                    DataSet.ASCAD_KEYS_NORMALIZED: 1400,
+                    DataSet.ASCAD_NORM: 700}
         return switcher[the_data_set]
     # Change input shape according to the selected data set
     input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50
