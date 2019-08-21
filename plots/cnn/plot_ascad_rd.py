@@ -32,13 +32,13 @@ num_layers = []
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 channel_sizes = [32]
 l2 = 0.0
-desync = 50
+desync = 100
 init_weights = "kaiming"
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
 network_settings = {
-    network_1: 4,
+    network_1: 5,
     # 'KernelBigVGGMDK': {}
 }
 data_set = util.DataSet.ASCAD_NORMALIZED
@@ -102,35 +102,41 @@ for k, v in network_settings.items():
 # UPDATE SETTINGS FOR DESIRED MODEL #
 #####################################
 network_settings[network_1][0].update({
-    "kernel_sizes": [100, 50, 25, 10, 5, 3],
-    "num_layers": [1] * 6,
+    "kernel_sizes": [100, 50, 25, 20, 15, 10, 7, 5, 3],
+    "num_layers": [1] * 9,
     "l2_penalty": l2,
     "title": f" 1 layer l2 {l2}",
     "plot_marker": " ",
 })
 network_settings[network_1][1].update({
-    "kernel_sizes": [100, 50, 25, 10, 5, 3],
-    "num_layers": [2] * 6,
+    "kernel_sizes": [100, 50, 25, 20, 15, 10, 7, 5, 3],
+    "num_layers": [2] * 9,
     "l2_penalty": l2,
     "title": f" 2 layers l2 {l2}",
     "plot_marker": "*",
 
 })
 network_settings[network_1][2].update({
-    "kernel_sizes": [50, 25, 10, 5, 3],
-    "num_layers": [3] * 5,
+    "kernel_sizes": [50, 25, 20, 15, 10, 7, 5, 3],
+    "num_layers": [3] * 8,
     "l2_penalty": l2,
     "title": f" 3 layers l2 {l2}",
     "plot_marker": ".",
 
 })
 network_settings[network_1][3].update({
-    "kernel_sizes": [25, 10, 5, 3],
-    "num_layers": [4] * 4,
+    "kernel_sizes": [25, 20, 15, 10, 7, 5, 3],
+    "num_layers": [4] * 7,
     "l2_penalty": l2,
     "title": f" 4 layers l2 {l2}",
     "plot_marker": "o",
-
+})
+network_settings[network_1][4].update({
+    "kernel_sizes": [20, 15, 10, 7, 5, 3],
+    "num_layers": [5] * 6,
+    "l2_penalty": l2,
+    "title": f" 4 layers l2 {l2}",
+    "plot_marker": "o",
 })
 
 

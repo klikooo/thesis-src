@@ -601,7 +601,6 @@ def load_sim_mask_test_traces(args):
     return x_test, y_test, key_guesses, 23
 
 
-
 def load_random_delay_dk(args):
     print(args)
 

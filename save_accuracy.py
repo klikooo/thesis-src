@@ -25,7 +25,7 @@ def get_ranks(args):
     for channel_size in args.channels:
         model_params.update({"channel_size": channel_size})
         for layers in args.layers:
-            model_params.update({"num_layers":  layers})
+            model_params.update({"num_layers": layers})
             for kernel in args.kernels:
                 model_params.update({"kernel_size": kernel})
 
@@ -71,6 +71,32 @@ def get_ranks(args):
 
 
 def load_data(args):
+    if args.data_set == util.DataSet.ASCAD_NORMALIZED:
+        return load_ascad_normalized(args)
+    else:
+        return load_rd_normalized(args)
+
+
+def load_ascad_normalized(args):
+    x, y, k_guesses, key = util.load_ascad_normalized_test_traces({'use_hw': args.use_hw,
+                                                                   'traces_path': args.traces_path,
+                                                                   'raw_traces': args.raw_traces,
+                                                                   'start': args.train_size + args.validation_size,
+                                                                   'size': args.attack_size,
+                                                                   'domain_knowledge': True,
+                                                                   'use_noise_data': args.use_noise_data,
+                                                                   'data_set': args.data_set,
+                                                                   'noise_level': args.noise_level,
+                                                                   'train_size': args.train_size,
+                                                                   'validation_size': args.validation_size,
+                                                                   # 'attack_size': args.attack_size,
+                                                                   'desync': args.desync,
+                                                                   'unmask': True
+                                                                   })
+    return x, y, k_guesses, key, None
+
+
+def load_rd_normalized(args):
     _x_attack, _y_attack, _real_key, _dk_plain, _key_guesses = None, None, None, None, None
     ###################
     # Load the traces #
@@ -108,18 +134,19 @@ def load_data(args):
     return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
 
 
-def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DELAY_NORMALIZED):
+def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DELAY_NORMALIZED, use_hw=False,
+             train_size=40000, attack_size=9000, desync=0):
     args = util.EmptySpace()
-    args.use_hw = False
+    args.use_hw = use_hw
     args.data_set = data_set
     # args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
     # args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
     args.traces_path = "/media/rico/Data/TU/thesis/data/"
     args.models_path = "/media/rico/Data/TU/thesis/runs3/"
     args.raw_traces = True
-    args.train_size = 40000
+    args.train_size = train_size
     args.validation_size = 1000
-    args.attack_size = 9000
+    args.attack_size = attack_size
     args.use_noise_data = True if noise_level > 0 else False
     args.epochs = 75
     args.batch_size = 100
@@ -132,7 +159,7 @@ def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DEL
     args.network_name = model
     args.subkey_index = 2
     args.unmask = True
-    args.desync = 0
+    args.desync = desync
     args.spread_factor = 1
     args.runs = 5
 
@@ -146,18 +173,36 @@ def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DEL
     get_ranks(args)
 
 
+def str_to_bool(s):
+    if s == 'True':
+        return True
+    elif s == 'False':
+        return False
+    else:
+        raise ValueError
+
+
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         run_load("VGGNumLayers2", l2_penal=0.005)
-    elif len(sys.argv) == 2:
-        run_load(sys.argv[1], sys.argv[2], data_set=util.DataSet.ASCAD_NORMALIZED)
+    elif len(sys.argv) == 5:
+        run_load(model=sys.argv[1],
+                 l2_penal=sys.argv[2],
+                 use_hw=str_to_bool(sys.argv[3]),
+                 desync=int(sys.argv[4]),
+                 train_size=45000,
+                 attack_size=10000,
+                 data_set=util.DataSet.ASCAD_NORMALIZED)
     elif len(sys.argv) == 3:
         for n_level in [0.0, 0.1, 0.25, 0.5, 0.75, 1.0]:
-            run_load(sys.argv[1], sys.argv[2], n_level,
+            run_load(model=sys.argv[1],
+                     l2_penal=sys.argv[2],
+                     noise_level=n_level,
                      data_set=util.DataSet.RANDOM_DELAY_NORMALIZED)
     else:
         print(sys.argv)
         run_load(model=sys.argv[1],
                  l2_penal=sys.argv[2],
                  noise_level=sys.argv[3],
-                 data_set=util.DataSet.from_string(sys.argv[4]))
+                 use_hw=sys.argv[4],
+                 data_set=util.DataSet.from_string(sys.argv[5]))

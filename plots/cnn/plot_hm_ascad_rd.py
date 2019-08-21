@@ -113,8 +113,8 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    desync = 50
-    hw = True
+    desync = 100
+    hw = False
     data_ge = load_ge(kernels, l2_penal, desync, hw)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
