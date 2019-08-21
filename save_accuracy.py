@@ -139,10 +139,10 @@ def run_load(model, l2_penal, noise_level=-1.0, data_set=util.DataSet.RANDOM_DEL
     args = util.EmptySpace()
     args.use_hw = use_hw
     args.data_set = data_set
-    # args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
-    # args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
-    args.traces_path = "/media/rico/Data/TU/thesis/data/"
-    args.models_path = "/media/rico/Data/TU/thesis/runs3/"
+    args.traces_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/"
+    args.models_path = "/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/"
+    # args.traces_path = "/media/rico/Data/TU/thesis/data/"
+    # args.models_path = "/media/rico/Data/TU/thesis/runs3/"
     args.raw_traces = True
     args.train_size = train_size
     args.validation_size = 1000
