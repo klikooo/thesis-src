@@ -15,8 +15,8 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_NORM
-    network_names = ["VGGNumLayers4"]
-    use_hw = False
+    network_names = ["SmallCNN"]
+    use_hw = True
     runs = 1
     train_sizes = [45000]
     epochs = 75
@@ -28,8 +28,8 @@ if __name__ == "__main__":
     raw_traces = True
     desync = 0
     validation_size = 1000
-    kernel_size = 15
-    channel_size = 32
+    kernel_size = 100
+    channel_size = 128
     num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()

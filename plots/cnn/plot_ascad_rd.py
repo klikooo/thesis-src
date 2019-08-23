@@ -25,7 +25,7 @@ lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True  # False if sub_kezy_index < 2 else True
+unmask = True
 kernel_sizes = []
 num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
@@ -41,7 +41,7 @@ network_settings = {
     network_1: 5,
     # 'KernelBigVGGMDK': {}
 }
-data_set = util.DataSet.ASCAD_NORMALIZED
+data_set = util.DataSet.ASCAD_NORM
 plt_titles = ['$Spread_{PH}$', '$Dense_{RT}$', '$MLP_{best}$', '', '', '', '']
 only_accuracy = False
 show_losses = False

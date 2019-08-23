@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
+    use_hw = True
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
@@ -23,20 +23,20 @@ if __name__ == "__main__":
     attack_size = 10000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
-    unmask = False  # If False then it is masked
+    unmask = True
     data_set = DataSet.ASCAD_NORM
-    kernel_sizes = [7]
+    kernel_sizes = [50]
     channel_sizes = [32]
-    num_layers = [4]
+    num_layers = [2]
     init_weights = ""
 
     network_names = ['VGGNumLayers']
-    desync = 0
-    num_exps = 3
+    desync = 50
+    num_exps = 30
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 4
+    max_pool = 64
     l2_penalty = 0.0
     noise_level = 0.0
     #####################################################################################

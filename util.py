@@ -544,9 +544,11 @@ def load_ascad_keys_test(args):
 
 def load_ascad_normalized(args):
     print(args)
-    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
+    x_train = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}{}.csv.npy'.format
                       (args['traces_path'], str(args['data_set']),
-                       args['train_size'], args['validation_size'], args['desync']))
+                       args['train_size'], args['validation_size'], args['desync'],
+                       '' if not args['use_noise_data'] else
+                       '' if args['noise_level'] <= 0 else f"_noise{args['noise_level']}"))
     y_train = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
                                                               'un' if args['unmask'] else ''))
 
@@ -562,15 +564,23 @@ def load_ascad_normalized(args):
 def load_ascad_normalized_test_traces(args):
     print(args)
 
-    x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
-                (args['traces_path'], str(args['data_set']),
-                 args['train_size'], args['validation_size'], args['desync']))
+    if args['use_noise_data'] and args['noise_level'] > 0:
+        x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}{}.csv.npy'.format
+                    (args['traces_path'], str(args['data_set']),
+                     args['train_size'], args['validation_size'], args['desync'],
+                     f"_noise{args['noise_level']}"))
+        x_test = x
+    else:
+        x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
+                    (args['traces_path'], str(args['data_set']),
+                     args['train_size'], args['validation_size'], args['desync']))
+        x_test = x[args['start']:args['start'] + args['size']]
+
     y = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
                                                         'un' if args['unmask'] else ''))
     key_guesses = np.load('{}/{}/Value/key_guesses_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
                                                                         'un' if args['unmask'] else ''))
 
-    x_test = x[args['start']:args['start'] + args['size']]
     y_test = y[50000:50000 + args['size']]
     print("y shape {}".format(y.shape))
 

@@ -71,7 +71,8 @@ def load_data(args, network_name):
             'data_set': args.data_set,
             'sub_key_index': args.subkey_index,
             'desync': args.desync,
-            'unmask': args.unmask}
+            'unmask': args.unmask,
+            'noise_level': args.noise_level}
 
     if args.data_set == util.DataSet.ASCAD:
         _x_attack, _y_attack, _plain, _real_key, _key_guesses = util.load_ascad_test_traces(argz)
