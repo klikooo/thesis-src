@@ -24,7 +24,7 @@ if __name__ == "__main__":
     lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False
+    unmask = True
     raw_traces = True
     desync = 0
     validation_size = 1000

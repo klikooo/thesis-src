@@ -65,9 +65,10 @@ def accuracy(network, x_test, y_test, plain=None, batch_size=100):
         # print(predi[0])
         # exit()
         num_correct = z.sum().item()
+        acc = num_correct / len(y_test) * 100
         print('Correct: {}'.format(num_correct))
-        print('Accuracy: {} - {}%'.format(num_correct / len(y_test), num_correct / len(y_test) * 100))
-        return predi
+        print('Accuracy: {} - {}%'.format(num_correct / len(y_test), acc))
+        return predi, acc
 
 
 def accuracy2(network, x_test, y_test, plain=None, batch_size=100):

@@ -4,6 +4,7 @@ import torch
 
 import util
 import numpy as np
+import json
 
 from models.load_model import load_model
 from util import load_ascad, shuffle_permutation, hot_encode, generate_folder_name
@@ -20,6 +21,7 @@ def get_ranks(args, network_name, model_params):
 
     # Calculate the predictions before hand
     predictions = []
+    sum_acc = 0.0
     for run in args.runs:
         model_path = '{}/model_r{}_{}.pt'.format(
             folder,
@@ -34,11 +36,20 @@ def get_ranks(args, network_name, model_params):
 
         # Calculate predictions
         if require_domain_knowledge(network_name):
-            prediction = accuracy(model, x_attack, y_attack, dk_plain)
+            prediction, acc = accuracy(model, x_attack, y_attack, dk_plain)
             predictions.append(prediction.cpu().numpy())
         else:
-            prediction = accuracy(model, x_attack, y_attack, None)
+            prediction, acc = accuracy(model, x_attack, y_attack, None)
             predictions.append(prediction.cpu().numpy())
+        sum_acc += acc
+
+    # Save accuracy
+    mean_acc = sum_acc / len(args.runs)
+    print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
+    noise_extension = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
+    mean_acc_file = f"{folder}/acc_{get_save_name(network_name, model_params)}{noise_extension}.acc"
+    with open(mean_acc_file, "w") as file:
+        file.write(json.dumps(mean_acc))
 
     # Check if it is only one run, if so don't do multi threading
     if len(args.runs) == 1:
