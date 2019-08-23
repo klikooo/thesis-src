@@ -25,18 +25,18 @@ if __name__ == "__main__":
     type_network = 'HW' if use_hw else 'ID'
     unmask = True
     data_set = DataSet.ASCAD_NORM
-    kernel_sizes = [50]
+    kernel_sizes = [20]
     channel_sizes = [32]
     num_layers = [2]
     init_weights = ""
 
     network_names = ['VGGNumLayers']
-    desync = 50
+    desync = 0
     num_exps = 30
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 64
+    max_pool = 5
     l2_penalty = 0.0
     noise_level = 0.0
     #####################################################################################

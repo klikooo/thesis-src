@@ -164,7 +164,6 @@ def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
             res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
             ranks[trace_num] = res
 
-    print('Key guess: {}'.format(np.argmax(probabilities)))
-
-    return np.array(range(1, attack_size+1)), ranks
+    final_guess = np.argmax(probabilities)
+    return np.array(range(1, attack_size+1)), ranks, final_guess
 

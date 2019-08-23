@@ -171,10 +171,11 @@ def threaded_run_test(args, prediction, folder, run, network_name, model_params,
         key_guesses_shuffled = shuffle_permutation(permutation, key_guesses)
 
         # Test the data
-        x_exp, y_exp = test_with_key_guess_p(key_guesses_shuffled, predictions_shuffled,
-                                             attack_size=args.attack_size,
-                                             real_key=real_key,
-                                             use_hw=args.use_hw)
+        x_exp, y_exp, k_guess = test_with_key_guess_p(key_guesses_shuffled, predictions_shuffled,
+                                                      attack_size=args.attack_size,
+                                                      real_key=real_key,
+                                                      use_hw=args.use_hw)
+        print(f'{exp_i}: Key rank: {y_exp[-1]}, guess: {k_guess}')
         y.append(y_exp)
 
     # Calculate the mean over the experiments
