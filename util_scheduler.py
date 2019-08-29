@@ -1,7 +1,7 @@
 import torch
 
 
-def cyclicLR(optimizer, args):
+def cyclicLR(optimizer, lr, args):
     return torch.optim.lr_scheduler.CyclicLR(optimizer,
                                              cycle_momentum=False,
                                              base_lr=args['base_lr'],
@@ -13,5 +13,5 @@ map_schedulers = {
 }
 
 
-def get_scheduluer(name):
+def get_scheduler(name):
     return map_schedulers[name]

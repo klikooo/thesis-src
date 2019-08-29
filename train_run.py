@@ -15,11 +15,11 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_NORM
-    network_names = ["ZaidCNN"]
+    network_names = ["VGGNumLayers"]
     use_hw = False
     runs = 1
     train_sizes = [45000]
-    epochs = 50
+    epochs = 70
     batch_size = 256
     lr = 0.001
     subkey_index = 2
@@ -85,7 +85,6 @@ if __name__ == "__main__":
                         help="Specify the scheduler")
     parser.add_argument("--scheduler_args", default=scheduler_args, type=str,
                         help="Specify the scheduler arguments")
-
 
     args = parser.parse_args()
     print(args)

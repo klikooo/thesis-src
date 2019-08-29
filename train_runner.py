@@ -4,6 +4,7 @@ from util import save_model, load_data_set, save_loss_acc, generate_folder_name,
 from train import train, train_dk2
 
 import numpy as np
+import json
 
 from util_init import init_weights
 
@@ -53,6 +54,12 @@ def run(args):
                  "num_layers": args.num_layers,
                  "max_pool": args.max_pool
                  }
+
+    # Convert scheduler args
+    if args.scheduler is not None and type(args.scheduler_args) is str:
+        args.scheduler_args = json.loads(args.scheduler_args)
+
+
 
     # Do the runs
     for i in range(args.runs):

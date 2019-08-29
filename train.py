@@ -44,12 +44,12 @@ def train(x_profiling, y_profiling, train_size,
     vali_acc = []
     train_acc = []
 
-    schedule_func = lambda: None
     # Scheduler
+    schedule_func = lambda: None
     if scheduler is not None:
-        scheduler = util_scheduler.get_scheduluer(scheduler)(optimizer, scheduler_args)
+        scheduler = util_scheduler.get_scheduler(scheduler)(optimizer, lr, scheduler_args)
         schedule_func = lambda: scheduler.step()
-
+        print(f"Using scheduler: {scheduler} with args: {scheduler_args}")
 
     # Perform training
     for epoch in range(epochs):

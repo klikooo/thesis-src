@@ -16,7 +16,7 @@ if __name__ == "__main__":
     spread_factor = 1
     runs = [x for x in range(1)]
     train_size = 45000
-    epochs = 50
+    epochs = 70
     batch_size = 256
     lr = 0.001
     sub_key_index = 2
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     num_layers = [2]
     init_weights = "kaiming_uniform"
 
-    network_names = ['ZaidCNN']
+    network_names = ['VGGNumLayers3']
     desync = 100
     num_exps = 10
     raw_traces = True
