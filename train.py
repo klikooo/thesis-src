@@ -1,21 +1,20 @@
 import torch
-import torch.nn as nn
-import numpy as np
+import math
 from torch.utils.data import DataLoader
 
 from DataLoaders.DataAscad import DataAscad
 from DataLoaders.DataDK import DataDK
 from util import HW, device, save_model
 import util_optimizer
+import util_scheduler
 
 
 def train(x_profiling, y_profiling, train_size,
           x_validation, y_validation, validation_size,
           network, loss_function, epochs=80, batch_size=1000, lr=0.00001,
-          checkpoints=None, save_path=None, l2_penalty=0.0, optimizer="Adam"):
+          checkpoints=None, save_path=None, l2_penalty=0.0, optimizer="Adam",
+          scheduler=None, scheduler_args=None):
     # Cut to the correct training size
-    # x_profiling = x_profiling[0:train_size]
-    # y_profiling = y_profiling[0:train_size]
 
     train_data_set = DataAscad(x_profiling, y_profiling, train_size)
     validation_data_set = DataAscad(x_validation, y_validation, validation_size)
@@ -35,7 +34,6 @@ def train(x_profiling, y_profiling, train_size,
     optimizer_func = util_optimizer.get_optimizer(optimizer)
     optimizer = optimizer_func(network.parameters(), optimizer_args)
 
-
     # Loss function
     # criterion = nn.CrossEntropyLoss().to(device)
     loss_function = loss_function.to(device)
@@ -45,6 +43,13 @@ def train(x_profiling, y_profiling, train_size,
     train_losses = []
     vali_acc = []
     train_acc = []
+
+    schedule_func = lambda: None
+    # Scheduler
+    if scheduler is not None:
+        scheduler = util_scheduler.get_scheduluer(scheduler)(optimizer, scheduler_args)
+        schedule_func = lambda: scheduler.step()
+
 
     # Perform training
     for epoch in range(epochs):
@@ -79,6 +84,8 @@ def train(x_profiling, y_profiling, train_size,
             z = pred == batch_y
             train_correct += z.sum().item()
 
+            schedule_func()
+
         # Do a check on the validation
         validation_iter = iter(DataLoader(validation_data_set, batch_size=batch_size))
         validation_loss = 0.0
@@ -95,6 +102,7 @@ def train(x_profiling, y_profiling, train_size,
                 _, pred = net_out.max(1)
                 z = pred == batch_y
                 validation_correct += z.sum().item()
+
 
         train_loss = train_running_loss / total_batches
         vali_loss = validation_loss / validation_batches
@@ -201,5 +209,3 @@ def train_dk2(x_profiling, y_profiling, p_profiling, train_size,
         vali_acc.append(validation_correct / validation_size)
         train_acc.append(train_correct / train_size)
     return network, (train_losses, vali_losses, train_acc, vali_acc)
-
-

@@ -15,29 +15,31 @@ if __name__ == "__main__":
 
     # Default Parameters
     data_set = DataSet.ASCAD_NORM
-    network_names = ["VGGNumLayers"]
-    use_hw = True
+    network_names = ["ZaidCNN"]
+    use_hw = False
     runs = 1
     train_sizes = [45000]
-    epochs = 75
-    batch_size = 100
-    lr = 0.0001
+    epochs = 50
+    batch_size = 256
+    lr = 0.001
     subkey_index = 2
     checkpoints = None
-    unmask = True
+    unmask = False
     raw_traces = True
-    desync = 0
+    desync = 100
     validation_size = 1000
     kernel_size = 20
     channel_size = 32
     num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
-    init_weights = ""
+    init_weights = "kaiming_uniform"
     max_pool = 5
     l2_penal = 0.0
     use_noise_data = False
     optimizer = "Adam"
+    scheduler = "CyclicLR"
+    scheduler_args = {"max_lr": 0.01, "base_lr": lr}
     ############################
 
     ###################
@@ -78,6 +80,12 @@ if __name__ == "__main__":
     parser.add_argument('-y', "--use_hw", default=use_hw, type=bool, help='Use hamming weight', action=BoolAction)
     parser.add_argument('-z', "--init_weights", default=init_weights, type=str,
                         help="Specify how the weights are initialized")
+
+    parser.add_argument("--scheduler", default=scheduler, type=str,
+                        help="Specify the scheduler")
+    parser.add_argument("--scheduler_args", default=scheduler_args, type=str,
+                        help="Specify the scheduler arguments")
+
 
     args = parser.parse_args()
     print(args)

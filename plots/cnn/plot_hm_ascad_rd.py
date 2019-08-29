@@ -6,7 +6,7 @@ import numpy as np
 hit_worst = False
 
 
-def load_ge(kernel, l2_penal, desync, hw):
+def load_ge(kernel, l2_penal, desync, hw, unmask, noise):
     combinations = {
         1: kernel,
         2: kernel,
@@ -20,9 +20,10 @@ def load_ge(kernel, l2_penal, desync, hw):
     }
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
-           "ASCAD_Normalized/subkey_2/desync{}/" \
+           "ASCAD_NORM/subkey_2/{}/{}/" \
            "{}_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train45000/".format(
-            desync,
+            '' if unmask else 'masked',
+            f'desync{desync}' if desync > 0.0 else '',
             'HW' if hw else 'ID',
             '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
@@ -34,7 +35,8 @@ def load_ge(kernel, l2_penal, desync, hw):
         all_ge.update({layers: kernel_size_dict})
         for kernel_size in kernel_sizes:
             ge_runs = []
-            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}.exp"
+            noise_string = f"_noise{noise}" if noise > 0.0 else ''
+            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}{noise_string}.exp"
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
@@ -65,7 +67,7 @@ def get_first_min(data):
     return all_min
 
 
-def find_sequence(data, epsilon=0.001, threshold=5, err=-100):
+def find_sequence(data, epsilon=0.001, threshold=5, err=float("nan")):
     global hit_worst
     joined = "".join(map(lambda x: '0' if x < epsilon else '1', data))
     index = joined.find("0" * threshold)
@@ -91,6 +93,23 @@ def get_first(data):
     return all_min
 
 
+def get_end(data):
+    all_min = {}
+    for layers, kernel_sizes in data.items():
+        min_per_layer = {}
+        all_min.update({layers: min_per_layer})
+        for kernel_size, mean_ge in kernel_sizes.items():
+            print(mean_ge)
+            # Check for NaN
+            if not isinstance(mean_ge, np.ndarray) and np.isnan(mean_ge):
+                min_per_layer.update({kernel_size: [mean_ge]})
+                continue
+
+            min_per_layer.update({kernel_size: mean_ge[9999]})
+    return all_min
+
+
+
 def get_sorted(data):
     new_data = []
     for layer_key in sorted(data.keys()):
@@ -114,10 +133,16 @@ if __name__ == "__main__":
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
     desync = 100
-    hw = False
-    data_ge = load_ge(kernels, l2_penal, desync, hw)
+    hw = True
+    unmask = True
+    noise = 0.25
+    data_ge = load_ge(kernels, l2_penal, desync, hw, unmask, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
+    end = get_end(data_ge)
+
+    data_for_hm = minimal if unmask else end
+    title = 'Convergence point' if unmask else 'Key rank after 10000 traces'
 
     x_labels = get_x_labels(minimal)
     y_labels = [f'K{i}' for i in sorted(list(kernels))]
@@ -125,37 +150,37 @@ if __name__ == "__main__":
     print(get_sorted(first))
 
     color_worst = "#000000" if hit_worst else "#4CC01F"
-    z = np.transpose(get_sorted(minimal))
+    z = np.transpose(get_sorted(data_for_hm))
     fig = go.Figure(data=go.Heatmap(
         z=z,
         x=x_labels,
         y=y_labels,
-        colorscale=[
-            [0.0,  color_worst],
-            [0.05, "#5EC321"],
-            [0.1,  "#70C623"],
-            [0.15, "#83C924"],
-            [0.2,  "#96CD26"],
-            [0.25, "#A9D028"],
-            [0.3,  "#BCD32A"],
-            [0.35, "#D0D52C"],
-            [0.4,  "#D8CD2E"],
-            [0.45, "#DBBF30"],
-            [0.5,  "#DEB132"],
-            [0.55, "#E19638"],
-            [0.6,  "#E57C3D"],
-            [0.65, "#E86343"],
-            [0.7,  "#EB4C4A"],
-            [0.75, "#ED506B"],
-            [0.8,  "#F0568C"],
-            [0.85, "#F25DAD"],
-            [0.9,  "#F564CB"],
-            [0.95, "#F76BE8"],
-            [1,    "#EE72F8"]
-        ],
+        # colorscale=[
+        #     [0.0,  color_worst],
+        #     [0.05, "#5EC321"],
+        #     [0.1,  "#70C623"],
+        #     [0.15, "#83C924"],
+        #     [0.2,  "#96CD26"],
+        #     [0.25, "#A9D028"],
+        #     [0.3,  "#BCD32A"],
+        #     [0.35, "#D0D52C"],
+        #     [0.4,  "#D8CD2E"],
+        #     [0.45, "#DBBF30"],
+        #     [0.5,  "#DEB132"],
+        #     [0.55, "#E19638"],
+        #     [0.6,  "#E57C3D"],
+        #     [0.65, "#E86343"],
+        #     [0.7,  "#EB4C4A"],
+        #     [0.75, "#ED506B"],
+        #     [0.8,  "#F0568C"],
+        #     [0.85, "#F25DAD"],
+        #     [0.9,  "#F564CB"],
+        #     [0.95, "#F76BE8"],
+        #     [1,    "#EE72F8"]
+        # ],
     ))
     fig.update_layout(
-        title=f'Convergence point, hw {hw}, L2 {l2_penal}, desync {desync}',
+        title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'

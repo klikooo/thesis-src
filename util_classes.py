@@ -16,6 +16,8 @@ from models.Alex.NumLayers import NumLayers
 from models.CNN.AscadCnn import AscadCnn
 from models.CNN.NIN import NIN
 from models.CNN.SmallCNN import SmallCNN
+from models.CNN.ZaidCNN import ZaidCNN
+from models.CNN.ZaidCNNRD import ZaidCNNRD
 from models.ConvNet import ConvNet
 from models.ConvNetDK import ConvNetDK
 from models.ConvNetDPA import ConvNetDPA
@@ -78,7 +80,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           VGGNumLayers, VGGNumBlocks, SpreadFirstLayer, BigChannels,
           DenseNorm, DenseBatch, SpreadV3, SmallCNN, MakeSomeNoiseReal,
           VGGNumLayers2, VGGMasked, VGGNumLayers3, VGGNumLayers4, VGGNumLayers4DK,
-          AscadCnn]
+          AscadCnn, ZaidCNN, ZaidCNNRD]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 

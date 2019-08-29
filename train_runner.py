@@ -96,7 +96,9 @@ def run(args):
                                  save_path=model_save_file,
                                  loss_function=args.loss_function,
                                  l2_penalty=args.l2_penalty,
-                                 optimizer=args.optimizer
+                                 optimizer=args.optimizer,
+                                 scheduler=args.scheduler,
+                                 scheduler_args=args.scheduler_args,
                                  )
         # Save the results of the accuracy and loss during training
         save_loss_acc(model_save_file, filename, res)

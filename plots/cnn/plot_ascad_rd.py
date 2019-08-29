@@ -14,8 +14,6 @@ path = '/media/rico/Data/TU/thesis'
 
 #####################################################################################
 # Parameters
-use_hw = True
-n_classes = 9 if use_hw else 256
 spread_factor = 1
 runs = [x for x in range(5)]
 train_size = 45000
@@ -25,15 +23,28 @@ lr = 0.0001
 sub_key_index = 2
 rank_step = 1
 
-unmask = True
 kernel_sizes = []
 num_layers = []
 # kernel_sizes = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]
 # num_layers = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+
+##################################################
+# Results for unmasked                           #
+# The results for HW are fine                    #
+# The results for ID need to be fine tuned/check #
+# for no noise where there is no convergence     #
+# and cherry pick from there                     #
+##################################################
 channel_sizes = [32]
 l2 = 0.0
-desync = 100
+desync = 50
 init_weights = "kaiming"
+noise_level = 0.1
+unmask = True
+use_hw = True
+n_classes = 9 if use_hw else 256
+
 
 # network_names = ['SpreadV2', 'SpreadNet', 'DenseSpreadNet', 'MLPBEST']
 network_1 = "VGGNumLayers"
@@ -53,7 +64,7 @@ experiment = False
 show_loss = False
 load_loss_acc = True
 colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
-          "fuchsia", "goldenrod", "green", "grey", "indigo", "lavender"]
+          "fuchsia", "goldenrod", "grey", "indigo", "lavender"]
 plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
 # "8"	m11	octagon
 # "s"	m12	square
@@ -135,7 +146,7 @@ network_settings[network_1][4].update({
     "kernel_sizes": [20, 15, 10, 7, 5, 3],
     "num_layers": [5] * 6,
     "l2_penalty": l2,
-    "title": f" 4 layers l2 {l2}",
+    "title": f" 5 layers l2 {l2}",
     "plot_marker": "o",
 })
 
@@ -161,9 +172,9 @@ def get_ge(net_name, model_parameters, load_parameters):
             run,
             get_save_name(net_name, model_parameters))
 
-        ge_path = '{}.exp__'.format(filename)
+        ge_path = '{}{}.exp__'.format(filename, f'_noise{noise_level}' if noise_level > 0.0 else '')
         if not os.path.exists(ge_path):
-            ge_path = '{}.exp'.format(filename)
+            ge_path = '{}{}.exp'.format(filename, f'_noise{noise_level}' if noise_level > 0.0 else '')
 
         y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
         x_r = range(len(y_r))
