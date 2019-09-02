@@ -7,7 +7,7 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs/'
+    models_path = '/media/rico/Data/TU/thesis/runs3/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
@@ -15,24 +15,24 @@ if __name__ == "__main__":
     n_classes = 9 if use_hw else 256
     spread_factor = 1
     runs = [x for x in range(1)]
-    train_size = 45000
-    epochs = 70
-    batch_size = 256
-    lr = 0.001
+    train_size = 40000
+    epochs = 75
+    batch_size = 100
+    lr = 0.0001
     sub_key_index = 2
-    attack_size = 10000
+    attack_size = 2000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
-    unmask = False
-    data_set = DataSet.ASCAD_NORM
-    kernel_sizes = [20]
+    unmask = True
+    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    kernel_sizes = [10]
     channel_sizes = [32]
     num_layers = [2]
-    init_weights = "kaiming_uniform"
+    init_weights = "kaiming"
 
-    network_names = ['VGGNumLayers3']
-    desync = 100
-    num_exps = 10
+    network_names = ['VGGNumLayers']
+    desync = 0
+    num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False

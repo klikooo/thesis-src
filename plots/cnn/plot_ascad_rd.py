@@ -40,7 +40,7 @@ channel_sizes = [32]
 l2 = 0.0
 desync = 50
 init_weights = "kaiming"
-noise_level = 0.1
+noise_level = 0.5
 unmask = True
 use_hw = True
 n_classes = 9 if use_hw else 256
@@ -406,7 +406,7 @@ for model_name, model_settings in network_settings.items():
                 plt.plot(model_setting['vl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
                          color='green', marker=plot_markers[i], markevery=0.1)
             plt.legend()
-if True:
+if False:
     validation_marker = "H"
     training_marker = " "
     for model_name, model_settings in network_settings.items():

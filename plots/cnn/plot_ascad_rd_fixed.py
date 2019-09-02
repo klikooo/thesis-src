@@ -15,13 +15,13 @@ from matplotlib.lines import Line2D
 matplotlib.rcParams.update({'font.size': 18})
 
 
-def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
+def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_extension=""):
     #####################################################################################
     # Parameters
-    use_hw = False
+    use_hw = hw
     spread_factor = 1
     runs = [x for x in range(5)]
-    train_size = 40000
+    train_size = 45000
     epochs = 75
     batch_size = 100
     lr = 0.0001
@@ -32,24 +32,22 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     num_layers = []
     channel_sizes = [32]
     init_weights = "kaiming"
+    l2_penalty = 0.0
 
     network_1 = "VGGNumLayers"
     network_settings = {
-        network_1: 9,
+        network_1: 5,
     }
-    data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
-    desync = 0
+    data_set = util.DataSet.ASCAD_NORM
     load_loss_acc = True
-    show_losses = False
     show_acc = False
-    show_only_mean = False
-    show_ge = False
     experiment = False
     show_loss = False
     show_per_layer = True
     colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
               "fuchsia", "goldenrod", "grey", "indigo", "lavender"]
     plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
+    hw_string = 'HW' if use_hw else 'ID'
     # "8"	m11	octagon
     # "s"	m12	square
     # "p"	m13	pentagon
@@ -97,74 +95,37 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     # UPDATE SETTINGS FOR DESIRED MODEL #
     #####################################
     network_settings[network_1][0].update({
-        "kernel_sizes": [100, 50, 25, 20, 15, 5, 3],
-        "num_layers": [1] * 7,
-        "l2_penalty": l2_penalty,
-        "title": " 1 layers L2 {}".format(l2_penalty),
+        "kernel_sizes": [100, 50, 25, 20, 15, 10, 7, 5, 3],
+        "num_layers": [1] * 9,
+        "title": " 1 layers desync {}, {}".format(desync, hw_string),
         "plot_marker": " ",
     })
     network_settings[network_1][1].update({
-        "kernel_sizes": [100, 50, 25, 20, 15, 10, 5, 3],
-        "num_layers": [2] * 8,
-        "l2_penalty": l2_penalty,
-        "title": " 2 layers L2 {}".format(l2_penalty),
+        "kernel_sizes": [100, 50, 25, 20, 15, 10, 7, 5, 3],
+        "num_layers": [2] * 9,
+        "title": " 2 layers desync {}, {}".format(desync, hw_string),
         "plot_marker": "*",
 
     })
     network_settings[network_1][2].update({
-        "kernel_sizes": [50, 25, 26, 20, 15, 10, 7, 5, 3],
-        "num_layers": [3] * 9,
-        "l2_penalty": l2_penalty,
-        "title": " 3 layers L2 {}".format(l2_penalty),
+        "kernel_sizes": [50, 25, 20, 15, 10, 7, 5, 3],
+        "num_layers": [3] * 8,
+        "title": " 3 layers desync {}, {}".format(desync, hw_string),
         "plot_marker": ".",
 
     })
     network_settings[network_1][3].update({
-        "kernel_sizes": [25, 20, 21, 15, 10, 7, 5, 3],
-        "num_layers": [4] * 8,
-        "l2_penalty": l2_penalty,
-        "title": " 4 layers L2 {}".format(l2_penalty),
+        "kernel_sizes": [25, 20, 15, 10, 7, 5, 3],
+        "num_layers": [4] * 7,
+        "title": " 4 layers desync {}, {}".format(desync, hw_string),
         "plot_marker": "o",
 
     })
     network_settings[network_1][4].update({
-        "kernel_sizes": [17, 15, 10, 7, 5, 3],
+        "kernel_sizes": [20, 15, 10, 7, 5, 3],
         "num_layers": [5] * 6,
-        "l2_penalty": l2_penalty,
-        "title": " 5 layers L2 {}".format(l2_penalty),
+        "title": " 5 layers desync {}, {}".format(desync, hw_string),
         "plot_marker": "+",
-
-    })
-    network_settings[network_1][5].update({
-        "kernel_sizes": [15, 10, 7, 5, 3],
-        "num_layers": [6] * 5,
-        "l2_penalty": l2_penalty,
-        "title": " 6 layers L2 {}".format(l2_penalty),
-        "plot_marker": "8",
-
-    })
-    network_settings[network_1][6].update({
-        "kernel_sizes": [10, 7, 5, 3],
-        "num_layers": [7] * 4,
-        "l2_penalty": l2_penalty,
-        "title": " 7 layers L2 {}".format(l2_penalty),
-        "plot_marker": "s",
-
-    })
-    network_settings[network_1][7].update({
-        "kernel_sizes": [10, 7, 5, 3],
-        "num_layers": [8] * 4,
-        "l2_penalty": l2_penalty,
-        "title": " 8 layers L2 {}".format(l2_penalty),
-        "plot_marker": "p",
-
-    })
-    network_settings[network_1][8].update({
-        "kernel_sizes": [10, 7, 5, 3],
-        "num_layers": [9] * 4,
-        "l2_penalty": l2_penalty,
-        "title": " 9 layers L2 {}".format(l2_penalty),
-        "plot_marker": "P",
 
     })
 
@@ -186,9 +147,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                 folder,
                 run,
                 get_save_name(net_name, model_parameters))
-            ge_path = '{}.exp__'.format(filename)
+            ge_path = '{}{}.exp__'.format(filename, f'_noise{noise_level}' if noise_level > 0.0 else '')
             if not os.path.exists(ge_path):
-                ge_path = f"{filename}.exp"
+                ge_path = f"{filename}{f'_noise{noise_level}' if noise_level > 0.0 else ''}.exp"
 
             y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
             x_r = range(len(y_r))
@@ -260,6 +221,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                  marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
         plt.legend()
 
+    noise_string = f'_noise{noise_level}' if noise_level > 0.0 else ''
     if show_per_layer:
         validation_marker = "H"
         training_marker = " "
@@ -299,9 +261,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                              marker=training_marker,
                              color=color, markevery=0.1)
 
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/loss"
-                file_name = f"loss_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/loss"
+                file_name = f"loss_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+                            f"_desync{desync}{noise_string}.png"
                 figure = plt.gcf()
                 figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
@@ -326,9 +288,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                              marker=training_marker,
                              color=color, markevery=0.1)
 
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/acc"
-                file_name = f"acc_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/acc"
+                file_name = f"acc_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
+                            f"_desync{desync}{noise_string}.png"
                 figure = plt.gcf()
                 figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
@@ -355,8 +317,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                          color=model_setting['plot_colors'][i])
             plt.legend()
             figure = plt.gcf()
-            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"
-            file_name = f"{file_extension}_ge_VGGNumLayers_layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}.png"
+            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd"
+            file_name = f"{file_extension}_ge_{hw_string}_VGGNumLayers_layers_" \
+                        f"{model_setting['num_layers'][0]}_desync{desync}{noise_string}.png"
             figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
@@ -396,23 +359,39 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 80]] * 9
-    limits_y = [[-5, 105]] * 9
-    # plot_rd(0.005, limits_x, limits_y, False, file_extension="equal")
+    # limits_x = [[-2, 1000]] * 5
+    # limits_y = [[-5, 128]] * 5
+    # plot_ascad(hw=False, desync=50, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
+    #            show=False, file_extension="equal")
+    #
+    # limits_x = [[-2, 20]] * 5
+    # limits_y = [[-5, 70]] * 5
+    # plot_ascad(hw=True, desync=50, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
+    #            show=False, file_extension="fitting")
+
+    limits_x = [[-2, 1000]] * 5
+    limits_y = [[-5, 250]] * 5
+    plot_ascad(hw=True, desync=50, noise_level=0.25, x_limits=limits_x, y_limits=limits_y,
+               show=False, file_extension="fitting")
+
+    limits_x = [[-2, 10000]] * 5
+    limits_y = [[-5, 160]] * 5
+    plot_ascad(hw=True, desync=50, noise_level=0.5, x_limits=limits_x, y_limits=limits_y,
+               show=False, file_extension="fitting")
+
+    # limits_x = [[-2, 1000]] * 5
+    # limits_y = [[-5, 250]] * 5
+    # plot_ascad(hw=True, desync=50, noise_level=0.75, x_limits=limits_x, y_limits=limits_y,
+    #            show=False, file_extension="fitting")
+
+    # limits_x = [[-2, 1000]] * 5
+    # limits_y = [[-5, 250]] * 5
+    # plot_ascad(hw=True, desync=50, noise_level=1.0, x_limits=limits_x, y_limits=limits_y,
+    #            show=False, file_extension="fitting")
 
     ###############################
     # PLOT WITH GOOD FITTING AXES #
     # ###############################
-    limits_x = [[-2, 400], [-2, 1500], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400]]
-    limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
-    plot_rd(0, limits_x, limits_y, show=False, file_extension="fitting")
-
-    # #               1       2         3          4         5        6             7             8             9
-    # limits_x = [[-1, 30], [-1, 11], [-1, 20], [-1, 10], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
-    # limits_y = [[-1, 60], [-1, 60], [-1, 55], [-5, 70], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
-    # plot_rd(0.05, limits_x, limits_y, show=False, file_extension="fitting")
-
-    #               1       2           3         4         5        6          7         8         9
-    # limits_x = [[-2, 25], [-2, 35], [-2, 20], [-2, 30], [-2, 80], [-2, 150], [-2, 60], [-2, 60], [-2, 60]]
-    # limits_y = [[-1, 70], [-1, 80], [-1, 70], [-1, 80], [-1, 100], [-1, 105], [-1, 100], [-1, 100], [-1, 100]]
-    # plot_rd(0.005, limits_x, limits_y, show=False, file_extension="fitting")
+    # limits_x = [[-2, 400], [-2, 1500], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400]]
+    # limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
+    # plot_ascad(0, limits_x, limits_y, show=False, file_extension="fitting")

@@ -41,10 +41,10 @@ def load_ge(kernel, l2_penal, desync, hw, unmask, noise):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
             for run in range(5):
-                file = file.format(run)
-                if os.path.exists(f"{file}__"):
-                    file = f"{file}__"
-                ge_run = util.load_csv(file, delimiter=' ', dtype=np.float)
+                filename = file.format(run)
+                if os.path.exists(f"{filename}__"):
+                    filename = f"{filename}__"
+                ge_run = util.load_csv(filename, delimiter=' ', dtype=np.float)
                 ge_runs.append(ge_run)
             mean_ge = np.mean(ge_runs, axis=0)
             kernel_size_dict.update({kernel_size: mean_ge})
@@ -67,7 +67,7 @@ def get_first_min(data):
     return all_min
 
 
-def find_sequence(data, epsilon=0.001, threshold=5, err=float("nan")):
+def find_sequence(data, epsilon=0.001, threshold=5, err=float("-100")):
     global hit_worst
     joined = "".join(map(lambda x: '0' if x < epsilon else '1', data))
     index = joined.find("0" * threshold)
@@ -132,10 +132,10 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    desync = 100
-    hw = True
+    desync = 50
+    hw = False
     unmask = True
-    noise = 0.25
+    noise = 0.0
     data_ge = load_ge(kernels, l2_penal, desync, hw, unmask, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)

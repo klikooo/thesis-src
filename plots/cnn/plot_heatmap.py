@@ -6,7 +6,7 @@ import numpy as np
 hit_worst = False
 
 
-def load_ge(kernel, l2_penal):
+def load_ge(kernel, l2_penal, noise_level):
     combinations = {
         1: kernel,
         2: kernel,
@@ -25,26 +25,25 @@ def load_ge(kernel, l2_penal):
     print(path)
     model = "VGGNumLayers"
 
+    noise_level_string = f'_noise{noise_level}' if noise_level > 0.0 else ''
     all_ge = {}
     for layers, kernel_sizes in combinations.items():
         kernel_size_dict = {}
         all_ge.update({layers: kernel_size_dict})
         for kernel_size in kernel_sizes:
             ge_runs = []
-            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}.exp"
+            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}{noise_level_string}.exp"
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
-            # if kernel_size == 3 and layers == 6:
-            #     kernel_size_dict.update({kernel_size: float("nan")})
-            #     continue
             for run in range(5):
-                file = file.format(run)
-                if os.path.exists(f"{file}__"):
-                    file = f"{file}__"
-                ge_run = util.load_csv(file, delimiter=' ', dtype=np.float)
+                filename = file.format(run)
+                if os.path.exists(f"{filename}__"):
+                    filename = f"{filename}__"
+                ge_run = util.load_csv(filename, delimiter=' ', dtype=np.float)
                 ge_runs.append(ge_run)
             mean_ge = np.mean(ge_runs, axis=0)
+
             kernel_size_dict.update({kernel_size: mean_ge})
     return all_ge
 
@@ -59,13 +58,12 @@ def get_first_min(data):
             if not isinstance(mean_ge, np.ndarray) and np.isnan(mean_ge):
                 min_per_layer.update({kernel_size: [mean_ge]})
                 continue
-
             index = find_sequence(mean_ge)
             min_per_layer.update({kernel_size: index})
     return all_min
 
 
-def find_sequence(data, epsilon=0.001, threshold=5, err=-100):
+def find_sequence(data, epsilon=0.00001, threshold=5, err=-100):
     global hit_worst
     joined = "".join(map(lambda x: '0' if x < epsilon else '1', data))
     index = joined.find("0" * threshold)
@@ -112,8 +110,9 @@ if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.0
-    data_ge = load_ge(kernels, l2_penal=l2_penal)
+    l2_penal = 0.005
+    noise_level = 0.0
+    data_ge = load_ge(kernels, l2_penal=l2_penal, noise_level=noise_level)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
 

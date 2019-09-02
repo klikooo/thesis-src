@@ -14,19 +14,19 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_NORM
-    network_names = ["VGGNumLayers"]
+    data_set = DataSet.ASCAD_KEYS_NORMALIZED
+    network_names = ["ZaidCNNMasked"]
     use_hw = False
     runs = 1
-    train_sizes = [45000]
-    epochs = 70
-    batch_size = 256
-    lr = 0.001
+    train_sizes = [195000]
+    epochs = 50
+    batch_size = 50
+    lr = 0.0005
     subkey_index = 2
     checkpoints = None
     unmask = False
     raw_traces = True
-    desync = 100
+    desync = 0
     validation_size = 1000
     kernel_size = 20
     channel_size = 32
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     use_noise_data = False
     optimizer = "Adam"
     scheduler = "CyclicLR"
-    scheduler_args = {"max_lr": 0.01, "base_lr": lr}
+    scheduler_args = {"max_lr": 0.005, "base_lr": lr}
     ############################
 
     ###################

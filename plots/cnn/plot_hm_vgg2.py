@@ -40,10 +40,10 @@ def load_ge(kernel, l2_penal, noise):
             #     kernel_size_dict.update({kernel_size: float("nan")})
             #     continue
             for run in range(5):
-                file = file.format(run)
-                if os.path.exists(f"{file}__"):
-                    file = f"{file}__"
-                ge_run = util.load_csv(file, delimiter=' ', dtype=np.float)
+                filename = file.format(run)
+                if os.path.exists(f"{filename}__"):
+                    filename = f"{filename}__"
+                ge_run = util.load_csv(filename, delimiter=' ', dtype=np.float)
                 ge_runs.append(ge_run)
             mean_ge = np.mean(ge_runs, axis=0)
             kernel_size_dict.update({kernel_size: mean_ge})
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    noise = 0.25
+    noise = 1.0
     data_ge = load_ge(kernels, l2_penal, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)

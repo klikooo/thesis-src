@@ -34,14 +34,14 @@ def load_ge():
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 continue
-            if kernel_size == 3 and layers == 6:
-                kernel_size_dict.update({kernel_size: float("nan")})
-                continue
+            # if kernel_size == 3 and layers == 6:
+            #     kernel_size_dict.update({kernel_size: float("nan")})
+            #     continue
             for run in range(5):
-                file = file.format(run)
-                if os.path.exists(f"{file}__"):
-                    file = f"{file}__"
-                ge_run = util.load_csv(file, delimiter=' ', dtype=np.float)
+                filename = file.format(run)
+                if os.path.exists(f"{filename}__"):
+                    filename = f"{filename}__"
+                ge_run = util.load_csv(filename, delimiter=' ', dtype=np.float)
                 ge_runs.append(ge_run)
             mean_ge = np.mean(ge_runs, axis=0)
             kernel_size_dict.update({kernel_size: mean_ge})
