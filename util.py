@@ -997,6 +997,7 @@ def load_test_data(args):
             'desync': args.desync,
             'unmask': args.unmask,
             'noise_level': args.noise_level,
-            'load_traces': args.load_traces}
+            'load_traces': args.load_traces,
+            'attack_size': args.attack_size}
     loader_function = loader_test_data(args['data_set'])
     return loader_function(args)
