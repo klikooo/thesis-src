@@ -511,35 +511,41 @@ def load_ascad_keys(args):
 
 def load_ascad_keys_test(args):
     print(args)
-
     path = f"{args['traces_path']}/{str(args['data_set'])}/"
-    x_test_file = f'{path}/traces/test_traces.npy'
-    print(f"Loading {x_test_file}")
-    x_test = np.load(x_test_file)
 
-    y_file = '{}/Value/test_model{}_{}masked.csv.npy'.format(
-        path,
-        '_hw' if args['use_hw'] else '',
-        'un' if args['unmask'] else ''
-    )
-    print(f"Loading y file {y_file}")
-    y_test = np.load(y_file)
+    x_test = None
+    y_test = None
+    plaintexts = None
+    if args['load_traces']:
+        x_test_file = f'{path}/traces/test_traces_normalized.npy'
+        print(f"Loading {x_test_file}")
+        x_test = np.load(x_test_file)
 
-    x_test = x_test[0:args.get('size')]
-    y_test = y_test[0:args.get('size')]
-    y_test = np.reshape(y_test, (args.get('size')))
+        y_file = '{}/Value/test_model{}_{}masked.csv.npy'.format(
+            path,
+            '_hw' if args['use_hw'] else '',
+            'un' if args['unmask'] else ''
+        )
+        print(f"Loading y file {y_file}")
+        y_test = np.load(y_file)
+
+        x_test = x_test[0:args.get('size')]
+        y_test = y_test[0:args.get('size')]
+        y_test = np.reshape(y_test, (args.get('size')))
+        if args['use_hw']:
+            y_test = [HW[y_test[i]] for i in range(len(y_test))]
+
+        plaintexts = np.load(f"{path}/Value/test_plaintexts.npy")
+        plaintexts = plaintexts[0:args.get('size')]
+        plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
 
     key_guesses_file = '{}/Value/key_guesses_{}masked.csv.npy'.format(
         path,
         'un' if args['unmask'] else ''
     )
     key_guesses = np.load(key_guesses_file)
-    plaintexts = np.load(f"{path}/Value/test_plaintexts.npy")
-    plaintexts = plaintexts[0:args.get('size')]
-    if args['use_hw']:
-        plaintexts = [HW[plaintexts[i]] for i in range(len(plaintexts))]
-    plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
-    return x_test, y_test, key_guesses, 34, plaintexts
+
+    return x_test, y_test, plaintexts, 34, key_guesses
 
 
 def load_ascad_normalized(args):
@@ -563,32 +569,76 @@ def load_ascad_normalized(args):
 
 def load_ascad_normalized_test_traces(args):
     print(args)
+    path = f"{args['traces_path']}/{str(args['data_set'])}/"
 
-    if args['use_noise_data'] and args['noise_level'] > 0:
-        x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}{}.csv.npy'.format
-                    (args['traces_path'], str(args['data_set']),
-                     args['train_size'], args['validation_size'], args['desync'],
-                     f"_noise{args['noise_level']}"))
-        x_test = x
-    else:
-        x = np.load('{}/{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format
-                    (args['traces_path'], str(args['data_set']),
-                     args['train_size'], args['validation_size'], args['desync']))
-        x_test = x[args['start']:args['start'] + args['size']]
+    if args['load_traces']:
+        if args['use_noise_data'] and args['noise_level'] > 0:
+            x = np.load('{}/traces/traces_normalized_t{}_v{}_{}{}.csv.npy'.format(
+                path,
+                args['train_size'], args['validation_size'], args['desync'],
+                f"_noise{args['noise_level']}"))
+            x_test = x
+        else:
+            x = np.load('{}/traces/traces_normalized_t{}_v{}_{}.csv.npy'.format(
+                path,
+                args['train_size'], args['validation_size'], args['desync']))
+            x_test = x[args['start']:args['start'] + args['size']]
 
-    y = np.load('{}/{}/Value/model_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
-                                                        'un' if args['unmask'] else ''))
-    key_guesses = np.load('{}/{}/Value/key_guesses_{}masked.npy'.format(args['traces_path'], str(args['data_set']),
-                                                                        'un' if args['unmask'] else ''))
+        y = np.load('{}/Value/model_{}masked.npy'.format(path,
+                                                         'un' if args['unmask'] else ''))
+        y_test = y[50000:50000 + args['size']]
+        print("y shape {}".format(y.shape))
 
-    y_test = y[50000:50000 + args['size']]
-    print("y shape {}".format(y.shape))
+        # Convert values to hamming weight if asked for
+        if args['use_hw']:
+            y_test = np.array([HW[val] for val in y_test])
 
-    # Convert values to hamming weight if asked for
+    key_guesses = np.load('{}/Value/key_guesses_{}masked.npy'.format(path,
+                                                                     'un' if args['unmask'] else ''))
+
+    return x_test, y_test, None, 224, key_guesses
+
+
+def load_train_data_set_keys(args):
+    print(args)
+    path = f'{args["traces_path"]}/{str(args["data_set"])}/'
+    x_train = np.load('{}/{}/traces/train_traces_normalized.npy'.format
+                      (args['traces_path'], str(args['data_set'])))
+    y_train = np.load('{}/{}/Value/train_model.npy'.format(args['traces_path'], str(args['data_set'])))
+    plain = np.load(f'{path}/Value/train_plain.npy')
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+    plain = plain[args['start']:args['start'] + args.get('size')]
+
     if args['use_hw']:
-        y_test = np.array([HW[val] for val in y_test])
+        y_train = np.array([HW[val] for val in y_train])
+    return x_train, y_train, plain
 
-    return x_test, y_test, key_guesses, 224
+
+def load_test_data_set_keys(args):
+    print(args)
+    path = f'{args["traces_path"]}/{str(args["data_set"])}/'
+
+    x_train = None
+    y_train = None
+    plain = None
+    if args['load_traces']:
+        x_train = np.load('{}/traces/test_traces_normalized.npy'.format(path))
+        y_train = np.load('{}/Value/test_model.npy'.format(path))
+        x_train = x_train[0:args.get('size')]
+        y_train = y_train[0:args.get('size')]
+        if args['use_hw']:
+            y_train = np.array([HW[val] for val in y_train])
+
+        plain = np.load(f'{path}/Value/test_plain.npy')
+        plain = plain[0:args.get('size')]
+
+    key_guesses = np.load(f'{path}/Value/test_key_guesses.npy')
+    key_guesses = key_guesses[0:args.get('size')]
+    key = np.load(f'{path}/Value/test_keys.npy')
+
+    return x_train, y_train, plain, key[0], key_guesses
 
 
 def load_sim_mask_test_traces(args):
@@ -607,8 +657,7 @@ def load_sim_mask_test_traces(args):
     # Convert values to hamming weight if asked for
     # if args['use_hw']:
     #     y_test = np.array([HW[val] for val in y_test])
-
-    return x_test, y_test, key_guesses, 23
+    return x_test, y_test, None, 23, key_guesses
 
 
 def load_random_delay_dk(args):
@@ -633,6 +682,28 @@ def load_random_delay_dk(args):
     return x_train, y_train, plain
 
 
+def load_test_rdn(args):
+    print(args)
+    path = f'{args["traces_path"]}/{str(args["data_set"])}/'
+
+    x_test = None
+    y_test = None
+    plain = None
+    if args['load_traces']:
+        x_test, y_test, plain = load_data_generic(args)
+    print('Loading key guesses')
+
+    key_guesses = load_csv('{}/Value/key_guesses_ALL_transposed.csv'.format(path),
+                           delimiter=' ',
+                           dtype=np.int,
+                           start=args['train_size'] + args['validation_size'],
+                           size=args['attack_size'])
+    key = load_csv('{}/secret_key.csv'.format(path),
+                   dtype=np.int)
+
+    return x_test, y_test, plain, key, key_guesses
+
+
 class DataSet(Enum):
     ASCAD = 1
     AES_HD = 2
@@ -646,6 +717,7 @@ class DataSet(Enum):
     ASCAD_KEYS = 10
     ASCAD_KEYS_NORMALIZED = 11
     ASCAD_NORM = 12
+    KEYS = 13
 
     def __str__(self):
         if self.value == 1:
@@ -672,6 +744,8 @@ class DataSet(Enum):
             return "ASCAD_Keys_Normalized"
         elif self.value == 12:
             return "ASCAD_NORM"
+        elif self.value == 13:
+            return "KEYS"
         else:
             print("ERROR {}".format(self.value))
 
@@ -681,22 +755,6 @@ class DataSet(Enum):
             return DataSet[s]
         except KeyError:
             raise ValueError()
-
-
-def load_data_set(data_set):
-    table = {DataSet.ASCAD: load_ascad_train_traces,
-             DataSet.AES_HD: load_aes_hd,
-             DataSet.DPA_V4: load_dpa_npy,
-             DataSet.RANDOM_DELAY: load_random_delay_npy,
-             DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
-             DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
-             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
-             DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
-             DataSet.SIM_MASK: load_data_generic,
-             DataSet.ASCAD_KEYS: load_ascad_keys,
-             DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys,
-             DataSet.ASCAD_NORM: load_ascad_normalized}
-    return table[data_set]
 
 
 def hot_encode(vector, num_classes, dtype=np.int):
@@ -812,3 +870,133 @@ class BColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+def get_raw_feature_size(the_data_set):
+    switcher = {DataSet.RANDOM_DELAY: 3500,
+                DataSet.DPA_V4: 3000,
+                DataSet.RANDOM_DELAY_LARGE: 6250,
+                DataSet.RANDOM_DELAY_DK: 3500,
+                DataSet.RANDOM_DELAY_NORMALIZED: 3500,
+                DataSet.ASCAD_NORMALIZED: 700,
+                DataSet.SIM_MASK: 700,
+                DataSet.ASCAD_KEYS: 1400,
+                DataSet.ASCAD_KEYS_NORMALIZED: 1400,
+                DataSet.ASCAD_NORM: 700,
+                DataSet.ASCAD: 700,
+                DataSet.KEYS: 500}
+    return switcher[the_data_set]
+
+
+def load_data_set(data_set):
+    table = {DataSet.ASCAD: load_ascad_train_traces,
+             DataSet.AES_HD: load_aes_hd,
+             DataSet.DPA_V4: load_dpa_npy,
+             DataSet.RANDOM_DELAY: load_random_delay_npy,
+             DataSet.RANDOM_DELAY_LARGE: load_random_delay_large,
+             DataSet.RANDOM_DELAY_DK: load_random_delay_dk,
+             DataSet.RANDOM_DELAY_NORMALIZED: load_data_generic,
+             DataSet.ASCAD_NORMALIZED: load_ascad_normalized,
+             DataSet.SIM_MASK: load_data_generic,
+             DataSet.ASCAD_KEYS: load_ascad_keys,
+             DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys,
+             DataSet.ASCAD_NORM: load_ascad_normalized,
+             DataSet.KEYS: load_train_data_set_keys}
+    return table[data_set]
+
+
+def loader_test_data(data_set):
+    switcher = {
+        DataSet.ASCAD: load_ascad_test_traces,
+        DataSet.KEYS: load_test_data_set_keys,
+        DataSet.ASCAD_NORMALIZED: load_ascad_normalized_test_traces,
+        DataSet.ASCAD_NORM: load_ascad_normalized_test_traces,
+        DataSet.SIM_MASK: load_sim_mask_test_traces,
+        DataSet.ASCAD_KEYS: load_ascad_keys_test,
+        DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys_test,
+        DataSet.RANDOM_DELAY_LARGE: load_test_random_delay_large,
+        DataSet.RANDOM_DELAY_NORMALIZED: load_test_rdn,
+        DataSet.AES_HD: load_test_generic,
+        DataSet.DPA_V4: load_test_generic,
+        DataSet.RANDOM_DELAY: load_test_generic,
+    }
+    return switcher[data_set]
+
+
+def load_test_random_delay_large(args):
+    loader = load_data_set(args.data_set)
+    total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
+                                                    'traces_path': args.traces_path,
+                                                    'raw_traces': args.raw_traces,
+                                                    'start': args.train_size + args.validation_size,
+                                                    'size': args.attack_size,
+                                                    'domain_knowledge': True,
+                                                    'use_noise_data': args.use_noise_data,
+                                                    'data_set': args.data_set})
+    print('Loading key guesses')
+    data_set_name = str(args.data_set)
+    _key_guesses = load_random_delay_large_key_guesses(args.traces_path,
+                                                       args.train_size + args.validation_size,
+                                                       args.attack_size)
+    _real_key = load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
+                         dtype=np.int)
+
+    _x_attack = total_x_attack
+    _y_attack = total_y_attack
+    return _x_attack, _y_attack, None, _real_key, _key_guesses
+
+
+def load_test_generic(args):
+    loader = load_data_set(args.data_set)
+    total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
+                                                    'traces_path': args.traces_path,
+                                                    'raw_traces': args.raw_traces,
+                                                    'start': args.train_size + args.validation_size,
+                                                    'size': args.attack_size,
+                                                    'domain_knowledge': True,
+                                                    'use_noise_data': args.use_noise_data,
+                                                    'data_set': args.data_set,
+                                                    'noise_level': args.noise_level})
+    _dk_plain = None
+    if plain is not None:
+        _dk_plain = torch.from_numpy(plain).cuda()
+    print('Loading key guesses')
+
+    ####################################
+    # Load the key guesses and the key #
+    ####################################
+    data_set_name = str(args.data_set)
+    _key_guesses = load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
+        args.traces_path,
+        data_set_name),
+        delimiter=' ',
+        dtype=np.int,
+        start=args.train_size + args.validation_size,
+        size=args.attack_size)
+    _real_key = load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
+                         dtype=np.int)
+
+    _x_attack = total_x_attack
+    _y_attack = total_y_attack
+    return _x_attack, _y_attack, _dk_plain, _real_key, _key_guesses
+
+
+def load_test_data(args):
+    _x_attack, _y_attack, _real_key, _dk_plain, _key_guesses = None, None, None, None, None
+    args = {'use_hw': args.use_hw,
+            'traces_path': args.traces_path,
+            'raw_traces': args.raw_traces,
+            'start': args.train_size + args.validation_size,
+            'size': args.attack_size,
+            'train_size': args.train_size,
+            'validation_size': args.validation_size,
+            'domain_knowledge': True,
+            'use_noise_data': args.use_noise_data,
+            'data_set': args.data_set,
+            'sub_key_index': args.subkey_index,
+            'desync': args.desync,
+            'unmask': args.unmask,
+            'noise_level': args.noise_level,
+            'load_traces': args.load_traces}
+    loader_function = loader_test_data(args['data_set'])
+    return loader_function(args)

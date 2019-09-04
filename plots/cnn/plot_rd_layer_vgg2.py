@@ -15,7 +15,7 @@ from matplotlib.lines import Line2D
 matplotlib.rcParams.update({'font.size': 18})
 
 
-def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
+def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
     #####################################################################################
     # Parameters
     use_hw = False
@@ -26,6 +26,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
+    max_pool = 4
+    l2_penalty = 0.0
 
     unmask = True  # False if sub_kezy_index < 2 else True
     kernel_sizes = []
@@ -33,9 +35,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     channel_sizes = [32]
     init_weights = "kaiming"
 
-    network_1 = "VGGNumLayers"
+    network_1 = "VGGNumLayers2"
     network_settings = {
-        network_1: 9,
+        network_1: 5,
     }
     data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
     desync = 0
@@ -89,7 +91,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                        "va": [],
                        "tl": [],
                        "vl": [],
-                       "line_title": []
+                       "line_title": [],
+                       "max_pool": max_pool,
                        }
             network_settings[k].append(setting)
 
@@ -122,7 +125,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "plot_marker": ".",
 
     })
-    kernels = [25, 20, 21, 15, 10, 7, 5, 3]
+    kernels = [25, 20, 15, 10, 7, 5, 3]
     network_settings[network_1][3].update({
         "kernel_sizes": kernels,
         "num_layers": [4] * len(kernels),
@@ -131,7 +134,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "plot_marker": "o",
 
     })
-    kernels = [20, 17, 15, 10, 7, 5, 3]
+    kernels = [20, 15, 10, 7, 5, 3]
     network_settings[network_1][4].update({
         "kernel_sizes": kernels,
         "num_layers": [5] * len(kernels),
@@ -140,46 +143,12 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "plot_marker": "+",
 
     })
-    kernels = [15, 10, 7, 5, 3]
-    network_settings[network_1][5].update({
-        "kernel_sizes": kernels,
-        "num_layers": [6] * len(kernels),
-        "l2_penalty": l2_penalty,
-        "title": " 6 layers L2 {}".format(l2_penalty),
-        "plot_marker": "8",
 
-    })
-    kernels = [10, 7, 5, 3]
-    network_settings[network_1][6].update({
-        "kernel_sizes": kernels,
-        "num_layers": [7] * len(kernels),
-        "l2_penalty": l2_penalty,
-        "title": " 7 layers L2 {}".format(l2_penalty),
-        "plot_marker": "s",
-
-    })
-    kernels = [10, 7, 5, 3]
-    network_settings[network_1][7].update({
-        "kernel_sizes": kernels,
-        "num_layers": [8] * len(kernels),
-        "l2_penalty": l2_penalty,
-        "title": " 8 layers L2 {}".format(l2_penalty),
-        "plot_marker": "p",
-
-    })
-    kernels = [10, 7, 5, 3]
-    network_settings[network_1][8].update({
-        "kernel_sizes": kernels,
-        "num_layers": [9] * len(kernels),
-        "l2_penalty": l2_penalty,
-        "title": " 9 layers L2 {}".format(l2_penalty),
-        "plot_marker": "P",
-
-    })
 
     #####################################################################################
 
     n_settings = []
+    noise_string = f"_noise{noise_level}" if noise_level > 0.0 else ''
 
     # Function to load the GE of a single model
     def get_ge(net_name, model_parameters, load_parameters):
@@ -195,9 +164,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                 folder,
                 run,
                 get_save_name(net_name, model_parameters))
-            ge_path = '{}.exp__'.format(filename)
+            ge_path = '{}{}.exp__'.format(filename, noise_string)
             if not os.path.exists(ge_path):
-                ge_path = f"{filename}.exp"
+                ge_path = f"{filename}{noise_string}.exp"
 
             y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
             x_r = range(len(y_r))
@@ -246,6 +215,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
 
             all_loss_acc.append(loss_acc)
 
+        model_params.update({"max_pool": max_pool})
         for setting in network_setting:
             print(setting)
             for cs in setting['channel_sizes']:
@@ -309,8 +279,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                              color=color, markevery=0.1)
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/loss"
-                file_name = f"loss_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                file_name = "loss_VGGNumLayers2_" \
+                            f"layers_{model_setting['num_layers'][0]}.png"
                 figure = plt.gcf()
                 figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
@@ -336,8 +306,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                              color=color, markevery=0.1)
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/acc"
-                file_name = f"acc_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                file_name = f"acc_VGGNumLayers2_" \
+                            f"layers_{model_setting['num_layers'][0]}.png"
                 figure = plt.gcf()
                 figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
@@ -365,7 +335,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"
-            file_name = f"{file_extension}_ge_VGGNumLayers_layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}.png"
+            file_name = f"{file_extension}_ge_VGGNumLayers2_" \
+                        f"layers_{model_setting['num_layers'][0]}_noise_{noise_level}.png"
             figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
@@ -405,23 +376,22 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 80]] * 9
-    limits_y = [[-5, 105]] * 9
-    plot_rd(0.005, limits_x, limits_y, False, file_extension="equal")
+    limits_x = [[-2, 15]] * 9
+    limits_y = [[-5, 60]] * 9
+    plot_rd(0.0, limits_x, limits_y, False, file_extension="fitting")
 
-    ###############################
-    # PLOT WITH GOOD FITTING AXES #
-    # ###############################
-    limits_x = [[-2, 400], [-2, 1500], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400]]
-    limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
-    plot_rd(0, limits_x, limits_y, show=False, file_extension="fitting")
+    limits_x = [[-2, 22]] * 9
+    limits_y = [[-5, 100]] * 9
+    plot_rd(0.25, limits_x, limits_y, False, file_extension="fitting")
 
-    # #               1       2         3          4         5        6             7             8             9
-    limits_x = [[-1, 30], [-1, 11], [-1, 20], [-1, 10], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
-    limits_y = [[-1, 60], [-1, 60], [-1, 55], [-5, 70], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
-    plot_rd(0.05, limits_x, limits_y, show=False, file_extension="fitting")
+    limits_x = [[-2, 150]] * 9
+    limits_y = [[-5, 120]] * 9
+    plot_rd(0.5, limits_x, limits_y, False, file_extension="fitting")
 
-    #               1       2           3         4         5        6          7         8         9
-    limits_x = [[-2, 25], [-2, 35], [-2, 20], [-2, 30], [-2, 80], [-2, 150], [-2, 60], [-2, 60], [-2, 60]]
-    limits_y = [[-1, 70], [-1, 80], [-1, 70], [-1, 80], [-1, 100], [-1, 105], [-1, 100], [-1, 100], [-1, 100]]
-    plot_rd(0.005, limits_x, limits_y, show=False, file_extension="fitting")
+    limits_x = [[-50, 6000]] * 9
+    limits_y = [[-5, 140]] * 9
+    plot_rd(0.75, limits_x, limits_y, False, file_extension="fitting")
+
+    limits_x = [[-50, 9000]] * 9
+    limits_y = [[-5, 200]] * 9
+    plot_rd(1.0, limits_x, limits_y, False, file_extension="fitting")

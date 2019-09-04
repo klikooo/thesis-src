@@ -5,7 +5,7 @@ import torch.nn as nn
 import time
 
 
-from util import BoolAction, DataSet
+from util import BoolAction, DataSet, get_raw_feature_size
 from util_classes import get_init_func, require_domain_knowledge
 
 if __name__ == "__main__":
@@ -14,17 +14,17 @@ if __name__ == "__main__":
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     # Default Parameters
-    data_set = DataSet.ASCAD_KEYS_NORMALIZED
-    network_names = ["ZaidCNNMasked"]
+    data_set = DataSet.KEYS
+    network_names = ["DenseNet"]
     use_hw = False
-    runs = 1
-    train_sizes = [195000]
-    epochs = 50
-    batch_size = 50
-    lr = 0.0005
+    runs = 2
+    train_sizes = [20000]
+    epochs = 150
+    batch_size = 256
+    lr = 0.0001
     subkey_index = 2
     checkpoints = None
-    unmask = False
+    unmask = True
     raw_traces = True
     desync = 0
     validation_size = 1000
@@ -33,13 +33,15 @@ if __name__ == "__main__":
     num_layers = 2
     spread_factor = 1
     loss_function = nn.CrossEntropyLoss()
-    init_weights = "kaiming_uniform"
+    init_weights = ""
     max_pool = 5
     l2_penal = 0.0
     use_noise_data = False
     optimizer = "Adam"
-    scheduler = "CyclicLR"
-    scheduler_args = {"max_lr": 0.005, "base_lr": lr}
+    scheduler = None #"CyclicLR"
+    scheduler_args = "" #{"max_lr": 0.001, "base_lr": lr}
+    save_predictions = True
+    attack_size = 1000
     ############################
 
     ###################
@@ -85,25 +87,15 @@ if __name__ == "__main__":
                         help="Specify the scheduler")
     parser.add_argument("--scheduler_args", default=scheduler_args, type=str,
                         help="Specify the scheduler arguments")
+    parser.add_argument("--create_predictions", default=save_predictions, type=BoolAction,
+                        help="Create and save predictions")
+    parser.add_argument("--attack_size", default=attack_size, type=int, help="Number of attack traces")
 
     args = parser.parse_args()
     print(args)
 
-    # TODO: move this to some util thing, or even the enum class
-    def get_raw_feature_size(the_data_set):
-        switcher = {DataSet.RANDOM_DELAY: 3500,
-                    DataSet.DPA_V4: 3000,
-                    DataSet.RANDOM_DELAY_LARGE: 6250,
-                    DataSet.RANDOM_DELAY_DK: 3500,
-                    DataSet.RANDOM_DELAY_NORMALIZED: 3500,
-                    DataSet.ASCAD_NORMALIZED: 700,
-                    DataSet.SIM_MASK: 700,
-                    DataSet.ASCAD_KEYS: 1400,
-                    DataSet.ASCAD_KEYS_NORMALIZED: 1400,
-                    DataSet.ASCAD_NORM: 700}
-        return switcher[the_data_set]
     # Change input shape according to the selected data set
-    input_shape = 700 if args.data_set == DataSet.ASCAD else get_raw_feature_size(args.data_set) if args.raw_traces else 50
+    input_shape = get_raw_feature_size(data_set)
 
     if not os.path.isdir(args.model_save_path):
         print("Model save path ({}) does not exist.".format(args.model_save_path))

@@ -7,30 +7,30 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs3/'
+    models_path = '/media/rico/Data/TU/thesis/runs/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
     use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(1)]
-    train_size = 40000
-    epochs = 75
-    batch_size = 100
+    runs = [x for x in range(2)]
+    train_size = 20000
+    epochs = 150
+    batch_size = 256
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 2000
+    attack_size = 200
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True
-    data_set = DataSet.RANDOM_DELAY_NORMALIZED
+    data_set = DataSet.KEYS
     kernel_sizes = [10]
     channel_sizes = [32]
     num_layers = [2]
-    init_weights = "kaiming"
+    init_weights = ""
 
-    network_names = ['VGGNumLayers']
+    network_names = ['DenseNet']
     desync = 0
     num_exps = 100
     raw_traces = True
@@ -39,6 +39,8 @@ if __name__ == "__main__":
     max_pool = 5
     l2_penalty = 0.0
     noise_level = 0.0
+    load_predictions = True
+    save_predictions = True
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
@@ -78,6 +80,10 @@ if __name__ == "__main__":
                         help="Specify how the weights are initialized")
 
     parser.add_argument("--noise_level", default=noise_level, type=float, help="Noise level")
+    parser.add_argument("--load_predictions", default=load_predictions, type=BoolAction,
+                        help="Load predictions if existing")
+    parser.add_argument("--save_predictions", default=load_predictions, type=BoolAction,
+                        help="Save predictions")
 
     args = parser.parse_args()
     print(args)

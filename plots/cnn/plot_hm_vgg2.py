@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    noise = 1.0
+    noise = 0.0
     data_ge = load_ge(kernels, l2_penal, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
@@ -153,6 +153,7 @@ if __name__ == "__main__":
             [0.95, "#F76BE8"],
             [1,    "#EE72F8"]
         ],
+        # text=z,
     ))
     fig.update_layout(
         title=f'Convergence point, noise {noise}, L2 {l2_penal}',

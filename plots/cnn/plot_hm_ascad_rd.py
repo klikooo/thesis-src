@@ -132,10 +132,10 @@ if __name__ == "__main__":
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.0
-    desync = 50
-    hw = False
+    desync = 100
+    hw = True
     unmask = True
-    noise = 0.0
+    noise = 0.25
     data_ge = load_ge(kernels, l2_penal, desync, hw, unmask, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
@@ -180,7 +180,7 @@ if __name__ == "__main__":
         # ],
     ))
     fig.update_layout(
-        title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}',
+        title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}, noise {noise}',
         xaxis=go.layout.XAxis(
             title=go.layout.xaxis.Title(text="Stacked layers"),
             linecolor='black'

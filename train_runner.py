@@ -1,7 +1,8 @@
 from models.Spread.SpreadNet import SpreadNet
 
-from util import save_model, load_data_set, save_loss_acc, generate_folder_name, count_parameters
+from util import save_model, load_data_set, save_loss_acc, generate_folder_name, load_test_data, BColors
 from train import train, train_dk2
+from test import accuracy
 
 import numpy as np
 import json
@@ -55,11 +56,23 @@ def run(args):
                  "max_pool": args.max_pool
                  }
 
+    # Load data for creating + saving predictions
+    x_test, y_test, plain_test, key_test, _key_guesses_test = None, None, None, None, None
+    sum_acc = 0.0
+    if args.create_predictions:
+        args.noise_level = 0.0
+        args.load_traces = True
+        x_test, y_test, plain_test, key_test, _key_guesses_test = load_test_data(args)
+        if not args.domain_knowledge:
+            plain_test = None
+
     # Convert scheduler args
     if args.scheduler is not None and type(args.scheduler_args) is str:
         args.scheduler_args = json.loads(args.scheduler_args)
 
-
+    # Folder path
+    path = f"{args.model_save_path}/{dir_name}/"
+    model_name = ""
 
     # Do the runs
     for i in range(args.runs):
@@ -69,7 +82,8 @@ def run(args):
 
         # Filename of the model + the folder
         filename = 'model_r{}_{}'.format(i, network.name())
-        model_save_file = '{}/{}/{}.pt'.format(args.model_save_path, dir_name, filename)
+        model_save_file = '{}/{}.pt'.format(path, filename)
+        model_name = network.name()
 
         print('Training with learning rate: {}, desync {}'.format(args.lr, args.desync))
 
@@ -116,3 +130,20 @@ def run(args):
 
         # Save the final model
         save_model(network, model_save_file)
+
+        # Create + save predictions
+        if args.create_predictions:
+            predictions, acc = accuracy(network, x_test, y_test, plain_test)
+            predictions_save_file = f'{path}/predictions_{filename}'
+            np.save(predictions_save_file, predictions.cpu().numpy())
+            print(f"{BColors.WARNING}Saved predictions to {predictions_save_file}.npy{BColors.ENDC}")
+            sum_acc += acc
+
+    # Save accuracy
+    if args.create_predictions:
+        mean_acc = sum_acc / len(range(args.runs))
+        print(BColors.WARNING + f"Mean accuracy {mean_acc}" + BColors.ENDC)
+        noise_extension = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
+        mean_acc_file = f"{path}/acc_{model_name}{noise_extension}.acc"
+        with open(mean_acc_file, "w") as file:
+            file.write(json.dumps(mean_acc))

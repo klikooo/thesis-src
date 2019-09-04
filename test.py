@@ -153,6 +153,8 @@ def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
                 sbox_out = key_guesses[trace_num][key_guess]
                 if predictions[trace_num][sbox_out] > 0.0:
                     probabilities[key_guess] += np.log(predictions[trace_num][sbox_out])
+                else:
+                    probabilities[key_guess] += np.log(0.0000000000001)
 
             res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
             ranks[trace_num] = res

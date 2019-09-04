@@ -7,24 +7,37 @@ import numpy as np
 import json
 
 from models.load_model import load_model
-from util import load_ascad, shuffle_permutation, hot_encode, generate_folder_name
+from util import shuffle_permutation, generate_folder_name, BColors
 from test import accuracy, test_with_key_guess_p
 from util_classes import get_save_name, require_domain_knowledge
+import os
 
 
-def get_ranks(args, network_name, model_params):
-    # Load the data and make it global
-    global x_attack, y_attack, dk_plain, key_guesses
-    x_attack, y_attack, key_guesses, real_key, dk_plain = load_data(args, network_name)
+def predictions_exist(path, model_name, noise_string):
+    file = f'{path}/predictions{noise_string}_model_r0_{model_name}.npy'
+    return os.path.exists(file)
 
-    folder = "{}/{}/".format(args.models_path, generate_folder_name(args))
+
+def load_predictions(path, model_name, runs, noise_string):
+    print(f"{BColors.WARNING}Loading predictions{BColors.ENDC}")
+    predictions = []
+    filename = f"{path}/predictions{noise_string}_model_r" + "{}_" + f"{model_name}.npy"
+    for run in runs:
+        predictions.append(np.load(filename.format(run)))
+    print("Loaded predictions")
+    return predictions
+
+
+def create_predictions(path, args, network_name, model_params, noise_string):
+    print(f"{BColors.WARNING}Creating predictions{BColors.ENDC}")
+    x_test, y_test, plain_test, key_test, key_guesses_test = load_data(args)
 
     # Calculate the predictions before hand
     predictions = []
     sum_acc = 0.0
     for run in args.runs:
         model_path = '{}/model_r{}_{}.pt'.format(
-            folder,
+            path,
             run,
             get_save_name(network_name, model_params))
         print('path={}'.format(model_path))
@@ -36,20 +49,57 @@ def get_ranks(args, network_name, model_params):
 
         # Calculate predictions
         if require_domain_knowledge(network_name):
-            prediction, acc = accuracy(model, x_attack, y_attack, dk_plain)
+            prediction, acc = accuracy(model, x_test, y_test, plain_test)
             predictions.append(prediction.cpu().numpy())
         else:
-            prediction, acc = accuracy(model, x_attack, y_attack, None)
+            prediction, acc = accuracy(model, x_test, y_test, None)
             predictions.append(prediction.cpu().numpy())
         sum_acc += acc
 
+        # Save the predictions
+        if args.save_predictions:
+            predictions_save_file = f'{path}/predictions{noise_string}_' \
+                                    f'model_r{run}_{get_save_name(network_name, model_params)}'
+            np.save(predictions_save_file, prediction.cpu().numpy())
+            print(f"{BColors.WARNING}Saved predictions to {predictions_save_file}.npy{BColors.ENDC}")
+
     # Save accuracy
-    mean_acc = sum_acc / len(args.runs)
-    print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
-    noise_extension = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
-    mean_acc_file = f"{folder}/acc_{get_save_name(network_name, model_params)}{noise_extension}.acc"
-    with open(mean_acc_file, "w") as file:
-        file.write(json.dumps(mean_acc))
+    if args.save_predictions:
+        mean_acc = sum_acc / len(args.runs)
+        print(util.BColors.WARNING + f"Mean accuracy {mean_acc}" + util.BColors.ENDC)
+        noise_extension = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
+        mean_acc_file = f"{path}/acc_{get_save_name(network_name, model_params)}{noise_extension}.acc"
+        with open(mean_acc_file, "w") as file:
+            file.write(json.dumps(mean_acc))
+    return x_test, y_test, plain_test, key_test, key_guesses_test, predictions
+
+
+# Load data + calc GE
+def get_ranks(args, network_name, model_params):
+    folder = "{}/{}/".format(args.models_path, generate_folder_name(args))
+    model_name = get_save_name(network_name, model_params)
+
+    # Load the data and make it global
+    global x_attack, y_attack, dk_plain, key_guesses
+
+    # Check noise string
+    noise_string = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
+
+    # Load predictions
+    if args.load_predictions and predictions_exist(folder, model_name, noise_string):
+        predictions = load_predictions(folder, model_name, args.runs, noise_string)
+
+        # Skip loading the traces
+        args.load_traces = False
+        _, _, dk_plain, real_key, key_guesses = load_data(args)
+    # Create predictions
+    else:
+        args.load_traces = True
+        x_attack, y_attack, dk_plain, real_key, key_guesses, predictions = create_predictions(folder,
+                                                                                              args,
+                                                                                              network_name,
+                                                                                              model_params,
+                                                                                              noise_string)
 
     # Check if it is only one run, if so don't do multi threading
     if len(args.runs) == 1:
@@ -68,95 +118,8 @@ def get_ranks(args, network_name, model_params):
             print('Joined process')
 
 
-def load_data(args, network_name):
-    _x_attack, _y_attack, _real_key, _dk_plain, _key_guesses = None, None, None, None, None
-    argz = {'use_hw': args.use_hw,
-            'traces_path': args.traces_path,
-            'raw_traces': args.raw_traces,
-            'start': args.train_size + args.validation_size,
-            'size': args.attack_size,
-            'train_size': args.train_size,
-            'validation_size': args.validation_size,
-            'domain_knowledge': True,
-            'use_noise_data': args.use_noise_data,
-            'data_set': args.data_set,
-            'sub_key_index': args.subkey_index,
-            'desync': args.desync,
-            'unmask': args.unmask,
-            'noise_level': args.noise_level}
-
-    if args.data_set == util.DataSet.ASCAD:
-        _x_attack, _y_attack, _plain, _real_key, _key_guesses = util.load_ascad_test_traces(argz)
-    elif args.data_set == util.DataSet.ASCAD_NORMALIZED or args.data_set == util.DataSet.ASCAD_NORM:
-        _x_attack, _y_attack, _key_guesses, _real_key = util.load_ascad_normalized_test_traces(argz)
-    elif args.data_set == util.DataSet.SIM_MASK:
-        _x_attack, _y_attack, _key_guesses, _real_key = util.load_sim_mask_test_traces(argz)
-    elif args.data_set == util.DataSet.ASCAD_KEYS or args.data_set == util.DataSet.ASCAD_KEYS_NORMALIZED:
-        _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain = util.load_ascad_keys_test(argz)
-    elif args.data_set == util.DataSet.RANDOM_DELAY_LARGE:
-        ###################
-        # Load the traces #
-        ###################
-        loader = util.load_data_set(args.data_set)
-        total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
-                                                        'traces_path': args.traces_path,
-                                                        'raw_traces': args.raw_traces,
-                                                        'start': args.train_size + args.validation_size,
-                                                        'size': args.attack_size,
-                                                        'domain_knowledge': True,
-                                                        'use_noise_data': args.use_noise_data,
-                                                        'data_set': args.data_set})
-        print('Loading key guesses')
-
-        ####################################
-        # Load the key guesses and the key #
-        ####################################
-        data_set_name = str(args.data_set)
-        _key_guesses = util.load_random_delay_large_key_guesses(args.traces_path,
-                                                                args.train_size + args.validation_size,
-                                                                args.attack_size)
-        _real_key = util.load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
-                                  dtype=np.int)
-
-        _x_attack = total_x_attack
-        _y_attack = total_y_attack
-
-    else:
-        ###################
-        # Load the traces #
-        ###################
-        loader = util.load_data_set(args.data_set)
-        total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
-                                                        'traces_path': args.traces_path,
-                                                        'raw_traces': args.raw_traces,
-                                                        'start': args.train_size + args.validation_size,
-                                                        'size': args.attack_size,
-                                                        'domain_knowledge': True,
-                                                        'use_noise_data': args.use_noise_data,
-                                                        'data_set': args.data_set,
-                                                        'noise_level': args.noise_level})
-        if plain is not None:
-            _dk_plain = torch.from_numpy(plain).cuda()
-        print('Loading key guesses')
-
-        ####################################
-        # Load the key guesses and the key #
-        ####################################
-        data_set_name = str(args.data_set)
-        _key_guesses = util.load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
-            args.traces_path,
-            data_set_name),
-            delimiter=' ',
-            dtype=np.int,
-            start=args.train_size + args.validation_size,
-            size=args.attack_size)
-        _real_key = util.load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
-                                  dtype=np.int)
-
-        _x_attack = total_x_attack
-        _y_attack = total_y_attack
-
-    return _x_attack, _y_attack, _key_guesses, _real_key, _dk_plain
+def load_data(args):
+    return util.load_test_data(args)
 
 
 def threaded_run_test(args, prediction, folder, run, network_name, model_params, real_key):

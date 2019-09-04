@@ -233,7 +233,11 @@ if __name__ == "__main__":
 
     limits_x = [[-50, 9000]] * 9
     limits_y = [[-5, 150]] * 9
-    plot_rd(1.0, limits_x, limits_y, show=True, file_extension="fitting")
+    plot_rd(0.75, limits_x, limits_y, show=True, file_extension="fitting")
+
+    limits_x = [[-50, 9000]] * 9
+    limits_y = [[-5, 150]] * 9
+    plot_rd(1.0, limits_x, limits_y, show=False, file_extension="fitting")
 
     ###############################
     # PLOT WITH GOOD FITTING AXES #
