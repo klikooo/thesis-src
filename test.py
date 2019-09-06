@@ -169,3 +169,51 @@ def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
     final_guess = np.argmax(probabilities)
     return np.array(range(1, attack_size+1)), ranks, final_guess
 
+
+def create_key_probabilities(key_guesses, predictions, attack_size, hw):
+    if hw:
+        return create_key_probabilities_hw(key_guesses, predictions, attack_size)
+    else:
+        return create_key_probabilities_id(key_guesses, predictions, attack_size)
+
+
+def create_key_probabilities_id(key_guesses, predictions, attack_size=10000):
+    key_probabilities = np.zeros((attack_size, 256))
+    for trace_num in range(attack_size):
+        for key_guess in range(256):
+            sbox_out = key_guesses[trace_num][key_guess]
+            if predictions[trace_num][sbox_out] > 0.0:
+                key_probabilities[trace_num][key_guess] += np.log(predictions[trace_num][sbox_out])
+            else:
+                key_probabilities[trace_num][key_guess] += np.log(0.0000000000001)
+    return key_probabilities
+
+
+def create_key_probabilities_hw(key_guesses, predictions, attack_size):
+    key_probabilities = np.zeros((attack_size, 256))
+    for trace_num in range(attack_size):
+        for key_guess in range(256):
+            sbox_out = HW[key_guesses[trace_num][key_guess]]
+            if predictions[trace_num][sbox_out] > 0.0:
+                key_probabilities[trace_num][key_guess] += np.log(predictions[trace_num][sbox_out])
+            else:
+                key_probabilities[trace_num][key_guess] += np.log(0.0000000000001)
+    return key_probabilities
+
+
+def test_with_key_probabilities(key_probabilities, real_key):
+    attack_size = len(key_probabilities)
+    ranks = np.zeros(attack_size)
+    probabilities = np.zeros(256,)
+
+    for trace_num in range(attack_size):
+        probabilities += key_probabilities[trace_num]
+
+        res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
+        ranks[trace_num] = res
+    final_guess = np.argmax(probabilities)
+    return np.array(range(1, attack_size+1)), ranks, final_guess
+
+
+
+

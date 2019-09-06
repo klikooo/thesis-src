@@ -8,7 +8,7 @@ import json
 
 from models.load_model import load_model
 from util import shuffle_permutation, generate_folder_name, BColors
-from test import accuracy, test_with_key_guess_p
+from test import accuracy, test_with_key_guess_p, create_key_probabilities, test_with_key_probabilities
 from util_classes import get_save_name, require_domain_knowledge
 import os
 
@@ -82,7 +82,7 @@ def get_ranks(args, network_name, model_params):
     # Load the data and make it global
     global x_attack, y_attack, dk_plain, key_guesses
 
-    # Check noise string
+    # Create file strings
     noise_string = f'_noise{args.noise_level}' if args.use_noise_data and args.noise_level > 0.0 else ''
 
     # Load predictions
@@ -123,23 +123,37 @@ def load_data(args):
 
 
 def threaded_run_test(args, prediction, folder, run, network_name, model_params, real_key):
-    # Shuffle the data using same permutation  for n_exp and calculate mean for GE of the model
+    print("Creating key probabilities")
+    key_probabilities = create_key_probabilities(key_guesses, prediction, args.attack_size, args.use_hw)
+
     y = []
     for exp_i in range(args.num_exps):
         # Select permutation
         permutation = args.permutations[exp_i]
-
-        # Shuffle data
-        predictions_shuffled = shuffle_permutation(permutation, np.array(prediction))
-        key_guesses_shuffled = shuffle_permutation(permutation, key_guesses)
+        key_probabilities_shuffled = shuffle_permutation(permutation, key_probabilities)
 
         # Test the data
-        x_exp, y_exp, k_guess = test_with_key_guess_p(key_guesses_shuffled, predictions_shuffled,
-                                                      attack_size=args.attack_size,
-                                                      real_key=real_key,
-                                                      use_hw=args.use_hw)
+        x_exp, y_exp, k_guess = test_with_key_probabilities(key_probabilities_shuffled, real_key)
         print(f'{exp_i}: Key rank: {y_exp[-1]}, guess: {k_guess}')
         y.append(y_exp)
+
+    # Shuffle the data using same permutation  for n_exp and calculate mean for GE of the model
+    # y = []
+    # for exp_i in range(args.num_exps):
+    #     # Select permutation
+    #     permutation = args.permutations[exp_i]
+    #
+    #     # Shuffle data
+    #     predictions_shuffled = shuffle_permutation(permutation, np.array(prediction))
+    #     key_guesses_shuffled = shuffle_permutation(permutation, key_guesses)
+    #
+    #     # Test the data
+    #     x_exp, y_exp, k_guess = test_with_key_guess_p(key_guesses_shuffled, predictions_shuffled,
+    #                                                   attack_size=args.attack_size,
+    #                                                   real_key=real_key,
+    #                                                   use_hw=args.use_hw)
+    #     print(f'{exp_i}: Key rank: {y_exp[-1]}, guess: {k_guess}')
+    #     y.append(y_exp)
 
     # Calculate the mean over the experiments
     y = np.mean(y, axis=0)

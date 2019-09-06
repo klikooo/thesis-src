@@ -29,7 +29,7 @@ class ZaidCNN(nn.Module):
         ).to(device)
 
         self.fc = nn.Sequential(
-            nn.Linear(384, 20),
+            nn.Linear(896, 20),
             nn.SELU(),
             nn.Linear(20, 20),
             nn.SELU(),

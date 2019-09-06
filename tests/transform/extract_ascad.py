@@ -4,6 +4,7 @@ import util
 import pdb
 from sklearn.preprocessing import StandardScaler
 import csv
+import pdb
 
 
 path = "/media/rico/Data/TU/thesis/data/"
@@ -12,7 +13,7 @@ path_ascad = path + "ASCAD_Keys/"
 desync = 0
 subkey = 2
 
-ascad_db = '{}/ascad.h5'.format(path_ascad)
+ascad_db = '{}/ascad-variable.h5'.format(path_ascad)
 in_file = h5py.File(ascad_db, "r")
 
 
@@ -35,7 +36,7 @@ train_keys = np.array([train_metadata[i]['key'][subkey] for i in range(train_siz
 train_plaintexts = np.array([train_metadata[i]['plaintext'][subkey] for i in range(train_size)])
 
 # Test data
-test_size = 1000
+test_size = 100000
 test_metadata = in_file['Attack_traces/metadata']
 x_test_traces = np.array(in_file['Attack_traces/traces'], dtype=np.int8)
 y_test_unmasked_all = np.array(in_file['Attack_traces/labels'])
@@ -110,7 +111,7 @@ train_masks_path = path_ascad + "/Value/train_masks"
 
 pdb.set_trace()
 
-save = False
+save = True
 if save:
     # Save the traces,
     np.save(train_traces_path, x_train_traces)

@@ -517,7 +517,7 @@ def load_ascad_keys_test(args):
     y_test = None
     plaintexts = None
     if args['load_traces']:
-        x_test_file = f'{path}/traces/test_traces_normalized.npy'
+        x_test_file = f'{path}/traces/test_traces.npy'
         print(f"Loading {x_test_file}")
         x_test = np.load(x_test_file)
 
@@ -533,11 +533,11 @@ def load_ascad_keys_test(args):
         y_test = y_test[0:args.get('size')]
         y_test = np.reshape(y_test, (args.get('size')))
         if args['use_hw']:
-            y_test = [HW[y_test[i]] for i in range(len(y_test))]
+            y_test = np.array([HW[y_test[i]] for i in range(len(y_test))])
 
         plaintexts = np.load(f"{path}/Value/test_plaintexts.npy")
         plaintexts = plaintexts[0:args.get('size')]
-        plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
+        # plaintexts = hot_encode(plaintexts, 9 if args['use_hw'] else 256, dtype=np.float)
 
     key_guesses_file = '{}/Value/key_guesses_{}masked.csv.npy'.format(
         path,
@@ -1001,3 +1001,11 @@ def load_test_data(args):
             'attack_size': args.attack_size}
     loader_function = loader_test_data(args['data_set'])
     return loader_function(args)
+
+
+def w_print(msg):
+    print(f"{BColors.WARNING}{msg}{BColors.ENDC}")
+
+
+def e_print(msg):
+    print(f"{BColors.FAIL}{msg}{BColors.ENDC}")

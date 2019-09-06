@@ -17,9 +17,9 @@ if __name__ == "__main__":
     data_set = DataSet.KEYS
     network_names = ["DenseNet"]
     use_hw = False
-    runs = 2
+    runs = 5
     train_sizes = [20000]
-    epochs = 150
+    epochs = 100
     batch_size = 256
     lr = 0.0001
     subkey_index = 2
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     scheduler = None #"CyclicLR"
     scheduler_args = "" #{"max_lr": 0.001, "base_lr": lr}
     save_predictions = True
-    attack_size = 1000
+    attack_size = 100000
     ############################
 
     ###################
