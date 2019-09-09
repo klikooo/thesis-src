@@ -80,9 +80,9 @@ if __name__ == "__main__":
                         help="Specify how the weights are initialized")
 
     parser.add_argument("--noise_level", default=noise_level, type=float, help="Noise level")
-    parser.add_argument("--load_predictions", default=load_predictions, type=BoolAction,
+    parser.add_argument("--load_predictions", default=load_predictions, type=bool, action=BoolAction,
                         help="Load predictions if existing")
-    parser.add_argument("--save_predictions", default=save_predictions, type=BoolAction,
+    parser.add_argument("--save_predictions", default=save_predictions, type=bool, action=BoolAction,
                         help="Save predictions")
 
     args = parser.parse_args()

@@ -87,13 +87,14 @@ def do(path, traces_path, list_num_traces, num_experiments, runs):
                 key_probabilities = create_key_probabilities_id(selected_key_guess,
                                                                 predictions[index],
                                                                 num_traces)
-                x_rank, y_rank, guess = test_with_key_probabilities(
-                    key_probabilities,
-                    key)
-                print(f"Model {j} guess: {guess}, key: {key}. rank: {y_rank[-1]}")
+
+                summed_probabilities = np.sum(key_probabilities, axis=0)
+                sorted_guess = np.argsort(summed_probabilities)
+                rank = np.argmax((sorted_guess[::-1] == key))
+                print(f"Model {j} guess: {sorted_guess[255]}, key: {key}. rank: {rank}")
 
                 sum_accuracy[j] += acc
-                sum_ge[j] += y_rank[-1]
+                sum_ge[j] += rank
 
         # Print some stats
         avg_accuracy = sum_accuracy / num_experiments
@@ -108,11 +109,17 @@ def do(path, traces_path, list_num_traces, num_experiments, runs):
 
 if __name__ == "__main__":
 
-    models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/ID_SF1_E100_BZ256_LR1.00E-04/train20000/'
+    epochs = 50
+    hw = False
     traces_p = '/media/rico/Data/TU/thesis/data/'
+    models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/'
+    train_size = 2000
 
     if len(sys.argv) == 3:
         models_p = sys.argv[2]
         traces_p = sys.argv[1]
+        epochs = sys.argv[3]
 
-    do(models_p, traces_p, [6, 7, 8, 9, 11, 12, 13, 14, 15], num_experiments=100, runs=5)
+    hw_string = 'HW' if hw else 'ID'
+    models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ256_LR1.00E-04/train{train_size}/'
+    do(models_p, traces_p, [5], num_experiments=10, runs=5)

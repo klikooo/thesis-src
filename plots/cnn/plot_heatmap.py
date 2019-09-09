@@ -110,8 +110,8 @@ if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.005
-    noise_level = 0.0
+    l2_penal = 0.05
+    noise_level = 0.25
     data_ge = load_ge(kernels, l2_penal=l2_penal, noise_level=noise_level)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
