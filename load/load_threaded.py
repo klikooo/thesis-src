@@ -170,7 +170,7 @@ def threaded_run_test(args, prediction, folder, run, network_name, model_params,
 def run_load(args):
     args.type_network = 'HW' if args.use_hw else 'ID'
 
-    args.device = torch.device("cuda")
+    args.device = torch.device("cuda") if args.load_predictions else torch.device("cpu")
 
     args.permutations = util.generate_permutations(args.num_exps, args.attack_size)
 
