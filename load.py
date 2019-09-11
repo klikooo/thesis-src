@@ -84,6 +84,9 @@ if __name__ == "__main__":
                         help="Load predictions if existing")
     parser.add_argument("--save_predictions", default=save_predictions, type=bool, action=BoolAction,
                         help="Save predictions")
+    parser.add_argument("--only_predictions", default=False, type=bool, action=BoolAction,
+                        help="Save only predictions")
+
 
     args = parser.parse_args()
 

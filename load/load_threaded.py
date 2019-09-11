@@ -100,6 +100,9 @@ def get_ranks(args, network_name, model_params):
                                                                                               network_name,
                                                                                               model_params,
                                                                                               noise_string)
+    # Check for only saving predictions
+    if args.only_predictions:
+        return
 
     # Check if it is only one run, if so don't do multi threading
     if len(args.runs) == 1:
