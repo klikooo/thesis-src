@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 import os
 import util
 import numpy as np
+import plotly
 
 hit_worst = False
 
@@ -21,7 +22,7 @@ def load_ge(kernel, l2_penal, noise_level):
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
-            '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
+        '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
     model = "VGGNumLayers"
 
@@ -106,12 +107,45 @@ def get_x_labels(data):
     return x_labels_
 
 
-if __name__ == "__main__":
+def generate_annotations(data, x_label, y_label):
+    annotations = go.Annotations()
+    font = dict(
+        # family="Courier New, monospace",
+        size=10,
+        color="#000000")
 
-    # kernels = {i for i in range(5, 105, 5)}
+    for n, row in enumerate(data):
+        for m, val in enumerate(row):
+            print(f"{type(data[n][m])} - {data[n][m]}")
+
+            if type(data[n][m]) is int or type(val) is float \
+                    or (type(val) is np.float64 and str(val) != 'nan'):
+                if type(val) is np.float64:
+                    val = "{0:.2f}".format(val)
+                    annotations.append(go.layout.Annotation(text=str(val), x=x_label[m],
+                                                            y=y_label[n], xref='x1', yref='y1',
+                                                            showarrow=False, font=font))
+                elif int(val) == -100:
+                    annotations.append(go.layout.Annotation(text="---", x=x_label[m], y=y_label[n],
+                                                            xref='x1', yref='y1', showarrow=False,
+                                                            font=font))
+                    data[n][m] = None
+                else:
+                    annotations.append(go.layout.Annotation(text=str(val), x=x_label[m],
+                                                            y=y_label[n], xref='x1', yref='y1',
+                                                            showarrow=False, font=font))
+
+
+            else:
+                annotations.append(go.layout.Annotation(text='', x=x_label[m], y=y_label[n],
+                                                        xref='x1', yref='y1', showarrow=False))
+    return annotations
+
+
+if __name__ == "__main__":
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     l2_penal = 0.05
-    noise_level = 0.25
+    noise_level = 1.0
     data_ge = load_ge(kernels, l2_penal=l2_penal, noise_level=noise_level)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
@@ -123,45 +157,27 @@ if __name__ == "__main__":
 
     color_worst = "#000000" if hit_worst else "#4CC01F"
     z = np.transpose(get_sorted(minimal))
+    annotations = generate_annotations(z, x_labels, y_labels)
+
     fig = go.Figure(data=go.Heatmap(
         z=z,
         x=x_labels,
         y=y_labels,
-        colorscale=[
-            [0.0,  color_worst],
-            [0.05, "#5EC321"],
-            [0.1,  "#70C623"],
-            [0.15, "#83C924"],
-            [0.2,  "#96CD26"],
-            [0.25, "#A9D028"],
-            [0.3,  "#BCD32A"],
-            [0.35, "#D0D52C"],
-            [0.4,  "#D8CD2E"],
-            [0.45, "#DBBF30"],
-            [0.5,  "#DEB132"],
-            [0.55, "#E19638"],
-            [0.6,  "#E57C3D"],
-            [0.65, "#E86343"],
-            [0.7,  "#EB4C4A"],
-            [0.75, "#ED506B"],
-            [0.8,  "#F0568C"],
-            [0.85, "#F25DAD"],
-            [0.9,  "#F564CB"],
-            [0.95, "#F76BE8"],
-            [1,    "#EE72F8"]
-        ],
     ))
     fig.update_layout(
-        title=f'Convergence point L2 {l2_penal}',
+        title=f'Convergence point L2 {l2_penal}, noise {noise_level}',
         xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers"),
+            title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
             linecolor='black'
         ),
         yaxis=go.layout.YAxis(
             title=go.layout.yaxis.Title(text="Kernel size"),
             linecolor='black'
         ),
+        annotations=annotations,
     )
     fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_yaxes(showgrid=False, zeroline=False)
+    fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
+                    f"cnn/rd/hm/ge_l2{l2_penal}_noise{noise_level}.pdf")
     fig.show()

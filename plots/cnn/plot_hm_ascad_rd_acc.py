@@ -1,11 +1,15 @@
 import plotly.graph_objects as go
 import numpy as np
 import json
+import os
+
+from plots.cnn.plot_heatmap import generate_annotations
 
 hit_worst = False
 
 
-def load_acc(l2_penal, unmasked, desync, hw):
+def load_acc(l2_penal, unmasked, desync, hw, noise):
+    noise_string = f"_noise{noise}" if noise > 0.0 else ''
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "ASCAD_NORM/subkey_2/{}/{}/{}_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train45000/".format(
             '' if unmasked else 'masked',
@@ -15,9 +19,38 @@ def load_acc(l2_penal, unmasked, desync, hw):
     print(path)
     model = "VGGNumLayers"
 
-    acc_path = f"{path}/acc_{model}.acc"
+    acc_path = f"{path}/acc_{model}{noise_string}.json"
     with open(acc_path, "r") as f:
         return json.loads(f.read())
+
+
+def write_to(ls, ks, l2_penal, noise_level, unmasked, hw, desync):
+    noise_string = f"_noise{noise_level}" if noise_level > 0.0 else ''
+    path = "/media/rico/Data/TU/thesis/runs3/" \
+           "ASCAD_NORM/subkey_2/{}/{}/{}_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train45000/".format(
+            '' if unmasked else 'masked',
+            f'desync{desync}' if desync > 0 else '',
+            'HW' if hw else 'ID',
+            '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
+
+    filename = "acc_VGGNumLayers_k{}_c32_l{}" + noise_string + ".acc"
+    data = {}
+    for l in ls:
+        for k in ks:
+            file = path + filename.format(k, l)
+            if os.path.exists(file):
+                with open(file, "r") as f:
+                    d = f.read()
+                data.update({f'c_32_l{l}_k{k}': float(d)})
+    new_filename = f"acc_VGGNumLayers{noise_string}.json"
+    file = path + new_filename
+    if os.path.exists(file):
+        print("skipping creating acc")
+        print(f"{file} exists, check it out. new content:")
+        print(data)
+        return
+    with open(file, "w") as f:
+        f.write(json.dumps(data))
 
 
 def get_sorted(data):
@@ -37,17 +70,19 @@ def get_x_labels(data):
     return x_labels_
 
 
-if __name__ == "__main__":
-
+def do():
     # kernels = {i for i in range(5, 105, 5)}
     layers = {1, 2, 3, 4, 5}
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
     channels = 32
     l2_penal = 0.0
-    desync = 100
-    unmask = False
-    hw = False
-    data_acc = load_acc(l2_penal, unmask, desync, hw)
+    desync = 50
+    noise = 0.0
+    unmask = True
+    hw = True
+    write_to(layers, kernels, l2_penal=l2_penal,
+             noise_level=noise, unmasked=unmask, hw=hw, desync=desync)
+    data_acc = load_acc(l2_penal, unmask, desync, hw, noise)
 
     x_labels = [f'L{i}' for i in sorted(list(layers))]
     y_labels = [f'K{i}' for i in sorted(list(kernels))]
@@ -64,47 +99,30 @@ if __name__ == "__main__":
             k_list.append(data_acc[key])
             print(f"l{l}k{k}: {data_acc[key]}")
     sorted_data = np.transpose(sorted_data)
+    annotations = generate_annotations(sorted_data, x_labels, y_labels)
 
     color_worst = "#000000" if hit_worst else "#4CC01F"
     fig = go.Figure(data=go.Heatmap(
         z=sorted_data,
         x=x_labels,
         y=y_labels,
-        # colorscale=[
-        #     [0.0,  color_worst],
-        #     [0.05, "#5EC321"],
-        #     [0.1,  "#70C623"],
-        #     [0.15, "#83C924"],
-        #     [0.2,  "#96CD26"],
-        #     [0.25, "#A9D028"],
-        #     [0.3,  "#BCD32A"],
-        #     [0.35, "#D0D52C"],
-        #     [0.4,  "#D8CD2E"],
-        #     [0.45, "#DBBF30"],
-        #     [0.5,  "#DEB132"],
-        #     [0.55, "#E19638"],
-        #     [0.6,  "#E57C3D"],
-        #     [0.65, "#E86343"],
-        #     [0.7,  "#EB4C4A"],
-        #     [0.75, "#ED506B"],
-        #     [0.8,  "#F0568C"],
-        #     [0.85, "#F25DAD"],
-        #     [0.9,  "#F564CB"],
-        #     [0.95, "#F76BE8"],
-        #     [1,    "#EE72F8"]
-        # ],
     ))
     fig.update_layout(
-        title=f'Accuracy, l2 {l2_penal}',
+        title=f'Accuracy, l2 {l2_penal} noise {noise} desync {desync}',
         xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers"),
+            title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
             linecolor='black'
         ),
         yaxis=go.layout.YAxis(
             title=go.layout.yaxis.Title(text="Kernel size"),
             linecolor='black'
         ),
+        annotations=annotations,
     )
     fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_yaxes(showgrid=False, zeroline=False)
     fig.show()
+
+
+if __name__ == "__main__":
+    do()

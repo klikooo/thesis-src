@@ -571,6 +571,8 @@ def load_ascad_normalized_test_traces(args):
     print(args)
     path = f"{args['traces_path']}/{str(args['data_set'])}/"
 
+    x_test = None
+    y_test = None
     if args['load_traces']:
         if args['use_noise_data'] and args['noise_level'] > 0:
             x = np.load('{}/traces/traces_normalized_t{}_v{}_{}{}.csv.npy'.format(

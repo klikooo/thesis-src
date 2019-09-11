@@ -3,6 +3,8 @@ import os
 import util
 import numpy as np
 
+from plots.cnn.plot_heatmap import generate_annotations
+
 hit_worst = False
 
 
@@ -109,7 +111,6 @@ def get_end(data):
     return all_min
 
 
-
 def get_sorted(data):
     new_data = []
     for layer_key in sorted(data.keys()):
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     desync = 100
     hw = True
     unmask = True
-    noise = 0.25
+    noise = 0.0
     data_ge = load_ge(kernels, l2_penal, desync, hw, unmask, noise)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
@@ -151,33 +152,12 @@ if __name__ == "__main__":
 
     color_worst = "#000000" if hit_worst else "#4CC01F"
     z = np.transpose(get_sorted(data_for_hm))
+    annotations = generate_annotations(z, x_labels, y_labels)
+
     fig = go.Figure(data=go.Heatmap(
         z=z,
         x=x_labels,
         y=y_labels,
-        # colorscale=[
-        #     [0.0,  color_worst],
-        #     [0.05, "#5EC321"],
-        #     [0.1,  "#70C623"],
-        #     [0.15, "#83C924"],
-        #     [0.2,  "#96CD26"],
-        #     [0.25, "#A9D028"],
-        #     [0.3,  "#BCD32A"],
-        #     [0.35, "#D0D52C"],
-        #     [0.4,  "#D8CD2E"],
-        #     [0.45, "#DBBF30"],
-        #     [0.5,  "#DEB132"],
-        #     [0.55, "#E19638"],
-        #     [0.6,  "#E57C3D"],
-        #     [0.65, "#E86343"],
-        #     [0.7,  "#EB4C4A"],
-        #     [0.75, "#ED506B"],
-        #     [0.8,  "#F0568C"],
-        #     [0.85, "#F25DAD"],
-        #     [0.9,  "#F564CB"],
-        #     [0.95, "#F76BE8"],
-        #     [1,    "#EE72F8"]
-        # ],
     ))
     fig.update_layout(
         title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}, noise {noise}',
@@ -189,6 +169,8 @@ if __name__ == "__main__":
             title=go.layout.yaxis.Title(text="Kernel size"),
             linecolor='black'
         ),
+        annotations=annotations,
+
     )
     fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_yaxes(showgrid=False, zeroline=False)

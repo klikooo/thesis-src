@@ -7,40 +7,40 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs/'
+    models_path = '/media/rico/Data/TU/thesis/runs3/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
     use_hw = True
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(1)]
-    train_size = 1000
-    epochs = 50
-    batch_size = 256
+    runs = [x for x in range(5)]
+    train_size = 45000
+    epochs = 75
+    batch_size = 100
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 100000
+    attack_size = 10000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True
-    data_set = DataSet.ASCAD_KEYS_NORMALIZED
-    kernel_sizes = [50]
+    data_set = DataSet.ASCAD_NORM
+    kernel_sizes = [100]
     channel_sizes = [32]
     num_layers = [2]
-    init_weights = ""
+    init_weights = "kaiming"
 
-    network_names = ['DenseNet']
-    desync = 0
-    num_exps = 100
+    network_names = ['VGGNumLayers']
+    desync = 50
+    num_exps = 1000
     raw_traces = True
     validation_size = 1000
     use_noise_data = False
-    max_pool = 5
+    max_pool = 4
     l2_penalty = 0.0
     noise_level = 0.0
     load_predictions = True
-    save_predictions = True
+    save_predictions = False
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
@@ -86,6 +86,5 @@ if __name__ == "__main__":
                         help="Save predictions")
 
     args = parser.parse_args()
-    print(args)
 
     run_load(args)

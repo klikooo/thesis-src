@@ -7,7 +7,7 @@ data_set = util.DataSet.ASCAD_NORM
 
 num_traces = 10000
 num_features = 700
-desync = 50
+desync = 100
 unmask = True
 
 # Load
@@ -25,7 +25,7 @@ args = {
 x_train, _, _ = util.load_ascad_normalized(args)
 
 # Create noise
-noise_level = 0.5
+noise_level = 0.4
 sigma = 1
 mu = 0
 noise = np.random.normal(0, 1, num_traces * num_features) * noise_level

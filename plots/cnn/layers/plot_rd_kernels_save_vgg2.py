@@ -15,7 +15,7 @@ from matplotlib.lines import Line2D
 matplotlib.rcParams.update({'font.size': 18})
 
 
-def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
+def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
     #####################################################################################
     # Parameters
     use_hw = False
@@ -26,6 +26,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     batch_size = 100
     lr = 0.0001
     sub_key_index = 2
+    l2_penalty = 0.0
 
     unmask = True  # False if sub_kezy_index < 2 else True
     kernel_sizes = []
@@ -33,7 +34,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     channel_sizes = [32]
     init_weights = "kaiming"
 
-    network_1 = "VGGNumLayers"
+    network_1 = "VGGNumLayers2"
     network_settings = {
         network_1: 1,
     }
@@ -105,7 +106,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         "plot_marker": " ",
     })
     #####################################################################################
-
+    noise_string = f'_noise{noise_level}' if noise_level > 0.0 else ''
     n_settings = []
 
     # Function to load the GE of a single model
@@ -122,9 +123,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                 folder,
                 run,
                 get_save_name(net_name, model_parameters))
-            ge_path = '{}.exp__'.format(filename)
+            ge_path = '{}{}.exp__'.format(filename, noise_string)
             if not os.path.exists(ge_path):
-                ge_path = f"{filename}.exp"
+                ge_path = f"{filename}{noise_string}.exp"
 
             y_r = util.load_csv(ge_path, delimiter=' ', dtype=np.float)
             x_r = range(len(y_r))
@@ -175,6 +176,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
 
         for setting in network_setting:
             print(setting)
+            model_params.update({"max_pool": 4})
             for cs in setting['channel_sizes']:
                 model_params.update({"channel_size": cs})
                 for i in range(len(setting['num_layers'])):
@@ -195,81 +197,6 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         plt.plot(ranks_x[i][0], rank_mean_y[i], label="{} {}".format(name_models[i], n_settings[i]['title']),
                  marker=n_settings[i]['plot_marker'], color=plot_colors[i], markevery=0.1)
         plt.legend()
-
-    if show_per_layer:
-        validation_marker = "H"
-        training_marker = " "
-        for model_name, model_settings in network_settings.items():
-            for model_setting in model_settings:
-                line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
-                ks_training_loss = model_setting['ta']
-                ks_training_acc = model_setting['tl']
-                ks_validation_acc = model_setting['vl']
-                ks_validation_loss = model_setting['va']
-
-                # Show loss
-                ks = model_setting['num_layers']
-                labels = [f"Num layers {k}" for k in ks]
-
-                iter_colors = itertools.cycle(colors)
-                line_labels = [Line2D([0], [0], color=next(iter_colors), lw=2) for _ in ks]
-                # line_marker = itertools.cycle((' ', '+', '<', 'o', "D", "H", "*", "."))
-
-                # SHOW LOSS
-                fig, ax = plt.subplots()
-                ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
-                           Line2D([0], [0], color='black', lw=2, marker=validation_marker),
-                           *line_labels],
-                          ['Training', 'Validation', *labels])
-                plt.grid(True)
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.title("Loss {} - {}".format(model_name, model_setting['title']))
-                iter_colors = itertools.cycle(colors)
-                for i in range(len(ks_validation_loss)):
-                    color = next(iter_colors)
-                    plt.plot(ks_validation_loss[i],
-                             marker=validation_marker,
-                             color=color, markevery=0.1)
-                    plt.plot(ks_training_loss[i],
-                             marker=training_marker,
-                             color=color, markevery=0.1)
-
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/loss/"
-                print(model_setting['num_layers'])
-
-                file_name = f"loss_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
-                figure = plt.gcf()
-                figure.set_size_inches(16, 9)
-                figure.savefig(f"{file_path}/{file_name}", dpi=100)
-
-                # SHOW ACCURACY
-                fig, ax = plt.subplots()
-                ax.legend([Line2D([0], [0], color='black', lw=2, marker=training_marker),
-                           Line2D([0], [0], color='black', lw=2, marker=validation_marker),
-                           *line_labels],
-                          ['Training', 'Validation', *labels])
-                plt.grid(True)
-                plt.xlabel('Epoch')
-                plt.ylabel('Accuracy')
-                plt.title("Accuracy {} - {}".format(model_name, model_setting['title']))
-                iter_colors = itertools.cycle(colors)
-                for i in range(len(ks_validation_acc)):
-                    color = next(iter_colors)
-                    plt.plot(ks_validation_acc[i],
-                             marker=validation_marker,
-                             color=color, markevery=0.1)
-                    plt.plot(ks_training_acc[i],
-                             marker=training_marker,
-                             color=color, markevery=0.1)
-
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/acc"
-                file_name = f"acc_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_l2_{l2_penalty}.png"
-                figure = plt.gcf()
-                figure.set_size_inches(16, 9)
-                figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
     i_counter = 0
     for model_name, model_settings in network_settings.items():
@@ -293,37 +220,12 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                          color=model_setting['plot_colors'][i])
             plt.legend()
             figure = plt.gcf()
-            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/"
-            file_name = f"{file_extension}_ge_VGGNumLayers_layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}.png"
+            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/vgg2/"
+            file_name = f"{file_extension}_ge_VGGNumLayers2_k{model_setting['kernel_sizes'][0]}" \
+                        f"_l2_{l2_penalty}{noise_string}.png"
             figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
-            # Plot accuracy if asked for
-            if show_acc:
-                plt.figure()
-                plt.title("Accuracy during training {} - {}".format(model_name, model_setting['title']))
-                plt.xlabel('Epoch')
-                plt.ylabel('Accuracy')
-                plt.grid(True)
-                for i in range(len(model_setting['ge_x'])):
-                    plt.plot(model_setting['ta'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                             color='orange', marker=plot_markers[i], markevery=0.1)
-                    plt.plot(model_setting['va'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                             color='green', marker=plot_markers[i], markevery=0.1)
-                plt.legend()
-
-            if show_loss:
-                plt.figure()
-                plt.title("Loss during training {} - {}".format(model_name, model_setting['title']))
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.grid(True)
-                for i in range(len(model_setting['ge_x'])):
-                    plt.plot(model_setting['tl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                             color='orange', marker=plot_markers[i], markevery=0.1)
-                    plt.plot(model_setting['vl'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                             color='green', marker=plot_markers[i], markevery=0.1)
-                plt.legend()
     if show:
         plt.show()
     else:
@@ -331,35 +233,31 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
 
 
 if __name__ == "__main__":
-    ########################
-    # PLOT WITH EQUAL AXES #
-    ########################
-    limits_x = [[-2, 200]] * 9
-    limits_y = [[-5, 126]] * 9
+
+    limits_x = [[-5, 2000]] * 9
+    limits_y = [[-5, 140]] * 9
+    plot_rd(1.0, limits_x, limits_y, False, file_extension="equal")
+
+    limits_x = [[-5, 450]] * 9
+    limits_y = [[-5, 130]] * 9
+    plot_rd(0.75, limits_x, limits_y, False, file_extension="equal")
+
+    limits_x = [[-5, 90]] * 9
+    limits_y = [[-5, 90]] * 9
+    plot_rd(0.5, limits_x, limits_y, False, file_extension="equal")
+
+    limits_x = [[-.5, 20]] * 9
+    limits_y = [[-1, 55]] * 9
+    plot_rd(0.25, limits_x, limits_y, False, file_extension="equal")
+
+    limits_x = [[-.5, 10]] * 9
+    limits_y = [[-1, 50]] * 9
     plot_rd(0.0, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-.5, 5]] * 9
-    limits_y = [[-5, 20]] * 9
-    plot_rd(0.05, limits_x, limits_y, False, file_extension="equal")
-
-    limits_x = [[-2, 25]] * 9
-    limits_y = [[-5, 70]] * 9
-    plot_rd(0.005, limits_x, limits_y, False, file_extension="equal")
 
 
-    ###############################
-    # PLOT WITH GOOD FITTING AXES #
-    # ###############################
-    # limits_x = [[-2, 400], [-2, 1500], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400]]
-    # limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
-    # plot_rd(0, limits_x, limits_y, show=False, file_extension="fitting")
-    #
-    # # #               1       2         3          4         5        6             7             8             9
-    # limits_x = [[-1, 30], [-1, 11], [-1, 20], [-1, 10], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
-    # limits_y = [[-1, 60], [-1, 60], [-1, 55], [-5, 70], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
-    # plot_rd(0.05, limits_x, limits_y, show=False, file_extension="fitting")
-    #
-    # #               1       2           3         4         5        6          7         8         9
-    # limits_x = [[-2, 25], [-2, 35], [-2, 20], [-2, 30], [-2, 80], [-2, 150], [-2, 60], [-2, 60], [-2, 60]]
-    # limits_y = [[-1, 70], [-1, 80], [-1, 70], [-1, 80], [-1, 100], [-1, 105], [-1, 100], [-1, 100], [-1, 100]]
-    # plot_rd(0.005, limits_x, limits_y, show=False, file_extension="fitting")
+    # limits_x = [[-2, 25]] * 9
+    # limits_y = [[-5, 70]] * 9
+    # plot_rd(0.005, 0.5, limits_x, limits_y, False, file_extension="equal")
+
+

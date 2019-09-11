@@ -15,10 +15,9 @@ from matplotlib.lines import Line2D
 matplotlib.rcParams.update({'font.size': 18})
 
 
-def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
+def plot_rd(l2_penalty, noise_level, x_limits, y_limits, show=True, file_extension=""):
     #####################################################################################
     # Parameters
-    l2_penalty = 0.05
     use_hw = False
     spread_factor = 1
     runs = [x for x in range(5)]
@@ -41,11 +40,23 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
     data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
     desync = 0
     load_loss_acc = True
+    show_losses = False
+    show_acc = False
+    show_only_mean = False
+    show_ge = False
     experiment = False
+    show_loss = False
     show_per_layer = True
     colors = ["aqua", "black", "brown", "darkblue", "darkgreen",
               "fuchsia", "goldenrod", "grey", "indigo", "lavender"]
     plot_markers = [" ", "*", ".", "o", "+", "8", "s", "p", "P", "h", "H"]
+    # "8"	m11	octagon
+    # "s"	m12	square
+    # "p"	m13	pentagon
+    # "P"	m23	plus (filled)
+    # "*"	m14	star
+    # "h"	m15	hexagon1
+    # "H"	m16	hexagon2
 
     ###########################
     # SETTINGS FOR EACH MODEL #
@@ -85,13 +96,13 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
     #####################################
     # UPDATE SETTINGS FOR DESIRED MODEL #
     #####################################
+    kernels = [15] * 5
     network_settings[network_1][0].update({
-        "kernel_sizes": [100, 50, 25, 20, 15, 10, 7, 5, 3],
-        "num_layers": [2] * 9,
+        "kernel_sizes": kernels,
+        "num_layers": list(range(1, len(kernels) + 1)),
         "l2_penalty": l2_penalty,
-        "title": " 2 layers noise {}".format(noise_level),
-        "plot_marker": "*",
-
+        "title": " 15 kernel, l2 {}".format(l2_penalty),
+        "plot_marker": " ",
     })
     #####################################################################################
 
@@ -203,15 +214,16 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
-                         label=f"Kernel size {model_setting['kernel_sizes'][i]}",
+                         label=f"Number layers {model_setting['num_layers'][i]}",
                          color=model_setting['plot_colors'][i])
             plt.legend()
             figure = plt.gcf()
-            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"
-            file_name = f"{file_extension}_ge_VGGNumLayers_" \
-                        f"layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}_noise{noise_level}.png"
+            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/"
+            file_name = f"{file_extension}_ge_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
+                        f"_l2_{l2_penalty}_noise{noise_level}.png"
             figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
+
 
     if show:
         plt.show()
@@ -220,22 +232,27 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
 
 
 if __name__ == "__main__":
-    ########################
-    # PLOT WITH EQUAL AXES #
-    ########################
-    limits_x = [[-2, 25]] * 9
-    limits_y = [[-5, 85]] * 9
-    plot_rd(0.25, limits_x, limits_y, show=False, file_extension="fitting")
 
-    limits_x = [[-5, 550]] * 9
+    limits_x = [[-5, 8100]] * 9
     limits_y = [[-5, 120]] * 9
-    plot_rd(0.5, limits_x, limits_y, show=False, file_extension="fitting")
+    plot_rd(0.05, 1.0, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-50, 9000]] * 9
-    limits_y = [[-5, 150]] * 9
-    plot_rd(0.75, limits_x, limits_y, show=True, file_extension="fitting")
+    limits_x = [[-5, 1250]] * 9
+    limits_y = [[-5, 120]] * 9
+    plot_rd(0.05, 0.75, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-50, 9000]] * 9
-    limits_y = [[-5, 150]] * 9
-    plot_rd(1.0, limits_x, limits_y, show=False, file_extension="fitting")
+    limits_x = [[-5, 300]] * 9
+    limits_y = [[-5, 80]] * 9
+    plot_rd(0.05, 0.5, limits_x, limits_y, False, file_extension="equal")
+
+    limits_x = [[-.5, 10]] * 9
+    limits_y = [[-1, 28]] * 9
+    plot_rd(0.05, 0.25, limits_x, limits_y, False, file_extension="equal")
+
+
+
+    # limits_x = [[-2, 25]] * 9
+    # limits_y = [[-5, 70]] * 9
+    # plot_rd(0.005, 0.5, limits_x, limits_y, False, file_extension="equal")
+
 
