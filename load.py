@@ -87,7 +87,6 @@ if __name__ == "__main__":
     parser.add_argument("--only_predictions", default=False, type=bool, action=BoolAction,
                         help="Save only predictions")
 
-
     args = parser.parse_args()
 
     run_load(args)
