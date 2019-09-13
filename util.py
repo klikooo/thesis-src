@@ -631,7 +631,7 @@ def load_test_data_set_keys(args):
         x_train = x_train[0:args.get('size')]
         y_train = y_train[0:args.get('size')]
         if args['use_hw']:
-            y_train = np.array([HW[val] for val in y_train])
+            y_train = np.array([HW[int(val)] for val in y_train])
 
         plain = np.load(f'{path}/Value/test_plain.npy')
         plain = plain[0:args.get('size')]

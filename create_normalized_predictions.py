@@ -6,10 +6,10 @@ import numpy as np
 import sys
 
 
-def load_traces(traces_path):
+def load_traces(traces_path, hamming_weight):
     args = util.EmptySpace
     args.load_traces = True
-    args.use_hw = False
+    args.use_hw = hamming_weight
     args.size = 50000
     args.unmask = True
     args.traces_path = traces_path
@@ -60,7 +60,7 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
 
     # Load traces
     util.w_print("Loading traces")
-    x, y, key, key_guesses = load_traces(traces_path)
+    x, y, key, key_guesses = load_traces(traces_path, hw)
 
     # Select correct function for calculating key probabilities
     create_key_probabilities_function = create_key_probabilities_hw if hw else create_key_probabilities_id
@@ -113,7 +113,7 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
 if __name__ == "__main__":
 
     epochs = 50
-    hw = False
+    hw = True
     traces_p = '/media/rico/Data/TU/thesis/data/'
     models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/'
     train_size = 2000
