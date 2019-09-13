@@ -40,10 +40,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     data_set = util.DataSet.RANDOM_DELAY_NORMALIZED
     desync = 0
     load_loss_acc = True
-    show_losses = False
     show_acc = False
-    show_only_mean = False
-    show_ge = False
     experiment = False
     show_loss = False
     show_per_layer = True
@@ -405,23 +402,23 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 80]] * 9
-    limits_y = [[-5, 105]] * 9
+    limits_x = [[0, 80]] * 9
+    limits_y = [[0, 105]] * 9
     plot_rd(0.005, limits_x, limits_y, False, file_extension="equal")
 
     ###############################
     # PLOT WITH GOOD FITTING AXES #
     # ###############################
-    limits_x = [[-2, 400], [-2, 1500], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400], [-2, 400]]
-    limits_y = [[-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128], [-5, 128]]
+    limits_x = [[0, 400], [0, 1500], [0, 400], [0, 400], [0, 400], [0, 400], [0, 400], [0, 400], [0, 400]]
+    limits_y = [[0, 128], [0, 128], [0, 128], [0, 128], [0, 128], [0, 128], [0, 128], [0, 128], [0, 128]]
     plot_rd(0, limits_x, limits_y, show=False, file_extension="fitting")
 
     # #               1       2         3          4         5        6             7             8             9
-    limits_x = [[-1, 30], [-1, 11], [-1, 20], [-1, 10], [-2, 80], [-10, 3000], [-10, 3000], [-10, 3000], [-10, 3000]]
-    limits_y = [[-1, 60], [-1, 60], [-1, 55], [-5, 70], [-5, 100], [-5, 256], [-5, 256], [-5, 256], [-5, 256]]
+    limits_x = [[0, 30], [0, 11], [0, 20], [0, 10], [0, 80], [0, 3000], [0, 3000], [0, 3000], [0, 3000]]
+    limits_y = [[0, 60], [0, 60], [0, 55], [0, 70], [0, 100], [0, 256], [0, 256], [0, 256], [0, 256]]
     plot_rd(0.05, limits_x, limits_y, show=False, file_extension="fitting")
 
     #               1       2           3         4         5        6          7         8         9
-    limits_x = [[-2, 25], [-2, 35], [-2, 20], [-2, 30], [-2, 80], [-2, 150], [-2, 60], [-2, 60], [-2, 60]]
-    limits_y = [[-1, 70], [-1, 80], [-1, 70], [-1, 80], [-1, 100], [-1, 105], [-1, 100], [-1, 100], [-1, 100]]
+    limits_x = [[0, 25], [0, 35], [0, 20], [0, 30], [0, 80], [0, 150], [0, 60], [0, 60], [0, 60]]
+    limits_y = [[0, 70], [0, 80], [0, 70], [0, 80], [0, 100], [0, 105], [0, 100], [0, 100], [0, 100]]
     plot_rd(0.005, limits_x, limits_y, show=False, file_extension="fitting")

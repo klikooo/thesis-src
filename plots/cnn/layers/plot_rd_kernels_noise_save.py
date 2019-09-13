@@ -233,20 +233,20 @@ def plot_rd(l2_penalty, noise_level, x_limits, y_limits, show=True, file_extensi
 
 if __name__ == "__main__":
 
-    limits_x = [[-5, 8100]] * 9
-    limits_y = [[-5, 120]] * 9
+    limits_x = [[0, 8100]] * 9
+    limits_y = [[0, 120]] * 9
     plot_rd(0.05, 1.0, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-5, 1250]] * 9
-    limits_y = [[-5, 120]] * 9
+    limits_x = [[0, 1250]] * 9
+    limits_y = [[0, 120]] * 9
     plot_rd(0.05, 0.75, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-5, 300]] * 9
-    limits_y = [[-5, 80]] * 9
+    limits_x = [[0, 300]] * 9
+    limits_y = [[0, 80]] * 9
     plot_rd(0.05, 0.5, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-.5, 10]] * 9
-    limits_y = [[-1, 28]] * 9
+    limits_x = [[0, 10]] * 9
+    limits_y = [[0, 28]] * 9
     plot_rd(0.05, 0.25, limits_x, limits_y, False, file_extension="equal")
 
 

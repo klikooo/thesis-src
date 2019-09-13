@@ -87,7 +87,7 @@ if __name__ == "__main__":
                         help="Specify the scheduler")
     parser.add_argument("--scheduler_args", default=scheduler_args, type=str,
                         help="Specify the scheduler arguments")
-    parser.add_argument("--create_predictions", default=save_predictions, type=BoolAction,
+    parser.add_argument("--create_predictions", default=save_predictions, type=bool, action=BoolAction,
                         help="Create and save predictions")
     parser.add_argument("--attack_size", default=attack_size, type=int, help="Number of attack traces")
 

@@ -99,9 +99,11 @@ if __name__ == "__main__":
                 z=sorted_data,
                 x=x_labels,
                 y=y_labels,
+                colorscale='Viridis',
             ))
             fig.update_layout(
-                title=f'Accuracy, l2 {l2_penal}, noise {noise_level}',
+                # title=f'Accuracy, l2 {l2_penal}, noise {noise_level}',
+                title='',
                 xaxis=go.layout.XAxis(
                     title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
                     linecolor='black',

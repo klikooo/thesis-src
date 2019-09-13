@@ -376,22 +376,22 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 15]] * 9
-    limits_y = [[-5, 60]] * 9
+    limits_x = [[0, 15]] * 9
+    limits_y = [[0, 60]] * 9
     plot_rd(0.0, limits_x, limits_y, False, file_extension="fitting")
 
-    limits_x = [[-2, 22]] * 9
-    limits_y = [[-5, 100]] * 9
+    limits_x = [[0, 22]] * 9
+    limits_y = [[0, 100]] * 9
     plot_rd(0.25, limits_x, limits_y, False, file_extension="fitting")
 
-    limits_x = [[-2, 150]] * 9
-    limits_y = [[-5, 120]] * 9
+    limits_x = [[0, 150]] * 9
+    limits_y = [[0, 120]] * 9
     plot_rd(0.5, limits_x, limits_y, False, file_extension="fitting")
 
-    limits_x = [[-50, 6000]] * 9
-    limits_y = [[-5, 140]] * 9
+    limits_x = [[0, 6000]] * 9
+    limits_y = [[0, 140]] * 9
     plot_rd(0.75, limits_x, limits_y, False, file_extension="fitting")
 
-    limits_x = [[-50, 9000]] * 9
-    limits_y = [[-5, 200]] * 9
+    limits_x = [[0, 9000]] * 9
+    limits_y = [[0, 200]] * 9
     plot_rd(1.0, limits_x, limits_y, False, file_extension="fitting")

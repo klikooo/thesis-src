@@ -25,13 +25,13 @@ if __name__ == "__main__":
     type_network = 'HW' if use_hw else 'ID'
     unmask = True
     data_set = DataSet.ASCAD_NORM
-    kernel_sizes = [100]
+    kernel_sizes = [10, 25, 50, 100]
     channel_sizes = [32]
     num_layers = [2]
     init_weights = "kaiming"
 
     network_names = ['VGGNumLayers']
-    desync = 50
+    desync = 100
     num_exps = 1000
     raw_traces = True
     validation_size = 1000
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     max_pool = 4
     l2_penalty = 0.0
     noise_level = 0.0
-    load_predictions = True
+    load_predictions = False
     save_predictions = False
     #####################################################################################
 
@@ -86,6 +86,8 @@ if __name__ == "__main__":
                         help="Save predictions")
     parser.add_argument("--only_predictions", default=False, type=bool, action=BoolAction,
                         help="Save only predictions")
+    parser.add_argument("--normalize", default=False, type=bool, action=BoolAction,
+                        help="Normalize traces")
 
     args = parser.parse_args()
 

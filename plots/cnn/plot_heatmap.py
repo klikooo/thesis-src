@@ -120,7 +120,7 @@ def generate_annotations(data, x_label, y_label):
 
             if type(data[n][m]) is int or type(val) is float \
                     or (type(val) is np.float64 and str(val) != 'nan'):
-                if type(val) is np.float64:
+                if type(val) is np.float64 and val != -100.0:
                     val = "{0:.2f}".format(val)
                     annotations.append(go.layout.Annotation(text=str(val), x=x_label[m],
                                                             y=y_label[n], xref='x1', yref='y1',
@@ -135,7 +135,6 @@ def generate_annotations(data, x_label, y_label):
                                                             y=y_label[n], xref='x1', yref='y1',
                                                             showarrow=False, font=font))
 
-
             else:
                 annotations.append(go.layout.Annotation(text='', x=x_label[m], y=y_label[n],
                                                         xref='x1', yref='y1', showarrow=False))
@@ -143,41 +142,52 @@ def generate_annotations(data, x_label, y_label):
 
 
 if __name__ == "__main__":
-    kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.05
-    noise_level = 1.0
-    data_ge = load_ge(kernels, l2_penal=l2_penal, noise_level=noise_level)
-    minimal = get_first_min(data_ge)
-    first = get_first(data_ge)
+    todo = {
+        0.0: [0.0],
+        0.05: [0.0, 0.25, 0.5, 0.75, 1.0],
+        0.005: [0.0]
+    }
+    for l2_penal, noise_levels in todo.items():
+        for noise_level in noise_levels:
 
-    x_labels = get_x_labels(minimal)
-    y_labels = [f'K{i}' for i in sorted(list(kernels))]
+            kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
+            # l2_penal = 0.05
+            # noise_level = 1.0
+            data_ge = load_ge(kernels, l2_penal=l2_penal, noise_level=noise_level)
+            minimal = get_first_min(data_ge)
+            first = get_first(data_ge)
 
-    print(get_sorted(first))
+            x_labels = get_x_labels(minimal)
+            y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
-    color_worst = "#000000" if hit_worst else "#4CC01F"
-    z = np.transpose(get_sorted(minimal))
-    annotations = generate_annotations(z, x_labels, y_labels)
+            print(get_sorted(first))
 
-    fig = go.Figure(data=go.Heatmap(
-        z=z,
-        x=x_labels,
-        y=y_labels,
-    ))
-    fig.update_layout(
-        title=f'Convergence point L2 {l2_penal}, noise {noise_level}',
-        xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
-            linecolor='black'
-        ),
-        yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(text="Kernel size"),
-            linecolor='black'
-        ),
-        annotations=annotations,
-    )
-    fig.update_xaxes(showgrid=False, zeroline=False)
-    fig.update_yaxes(showgrid=False, zeroline=False)
-    fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
-                    f"cnn/rd/hm/ge_l2{l2_penal}_noise{noise_level}.pdf")
-    fig.show()
+            color_worst = "#000000" if hit_worst else "#4CC01F"
+            z = np.transpose(get_sorted(minimal))
+            annotations = generate_annotations(z, x_labels, y_labels)
+
+            fig = go.Figure(data=go.Heatmap(
+                z=z,
+                x=x_labels,
+                y=y_labels,
+                colorscale='Viridis',
+                reversescale=True
+            ))
+            fig.update_layout(
+                # title=f'Convergence point L2 {l2_penal}, noise {noise_level}',
+                title='',
+                xaxis=go.layout.XAxis(
+                    title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
+                    linecolor='black'
+                ),
+                yaxis=go.layout.YAxis(
+                    title=go.layout.yaxis.Title(text="Kernel size"),
+                    linecolor='black'
+                ),
+                annotations=annotations,
+            )
+            fig.update_xaxes(showgrid=False, zeroline=False)
+            fig.update_yaxes(showgrid=False, zeroline=False)
+            fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
+                            f"cnn/rd/hm/ge_l2_{l2_penal}_noise{noise_level}.pdf")
+            # fig.show()

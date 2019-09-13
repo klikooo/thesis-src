@@ -234,24 +234,24 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
 
 if __name__ == "__main__":
 
-    limits_x = [[-5, 2000]] * 9
-    limits_y = [[-5, 140]] * 9
+    limits_x = [[0, 2000]] * 9
+    limits_y = [[0, 140]] * 9
     plot_rd(1.0, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-5, 450]] * 9
-    limits_y = [[-5, 130]] * 9
+    limits_x = [[0, 450]] * 9
+    limits_y = [[0, 130]] * 9
     plot_rd(0.75, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-5, 90]] * 9
-    limits_y = [[-5, 90]] * 9
+    limits_x = [[0, 90]] * 9
+    limits_y = [[0, 90]] * 9
     plot_rd(0.5, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-.5, 20]] * 9
-    limits_y = [[-1, 55]] * 9
+    limits_x = [[0, 20]] * 9
+    limits_y = [[0, 55]] * 9
     plot_rd(0.25, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-.5, 10]] * 9
-    limits_y = [[-1, 50]] * 9
+    limits_x = [[0, 10]] * 9
+    limits_y = [[0, 50]] * 9
     plot_rd(0.0, limits_x, limits_y, False, file_extension="equal")
 
 

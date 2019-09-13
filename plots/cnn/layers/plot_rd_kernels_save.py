@@ -334,16 +334,16 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 200]] * 9
-    limits_y = [[-5, 126]] * 9
+    limits_x = [[0, 200]] * 9
+    limits_y = [[0, 126]] * 9
     plot_rd(0.0, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-.5, 5]] * 9
-    limits_y = [[-1, 20]] * 9
+    limits_x = [[0, 5]] * 9
+    limits_y = [[0, 20]] * 9
     plot_rd(0.05, limits_x, limits_y, False, file_extension="equal")
 
-    limits_x = [[-2, 25]] * 9
-    limits_y = [[-5, 70]] * 9
+    limits_x = [[0, 25]] * 9
+    limits_y = [[0, 70]] * 9
     plot_rd(0.005, limits_x, limits_y, False, file_extension="equal")
 
 

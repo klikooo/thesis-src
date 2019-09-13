@@ -71,57 +71,61 @@ def get_x_labels(data):
 
 
 def do():
-    # kernels = {i for i in range(5, 105, 5)}
-    layers = {1, 2, 3, 4, 5}
-    kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    channels = 32
-    l2_penal = 0.0
-    desync = 50
-    noise = 0.0
-    unmask = True
-    hw = True
-    write_to(layers, kernels, l2_penal=l2_penal,
-             noise_level=noise, unmasked=unmask, hw=hw, desync=desync)
-    data_acc = load_acc(l2_penal, unmask, desync, hw, noise)
+    todo = {
+        50: {0.0, 0.1, 0.2, 0.3, 0.4, 0.5},
+        100: {0.0, 0.1, 0.2, 0.3, 0.4, 0.5}
+    }
+    for desync, noise_levels in todo.items():
+        for noise in noise_levels:
+            layers = {1, 2, 3, 4, 5}
+            kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
+            channels = 32
+            l2_penal = 0.0
+            unmask = True
+            hw = True
+            write_to(layers, kernels, l2_penal=l2_penal,
+                     noise_level=noise, unmasked=unmask, hw=hw, desync=desync)
+            data_acc = load_acc(l2_penal, unmask, desync, hw, noise)
 
-    x_labels = [f'L{i}' for i in sorted(list(layers))]
-    y_labels = [f'K{i}' for i in sorted(list(kernels))]
+            x_labels = [f'L{i}' for i in sorted(list(layers))]
+            y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
-    # Update the ones were we have no data of
-    sorted_data = []
-    for l in sorted(layers):
-        k_list = []
-        sorted_data.append(k_list)
-        for k in sorted(kernels):
-            key = f"c_{channels}_l{l}_k{k}"
-            if key not in data_acc:
-                data_acc.update({key: float("nan")})
-            k_list.append(data_acc[key])
-            print(f"l{l}k{k}: {data_acc[key]}")
-    sorted_data = np.transpose(sorted_data)
-    annotations = generate_annotations(sorted_data, x_labels, y_labels)
+            # Update the ones were we have no data of
+            sorted_data = []
+            for l in sorted(layers):
+                k_list = []
+                sorted_data.append(k_list)
+                for k in sorted(kernels):
+                    key = f"c_{channels}_l{l}_k{k}"
+                    if key not in data_acc:
+                        data_acc.update({key: float("nan")})
+                    k_list.append(data_acc[key])
+                    print(f"l{l}k{k}: {data_acc[key]}")
+            sorted_data = np.transpose(sorted_data)
+            annotations = generate_annotations(sorted_data, x_labels, y_labels)
 
-    color_worst = "#000000" if hit_worst else "#4CC01F"
-    fig = go.Figure(data=go.Heatmap(
-        z=sorted_data,
-        x=x_labels,
-        y=y_labels,
-    ))
-    fig.update_layout(
-        title=f'Accuracy, l2 {l2_penal} noise {noise} desync {desync}',
-        xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
-            linecolor='black'
-        ),
-        yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(text="Kernel size"),
-            linecolor='black'
-        ),
-        annotations=annotations,
-    )
-    fig.update_xaxes(showgrid=False, zeroline=False)
-    fig.update_yaxes(showgrid=False, zeroline=False)
-    fig.show()
+            color_worst = "#000000" if hit_worst else "#4CC01F"
+            fig = go.Figure(data=go.Heatmap(
+                z=sorted_data,
+                x=x_labels,
+                y=y_labels,
+            ))
+            fig.update_layout(
+                title=f'Accuracy, l2 {l2_penal} noise {noise} desync {desync}',
+                xaxis=go.layout.XAxis(
+                    title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
+                    linecolor='black'
+                ),
+                yaxis=go.layout.YAxis(
+                    title=go.layout.yaxis.Title(text="Kernel size"),
+                    linecolor='black'
+                ),
+                annotations=annotations,
+            )
+            fig.update_xaxes(showgrid=False, zeroline=False)
+            fig.update_yaxes(showgrid=False, zeroline=False)
+            fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
+                            f"cnn/ascad_rd/hm/acc_desync{desync}_noise{noise}.pdf")
 
 
 if __name__ == "__main__":

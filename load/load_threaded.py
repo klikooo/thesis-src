@@ -11,6 +11,8 @@ from util import shuffle_permutation, generate_folder_name, BColors
 from test import accuracy, test_with_key_guess_p, create_key_probabilities, test_with_key_probabilities
 from util_classes import get_save_name, require_domain_knowledge
 import os
+from sklearn.preprocessing import StandardScaler
+
 
 
 def predictions_exist(path, model_name, noise_string):
@@ -31,6 +33,9 @@ def load_predictions(path, model_name, runs, noise_string):
 def create_predictions(path, args, network_name, model_params, noise_string):
     print(f"{BColors.WARNING}Creating predictions{BColors.ENDC}")
     x_test, y_test, plain_test, key_test, key_guesses_test = load_data(args)
+    if args.normalize:
+        scale = StandardScaler()
+        x_test = scale.fit_transform(x_test)
 
     # Calculate the predictions before hand
     predictions = []
