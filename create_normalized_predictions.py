@@ -126,7 +126,7 @@ if __name__ == "__main__":
         epochs = sys.argv[3]
         train_size = sys.argv[4]
         batch_size = sys.argv[5]
-        hw_string = sys.argv[6] == "True"
+        hw_string = "HW" if sys.argv[6] == "True" else "ID"
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
     do(models_p, traces_p, [10], num_experiments=20, runs=5)
