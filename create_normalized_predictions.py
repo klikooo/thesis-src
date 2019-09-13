@@ -113,7 +113,7 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
 if __name__ == "__main__":
 
     epochs = 50
-    hw = True
+    hw = False
     traces_p = '/media/rico/Data/TU/thesis/data/'
     models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/'
     train_size = 2000
@@ -132,4 +132,6 @@ if __name__ == "__main__":
         hw_string = "HW" if sys.argv[6] == "True" else "ID"
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
-    do(models_p, traces_p, [10], num_experiments=20, runs=5, hw=hw)
+    do(models_p, traces_p,
+       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100, 200],
+       num_experiments=100, runs=5, hw=hw)
