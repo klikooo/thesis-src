@@ -1,7 +1,7 @@
 from models.load_model import load_model
 import util
 from sklearn.preprocessing import StandardScaler
-from test import accuracy, create_key_probabilities_id, test_with_key_probabilities
+from test import accuracy, create_key_probabilities_id, create_key_probabilities_hw
 import numpy as np
 import sys
 
@@ -53,7 +53,7 @@ def load_models(path, runs):
     return models
 
 
-def do(path, traces_path, list_num_traces, num_experiments, runs):
+def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
     # Load models
     util.w_print("Loading models")
     models = load_models(path, range(runs))
@@ -61,6 +61,9 @@ def do(path, traces_path, list_num_traces, num_experiments, runs):
     # Load traces
     util.w_print("Loading traces")
     x, y, key, key_guesses = load_traces(traces_path)
+
+    # Select correct function for calculating key probabilities
+    create_key_probabilities_function = create_key_probabilities_hw if hw else create_key_probabilities_id
 
     # Loop over the list of amount of traces to use
     num_models = len(models)
@@ -84,9 +87,9 @@ def do(path, traces_path, list_num_traces, num_experiments, runs):
                 predictions = predictions.cpu().numpy()
 
                 # Calculate the key rank
-                key_probabilities = create_key_probabilities_id(selected_key_guess,
-                                                                predictions[index],
-                                                                num_traces)
+                key_probabilities = create_key_probabilities_function(selected_key_guess,
+                                                                      predictions[index],
+                                                                      num_traces)
 
                 summed_probabilities = np.sum(key_probabilities, axis=0)
                 sorted_guess = np.argsort(summed_probabilities)
@@ -110,7 +113,7 @@ def do(path, traces_path, list_num_traces, num_experiments, runs):
 if __name__ == "__main__":
 
     epochs = 50
-    hw = False
+    hw = True
     traces_p = '/media/rico/Data/TU/thesis/data/'
     models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/'
     train_size = 2000
@@ -129,4 +132,4 @@ if __name__ == "__main__":
         hw_string = "HW" if sys.argv[6] == "True" else "ID"
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
-    do(models_p, traces_p, [10], num_experiments=20, runs=5)
+    do(models_p, traces_p, [10], num_experiments=20, runs=5, hw=hw)

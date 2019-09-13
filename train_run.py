@@ -18,9 +18,9 @@ if __name__ == "__main__":
     subkey_index = 2
     raw_traces = True
 
-    # Training data settings
+    # Data settings
     data_set = DataSet.KEYS
-    runs = 1
+    runs = 5
     unmask = True
     desync = 0
     use_noise_data = False
@@ -33,14 +33,14 @@ if __name__ == "__main__":
     channel_size = 32
     num_layers = 2
     max_pool = 5
-    use_hw = False
+    use_hw = True
     spread_factor = 1
 
     # Hyper parameters
     train_sizes = [2000]
     validation_size = 1000
     epochs = 50
-    batch_size = 100
+    batch_size = 256
     lr = 0.0001
     scheduler = None  # "CyclicLR"
     scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
