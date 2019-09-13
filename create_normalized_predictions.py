@@ -116,6 +116,9 @@ if __name__ == "__main__":
     train_size = 2000
     batch_size = 256
 
+    print(sys.argv)
+    print(len(sys.argv))
+
     if len(sys.argv) == 6:
         models_p = sys.argv[2]
         traces_p = sys.argv[1]
