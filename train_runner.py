@@ -8,10 +8,10 @@ import numpy as np
 import json
 
 from util_init import init_weights
+from sklearn.preprocessing import StandardScaler
 
 
 def run(args):
-
     # Save the models to this folder
     dir_name = generate_folder_name(args)
 
@@ -65,6 +65,15 @@ def run(args):
         x_test, y_test, plain_test, key_test, _key_guesses_test = load_test_data(args)
         if not args.domain_knowledge:
             plain_test = None
+
+    # Normalize data if asked for
+    if args.normalize:
+        print("Normalizing traces...")
+        scale = StandardScaler()
+        x_train = scale.fit_transform(x_train)
+        x_validation = scale.transform(x_validation)
+        if args.create_predictions:
+            x_test = scale.transform(x_test)
 
     # Convert scheduler args
     if args.scheduler is not None and type(args.scheduler_args) is str:
@@ -130,6 +139,7 @@ def run(args):
 
         # Save the final model
         save_model(network, model_save_file)
+        print(f"Saved model to {model_save_file}")
 
         # Create + save predictions
         if args.create_predictions:

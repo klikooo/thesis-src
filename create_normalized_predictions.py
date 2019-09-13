@@ -114,12 +114,15 @@ if __name__ == "__main__":
     traces_p = '/media/rico/Data/TU/thesis/data/'
     models_p = '/media/rico/Data/TU/thesis/runs/KEYS/subkey_2/'
     train_size = 2000
+    batch_size = 256
 
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 6:
         models_p = sys.argv[2]
         traces_p = sys.argv[1]
         epochs = sys.argv[3]
+        train_size = sys.argv[4]
+        batch_size = sys.argv[5]
 
     hw_string = 'HW' if hw else 'ID'
-    models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ256_LR1.00E-04/train{train_size}/'
-    do(models_p, traces_p, [5], num_experiments=10, runs=5)
+    models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
+    do(models_p, traces_p, [10], num_experiments=20, runs=5)

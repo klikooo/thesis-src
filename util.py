@@ -604,7 +604,7 @@ def load_ascad_normalized_test_traces(args):
 def load_train_data_set_keys(args):
     print(args)
     path = f'{args["traces_path"]}/{str(args["data_set"])}/'
-    x_train = np.load('{}/{}/traces/train_traces_normalized.npy'.format
+    x_train = np.load('{}/{}/traces/train_traces.npy'.format
                       (args['traces_path'], str(args['data_set'])))
     y_train = np.load('{}/{}/Value/train_model.npy'.format(args['traces_path'], str(args['data_set'])))
     plain = np.load(f'{path}/Value/train_plain.npy')
@@ -626,7 +626,7 @@ def load_test_data_set_keys(args):
     y_train = None
     plain = None
     if args['load_traces']:
-        x_train = np.load('{}/traces/test_traces_normalized.npy'.format(path))
+        x_train = np.load('{}/traces/test_traces.npy'.format(path))
         y_train = np.load('{}/Value/test_model.npy'.format(path))
         x_train = x_train[0:args.get('size')]
         y_train = y_train[0:args.get('size')]

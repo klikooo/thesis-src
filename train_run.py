@@ -19,14 +19,16 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Training data settings
-    data_set = DataSet.ASCAD_NORM
+    data_set = DataSet.KEYS
     runs = 1
     unmask = True
-    desync = 50
+    desync = 0
     use_noise_data = False
+    normalize = True
+    attack_size = 100
 
     # Architecture settings
-    network_names = ["VGGNumLayers"]
+    network_names = ["DenseNet"]
     kernel_size = 10
     channel_size = 32
     num_layers = 2
@@ -35,22 +37,21 @@ if __name__ == "__main__":
     spread_factor = 1
 
     # Hyper parameters
-    train_sizes = [45000]
+    train_sizes = [2000]
     validation_size = 1000
-    attack_size = 100
-    epochs = 75
+    epochs = 50
     batch_size = 100
-    lr = 0.001
+    lr = 0.0001
     scheduler = None  # "CyclicLR"
     scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
     loss_function = nn.CrossEntropyLoss()
-    init_weights = "kaiming"
+    init_weights = ""
     l2_penal = 0.0
     optimizer = "Adam"
 
     # Other
     checkpoints = None
-    save_predictions = True
+    save_predictions = False
     ############################
 
     ###################
@@ -99,6 +100,8 @@ if __name__ == "__main__":
     parser.add_argument("--create_predictions", default=save_predictions, type=bool, action=BoolAction,
                         help="Create and save predictions")
     parser.add_argument("--attack_size", default=attack_size, type=int, help="Number of attack traces")
+    parser.add_argument("--normalize", default=normalize, type=bool, action=BoolAction,
+                        help="Normalize the test traces")
 
     args = parser.parse_args()
     print(args)
