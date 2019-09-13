@@ -9,6 +9,7 @@ class VGGNumLayers(nn.Module):
         super(VGGNumLayers, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
+        print(f"INPUT SHAPE: {input_shape}, OUTPUT SHAPE: {out_shape}")
 
         ############
         # SETTINGS #

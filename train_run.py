@@ -15,35 +15,42 @@ if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
-    # Default Parameters
-    data_set = DataSet.KEYS
-    network_names = ["DenseNet"]
-    use_hw = False
-    runs = 5
-    train_sizes = [ 2000]
-    epochs = 50
-    batch_size = 256
-    lr = 0.0001
     subkey_index = 2
-    checkpoints = None
-    unmask = True
     raw_traces = True
-    desync = 0
-    validation_size = 1000
-    kernel_size = 20
+
+    # Training data settings
+    data_set = DataSet.ASCAD_NORM
+    runs = 1
+    unmask = True
+    desync = 50
+    use_noise_data = False
+
+    # Architecture settings
+    network_names = ["VGGNumLayers"]
+    kernel_size = 10
     channel_size = 32
     num_layers = 2
-    spread_factor = 1
-    loss_function = nn.CrossEntropyLoss()
-    init_weights = ""
     max_pool = 5
+    use_hw = False
+    spread_factor = 1
+
+    # Hyper parameters
+    train_sizes = [45000]
+    validation_size = 1000
+    attack_size = 100
+    epochs = 75
+    batch_size = 100
+    lr = 0.001
+    scheduler = None  # "CyclicLR"
+    scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
+    loss_function = nn.CrossEntropyLoss()
+    init_weights = "kaiming"
     l2_penal = 0.0
-    use_noise_data = False
     optimizer = "Adam"
-    scheduler = None #"CyclicLR"
-    scheduler_args = "" #{"max_lr": 0.001, "base_lr": lr}
+
+    # Other
+    checkpoints = None
     save_predictions = True
-    attack_size = 1000
     ############################
 
     ###################
