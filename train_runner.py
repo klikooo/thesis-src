@@ -74,6 +74,7 @@ def run(args):
         x_validation = scale.transform(x_validation)
         if args.create_predictions:
             x_test = scale.transform(x_test)
+        print("Done normalizing")
 
     # Convert scheduler args
     if args.scheduler is not None and type(args.scheduler_args) is str:

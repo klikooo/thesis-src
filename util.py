@@ -614,7 +614,7 @@ def load_train_data_set_keys(args):
     plain = plain[args['start']:args['start'] + args.get('size')]
 
     if args['use_hw']:
-        y_train = np.array([HW[val] for val in y_train])
+        y_train = np.array([HW[int(val)] for val in y_train])
     return x_train, y_train, plain
 
 
