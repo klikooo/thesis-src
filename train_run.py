@@ -5,10 +5,12 @@ import torch.nn as nn
 import time
 
 
-from util import BoolAction, DataSet, get_raw_feature_size
+from util import BoolAction, DataSet, get_raw_feature_size, e_print
 from util_classes import get_init_func, require_domain_knowledge
+import sys
 
 if __name__ == "__main__":
+    e_print(' '.join(sys.argv))
 
     traces_path = '/media/rico/Data/TU/thesis/data/'
     model_save_path = '/media/rico/Data/TU/thesis/runs/'
