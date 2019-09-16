@@ -12,7 +12,7 @@ import os
 import matplotlib
 from matplotlib.lines import Line2D
 
-matplotlib.rcParams.update({'font.size': 18})
+# matplotlib.rcParams.update({'font.size': 18})
 
 
 def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
@@ -175,8 +175,8 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
     ###############################################
     # Plot the mean of the runs of a single model #
     ###############################################
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
+    plt.xlabel('Number of traces')
+    plt.ylabel('Guessing Entropy')
     plt.grid(True)
     axes = plt.gca()
     axes.set_ylim([0, 256])
@@ -190,8 +190,8 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces', fontsize=16)
-            plt.ylabel('Guessing Entropy', fontsize=16)
+            plt.xlabel('Number of traces')
+            plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
             axes.set_ylim(y_limits[i_counter])
@@ -209,8 +209,8 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"
             file_name = f"{file_extension}_ge_VGGNumLayers_" \
-                        f"layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}_noise{noise_level}.png"
-            figure.set_size_inches(16, 9)
+                        f"layers_{model_setting['num_layers'][0]}_l2_{l2_penalty}_noise{noise_level}.pdf"
+            # figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
     if show:
@@ -223,19 +223,19 @@ if __name__ == "__main__":
     ########################
     # PLOT WITH EQUAL AXES #
     ########################
-    limits_x = [[-2, 25]] * 9
-    limits_y = [[-5, 85]] * 9
+    limits_x = [[0, 25]] * 9
+    limits_y = [[0, 85]] * 9
     plot_rd(0.25, limits_x, limits_y, show=False, file_extension="fitting")
 
-    limits_x = [[-5, 550]] * 9
-    limits_y = [[-5, 120]] * 9
+    limits_x = [[0, 550]] * 9
+    limits_y = [[0, 120]] * 9
     plot_rd(0.5, limits_x, limits_y, show=False, file_extension="fitting")
 
-    limits_x = [[-50, 9000]] * 9
-    limits_y = [[-5, 150]] * 9
+    limits_x = [[0, 9000]] * 9
+    limits_y = [[0, 150]] * 9
     plot_rd(0.75, limits_x, limits_y, show=True, file_extension="fitting")
 
-    limits_x = [[-50, 9000]] * 9
-    limits_y = [[-5, 150]] * 9
+    limits_x = [[0, 9000]] * 9
+    limits_y = [[0, 150]] * 9
     plot_rd(1.0, limits_x, limits_y, show=False, file_extension="fitting")
 

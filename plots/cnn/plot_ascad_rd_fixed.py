@@ -370,73 +370,73 @@ if __name__ == "__main__":
     #            show=False, file_extension="equal")
     #
 
-    limits_x = [[-50, 10000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.3, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-2, 20]] * 5
-    limits_y = [[-5, 70]] * 5
+    limits_x = [[0, 20]] * 5
+    limits_y = [[0, 70]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.1, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.2, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.25, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.3, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.4, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 10000]] * 5
-    limits_y = [[-5, 160]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 160]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.5, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-2, 20]] * 5
-    limits_y = [[-5, 70]] * 5
+    limits_x = [[0, 20]] * 5
+    limits_y = [[0, 70]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.1, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.2, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.4, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.25, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-50, 10000]] * 5
-    limits_y = [[-5, 160]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 160]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.5, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 

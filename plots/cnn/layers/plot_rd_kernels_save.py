@@ -12,7 +12,7 @@ import os
 import matplotlib
 from matplotlib.lines import Line2D
 
-matplotlib.rcParams.update({'font.size': 18})
+# matplotlib.rcParams.update({'font.size': 18})
 
 
 def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
@@ -186,8 +186,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
     ###############################################
     # Plot the mean of the runs of a single model #
     ###############################################
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
+    plt.xlabel('Number of traces')
+    plt.ylabel('Guessing Entropy')
     plt.grid(True)
     axes = plt.gca()
     axes.set_ylim([0, 256])
@@ -238,9 +238,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
                 util.e_print(model_setting['num_layers'])
 
                 file_name = f"loss_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                            f"_l2_{l2_penalty}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/loss/"
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
@@ -266,9 +266,9 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/acc"
                 file_name = f"acc_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
-                            f"_l2_{l2_penalty}.png"
+                            f"_l2_{l2_penalty}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
     i_counter = 0
@@ -276,8 +276,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces', fontsize=16)
-            plt.ylabel('Guessing Entropy', fontsize=16)
+            plt.xlabel('Number of traces')
+            plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
             axes.set_ylim(y_limits[i_counter])
@@ -294,8 +294,8 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/"
-            file_name = f"{file_extension}_ge_VGGNumLayers_k{model_setting['kernel_sizes'][0]}_l2_{l2_penalty}.png"
-            figure.set_size_inches(16, 9)
+            file_name = f"{file_extension}_ge_VGGNumLayers_k{model_setting['kernel_sizes'][0]}_l2_{l2_penalty}.pdf"
+            # figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
             # Plot accuracy if asked for

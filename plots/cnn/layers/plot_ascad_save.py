@@ -12,7 +12,7 @@ import os
 import matplotlib
 from matplotlib.lines import Line2D
 
-matplotlib.rcParams.update({'font.size': 18})
+# matplotlib.rcParams.update({'font.size': 18})
 
 
 def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_extension=""):
@@ -184,8 +184,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
     ###############################################
     # Plot the mean of the runs of a single model #
     ###############################################
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
+    plt.xlabel('Number of traces')
+    plt.ylabel('Guessing Entropy')
     plt.grid(True)
     axes = plt.gca()
     axes.set_ylim([0, 256])
@@ -236,9 +236,9 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/ascad/loss"
                 file_name = f"loss_{hw_string}_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
-                            f"_desync{desync}{noise_string}.png"
+                            f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
                 # SHOW ACCURACY
@@ -263,9 +263,9 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/ascad/acc"
                 file_name = f"acc_{hw_string}_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
-                            f"_desync{desync}{noise_string}.png"
+                            f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
     i_counter = 0
@@ -273,8 +273,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces', fontsize=16)
-            plt.ylabel('Guessing Entropy', fontsize=16)
+            plt.xlabel('Number of traces')
+            plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
             axes.set_ylim(y_limits[i_counter])
@@ -292,8 +292,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/ascad/"
             file_name = f"{file_extension}_ge_{hw_string}_VGGNumLayers_k{model_setting['kernel_sizes'][0]}" \
-                        f"_desync{desync}{noise_string}.png"
-            figure.set_size_inches(16, 9)
+                        f"_desync{desync}{noise_string}.pdf"
+            # figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
             # Plot accuracy if asked for
@@ -334,64 +334,64 @@ if __name__ == "__main__":
     ########################
 
     # Desync 100
-    limits_x = [[-2, 20]] * 5
-    limits_y = [[-5, 75]] * 5
+    limits_x = [[0, 20]] * 5
+    limits_y = [[0, 75]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 100]] * 5
-    limits_y = [[-5, 110]] * 5
+    limits_x = [[0, 100]] * 5
+    limits_y = [[0, 110]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.1, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 500]] * 5
-    limits_y = [[-5, 125]] * 5
+    limits_x = [[0, 500]] * 5
+    limits_y = [[0, 125]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.2, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 3000]] * 5
-    limits_y = [[-5, 256]] * 5
+    limits_x = [[0, 3000]] * 5
+    limits_y = [[0, 256]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.3, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 10000]] * 5
-    limits_y = [[-5, 256]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 256]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.4, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 10000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.5, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
     # Desync 50
-    limits_x = [[-2, 20]] * 5
-    limits_y = [[-5, 70]] * 5
+    limits_x = [[0, 20]] * 5
+    limits_y = [[0, 70]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 100]] * 5
-    limits_y = [[-5, 100]] * 5
+    limits_x = [[0, 100]] * 5
+    limits_y = [[0, 100]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.1, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 100]] * 5
-    limits_y = [[-5, 125]] * 5
+    limits_x = [[0, 100]] * 5
+    limits_y = [[0, 125]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.2, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 250]] * 5
-    limits_y = [[-5, 200]] * 5
+    limits_x = [[0, 250]] * 5
+    limits_y = [[0, 200]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.3, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 2000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 2000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.4, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
-    limits_x = [[-5, 10000]] * 5
-    limits_y = [[-5, 250]] * 5
+    limits_x = [[0, 10000]] * 5
+    limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=50, noise_level=0.5, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
 
