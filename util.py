@@ -720,6 +720,8 @@ class DataSet(Enum):
     ASCAD_KEYS_NORMALIZED = 11
     ASCAD_NORM = 12
     KEYS = 13
+    KEYS_1B = 14
+    KEYS_1 = 15
 
     def __str__(self):
         if self.value == 1:
@@ -748,6 +750,10 @@ class DataSet(Enum):
             return "ASCAD_NORM"
         elif self.value == 13:
             return "KEYS"
+        elif self.value == 14:
+            return "KEYS_1B"
+        elif self.value == 15:
+            return "KEYS_1"
         else:
             print("ERROR {}".format(self.value))
 
@@ -886,7 +892,9 @@ def get_raw_feature_size(the_data_set):
                 DataSet.ASCAD_KEYS_NORMALIZED: 1400,
                 DataSet.ASCAD_NORM: 700,
                 DataSet.ASCAD: 700,
-                DataSet.KEYS: 500}
+                DataSet.KEYS: 500,
+                DataSet.KEYS_1B: 500,
+                DataSet.KEYS_1: 500}
     return switcher[the_data_set]
 
 
@@ -903,7 +911,9 @@ def load_data_set(data_set):
              DataSet.ASCAD_KEYS: load_ascad_keys,
              DataSet.ASCAD_KEYS_NORMALIZED: load_ascad_keys,
              DataSet.ASCAD_NORM: load_ascad_normalized,
-             DataSet.KEYS: load_train_data_set_keys}
+             DataSet.KEYS: load_train_data_set_keys,
+             DataSet.KEYS_1B: load_train_data_set_keys,
+             DataSet.KEYS_1: load_train_data_set_keys}
     return table[data_set]
 
 
@@ -911,6 +921,8 @@ def loader_test_data(data_set):
     switcher = {
         DataSet.ASCAD: load_ascad_test_traces,
         DataSet.KEYS: load_test_data_set_keys,
+        DataSet.KEYS_1: load_test_data_set_keys,
+        DataSet.KEYS_1B: load_test_data_set_keys,
         DataSet.ASCAD_NORMALIZED: load_ascad_normalized_test_traces,
         DataSet.ASCAD_NORM: load_ascad_normalized_test_traces,
         DataSet.SIM_MASK: load_sim_mask_test_traces,

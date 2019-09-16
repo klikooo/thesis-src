@@ -19,27 +19,28 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.KEYS
+    data_set = DataSet.KEYS_1
     runs = 5
     unmask = True
     desync = 0
     use_noise_data = False
     normalize = True
+    save_predictions = False
     attack_size = 100
 
     # Architecture settings
     network_names = ["DenseNet"]
+    use_hw = False
     kernel_size = 10
     channel_size = 32
     num_layers = 2
     max_pool = 5
-    use_hw = True
     spread_factor = 1
 
     # Hyper parameters
-    train_sizes = [2000]
+    train_sizes = [10000]
     validation_size = 1000
-    epochs = 50
+    epochs = 75
     batch_size = 256
     lr = 0.0001
     scheduler = None  # "CyclicLR"
@@ -51,7 +52,6 @@ if __name__ == "__main__":
 
     # Other
     checkpoints = None
-    save_predictions = False
     ############################
 
     ###################

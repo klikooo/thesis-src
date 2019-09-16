@@ -109,7 +109,7 @@ def save_fig(fig, path):
 
 
 def run():
-    train_sizes = [1000, 2000, 5000, 10000]
+    train_sizes = [1000, 2000, 5000, 10000, 20000]
     epochs = [10, 25, 50, 75]
     # train_sizes = [20000]
     # epochs = [75]
@@ -126,7 +126,13 @@ def run():
         fig_acc = create_plot_train_sizes(id_acc, train_sizes, epoch, ge=False)
         save_fig(fig_ge, path_epochs + f"ge_id_epoch{epoch}.pdf")
         save_fig(fig_acc, path_epochs + f"acc_id_epoch{epoch}.pdf")
-        # plt.show()
+
+        # Hamming weight
+        fig_ge = create_plot_train_sizes(hw_ge, train_sizes, epoch, ge=True)
+        fig_acc = create_plot_train_sizes(hw_acc, train_sizes, epoch, ge=False)
+        save_fig(fig_ge, path_epochs + f"ge_hw_epoch{epoch}.pdf")
+        save_fig(fig_acc, path_epochs + f"acc_hw_epoch{epoch}.pdf")
+        plt.close("all")
 
     for train_size in train_sizes:
         fig_ge = create_plot_epochs(id_ge, epochs, train_size=train_size, ge=True)
@@ -134,7 +140,12 @@ def run():
         save_fig(fig_ge, path_train_size + f"ge_id_tz{train_size}.pdf")
         save_fig(fig_acc, path_train_size + f"acc_id_tz{train_size}.pdf")
 
-    # plt.show()
+        # Hamming weight
+        fig_ge = create_plot_epochs(hw_ge, epochs, train_size=train_size, ge=True)
+        fig_acc = create_plot_epochs(hw_acc, epochs, train_size=train_size, ge=False)
+        save_fig(fig_ge, path_train_size + f"ge_hw_tz{train_size}.pdf")
+        save_fig(fig_acc, path_train_size + f"acc_hw_tz{train_size}.pdf")
+        plt.close("all")
 
 
 if __name__ == "__main__":

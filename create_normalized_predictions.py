@@ -6,14 +6,14 @@ import numpy as np
 import sys
 
 
-def load_traces(traces_path, hamming_weight):
+def load_traces(traces_path, hamming_weight, data_set):
     args = util.EmptySpace
     args.load_traces = True
     args.use_hw = hamming_weight
     args.size = 50000
     args.unmask = True
     args.traces_path = traces_path
-    args.data_set = util.DataSet.KEYS
+    args.data_set = data_set
     args.raw_traces = True
     args.start = 0
     args.train_size = 0
@@ -53,14 +53,14 @@ def load_models(path, runs):
     return models
 
 
-def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
+def do(path, traces_path, list_num_traces, num_experiments, runs, hw, data_set):
     # Load models
     util.w_print("Loading models")
     models = load_models(path, range(runs))
 
     # Load traces
     util.w_print("Loading traces")
-    x, y, key, key_guesses = load_traces(traces_path, hw)
+    x, y, key, key_guesses = load_traces(traces_path, hw, data_set)
 
     # Select correct function for calculating key probabilities
     create_key_probabilities_function = create_key_probabilities_hw if hw else create_key_probabilities_id
@@ -111,33 +111,46 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw):
 
 
 def start():
-    epochs = 10
-    hw = False
-    traces_p = '/media/rico/Data/TU/thesis/data/'
-    models_p = '/media/rico/Data/TU/thesis/runs3/KEYS/subkey_2/'
+    epochs = 25
     train_size = 1000
     batch_size = 256
+    hw = False
+    data_set = util.DataSet.KEYS_1B
+    traces_p = '/media/rico/Data/TU/thesis/data/'
+    models_p = '/media/rico/Data/TU/thesis/runs3/'
+    num_experiments = 3
 
     print(sys.argv)
     print(len(sys.argv))
 
-    if len(sys.argv) == 7:
+    if len(sys.argv) == 9:
         traces_p = sys.argv[1]
         models_p = sys.argv[2]
         epochs = sys.argv[3]
         train_size = sys.argv[4]
         batch_size = sys.argv[5]
         hw = sys.argv[6] == "True"
+        if sys.argv[7] == "KEYS":
+            data_set = util.DataSet.KEYS
+        elif sys.argv[7] == "KEYS_1B":
+            data_set = util.DataSet.KEYS_1B
+        elif sys.argv[7] == "KEYS_1":
+            data_set = util.DataSet.KEYS_1
+        else:
+            util.e_print(f"Incorrect data set supplied: {sys.argv[7]}")
+            exit(-1)
+        num_experiments = sys.argv[8]
 
     hw_string = "HW" if hw else "ID"
+    models_p = f'{models_p}/{str(data_set)}/subkey_2/'
 
     num_traces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100, 200]
-    # num_traces = [5000]
+    # num_traces = [50]
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
     do(models_p, traces_p,
        num_traces,
-       num_experiments=100, runs=5, hw=hw)
+       num_experiments=num_experiments, runs=5, hw=hw, data_set=data_set)
 
 
 if __name__ == "__main__":

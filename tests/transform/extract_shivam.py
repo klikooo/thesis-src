@@ -65,7 +65,7 @@ train_traces = read_csv(f'{path}{traces_filename.format(train_data_set)}')
 train_keys = np.reshape(np.transpose(read_csv(f'{path}{key_filename.format(train_data_set)}')), (num_traces,))
 train_plaintexts = np.reshape(np.transpose(read_csv(f'{path}{input_filename.format(train_data_set)}')), (num_traces,))
 
-test_data_set = "2"
+test_data_set = "1"
 test_traces = read_csv(f'{path}{traces_filename.format(test_data_set)}')
 test_keys = np.reshape(read_csv(f'{path}{key_filename.format(test_data_set)}'), (1,))
 test_plaintexts = np.reshape(np.transpose(read_csv(f'{path}{input_filename.format(test_data_set)}')), (num_traces,))
@@ -94,7 +94,7 @@ for trace_index in range(num_traces):
 train_key_guesses = np.array(train_key_guesses)
 test_key_guesses = np.array(test_key_guesses)
 
-save_path = "/media/rico/Data/TU/thesis/data/KEYS"
+save_path = f"/media/rico/Data/TU/thesis/data/KEYS_{test_data_set}"
 np.save(f"{save_path}/traces/train_traces", train_traces)
 np.save(f"{save_path}/traces/train_traces_normalized", normalized_train_traces)
 np.save(f"{save_path}/Value/train_key_guesses", train_key_guesses)
