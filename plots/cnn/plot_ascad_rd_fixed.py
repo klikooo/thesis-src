@@ -12,7 +12,7 @@ import os
 import matplotlib
 from matplotlib.lines import Line2D
 
-matplotlib.rcParams.update({'font.size': 18})
+# matplotlib.rcParams.update({'font.size': 18})
 
 
 def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_extension=""):
@@ -216,8 +216,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
     ###############################################
     # Plot the mean of the runs of a single model #
     ###############################################
-    plt.xlabel('Number of traces', fontsize=16)
-    plt.ylabel('Guessing Entropy', fontsize=16)
+    plt.xlabel('Number of traces')
+    plt.ylabel('Guessing Entropy')
     plt.grid(True)
     axes = plt.gca()
     axes.set_ylim([0, 256])
@@ -268,9 +268,9 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/loss"
                 file_name = f"loss_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_desync{desync}{noise_string}.png"
+                            f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
                 # SHOW ACCURACY
@@ -295,9 +295,9 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
 
                 file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/acc"
                 file_name = f"acc_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
-                            f"_desync{desync}{noise_string}.png"
+                            f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
-                figure.set_size_inches(16, 9)
+                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
     i_counter = 0
@@ -305,8 +305,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces', fontsize=16)
-            plt.ylabel('Guessing Entropy', fontsize=16)
+            plt.xlabel('Number of traces')
+            plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
             axes.set_ylim(y_limits[i_counter])
@@ -324,8 +324,8 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd"
             file_name = f"{file_extension}_ge_{hw_string}_VGGNumLayers_layers_" \
-                        f"{model_setting['num_layers'][0]}_desync{desync}{noise_string}.png"
-            figure.set_size_inches(16, 9)
+                        f"{model_setting['num_layers'][0]}_desync{desync}{noise_string}.pdf"
+            # figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
             # Plot accuracy if asked for
@@ -424,7 +424,6 @@ if __name__ == "__main__":
     limits_y = [[-5, 250]] * 5
     plot_ascad(hw=True, desync=100, noise_level=0.2, x_limits=limits_x, y_limits=limits_y,
                show=False, file_extension="fitting")
-
 
     limits_x = [[-50, 2000]] * 5
     limits_y = [[-5, 250]] * 5
