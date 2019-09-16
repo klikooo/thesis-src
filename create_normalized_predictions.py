@@ -139,7 +139,7 @@ def start():
         else:
             util.e_print(f"Incorrect data set supplied: {sys.argv[7]}")
             exit(-1)
-        num_experiments = sys.argv[8]
+        num_experiments = int(sys.argv[8])
 
     hw_string = "HW" if hw else "ID"
     models_p = f'{models_p}/{str(data_set)}/subkey_2/'
