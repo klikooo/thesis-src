@@ -19,14 +19,16 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.KEYS_1
-    runs = 5
+    data_set = DataSet.KEYS
+    runs = 1
     unmask = True
     desync = 0
     use_noise_data = False
     normalize = True
-    save_predictions = False
+    save_predictions = True
     attack_size = 100
+    train_sizes = [40000]
+    validation_size = 1000
 
     # Architecture settings
     network_names = ["DenseNet"]
@@ -38,8 +40,6 @@ if __name__ == "__main__":
     spread_factor = 1
 
     # Hyper parameters
-    train_sizes = [10000]
-    validation_size = 1000
     epochs = 75
     batch_size = 256
     lr = 0.0001

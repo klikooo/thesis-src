@@ -7,32 +7,32 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs3/'
+    models_path = '/media/rico/Data/TU/thesis/runs/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = True
+    use_hw = False
     n_classes = 9 if use_hw else 256
     spread_factor = 1
-    runs = [x for x in range(5)]
-    train_size = 45000
+    runs = [x for x in range(1)]
+    train_size = 10000
     epochs = 75
-    batch_size = 100
+    batch_size = 256
     lr = 0.0001
     sub_key_index = 2
-    attack_size = 10000
+    attack_size = 4000
     rank_step = 1
     type_network = 'HW' if use_hw else 'ID'
     unmask = True
-    data_set = DataSet.ASCAD_NORM
-    kernel_sizes = [10, 25, 50, 100]
+    data_set = DataSet.KEYS
+    kernel_sizes = [10]
     channel_sizes = [32]
     num_layers = [2]
-    init_weights = "kaiming"
+    init_weights = ""
 
-    network_names = ['VGGNumLayers']
-    desync = 100
-    num_exps = 1000
+    network_names = ['DenseNet']
+    desync = 0
+    num_exps = 100
     raw_traces = True
     validation_size = 1000
     use_noise_data = False

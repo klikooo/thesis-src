@@ -618,6 +618,43 @@ def load_train_data_set_keys(args):
     return x_train, y_train, plain
 
 
+def load_train_portability(args):
+    print(args)
+    path = f'{args["traces_path"]}/{str(args["data_set"])}/'
+    x_train = np.load('{}/traces/traces_selected_Exp_3.npy'.format(path))
+    y_train = np.load('{}/Value/model_Exp_3.npy'.format(path))
+
+    x_train = x_train[args['start']:args['start'] + args.get('size')]
+    y_train = y_train[args['start']:args['start'] + args.get('size')]
+
+    if args['use_hw']:
+        y_train = np.array([HW[int(val)] for val in y_train])
+    return x_train, y_train, None
+
+
+def load_test_portability(args):
+    print(args)
+    path = f'{args["traces_path"]}/{str(args["data_set"])}/'
+
+    x_train = None
+    y_train = None
+    if args['load_traces']:
+        x_train = np.load('{}/traces/traces_selected_Exp_7.npy'.format(path))
+        y_train = np.load('{}/Value/model_Exp_3.npy'.format(path))
+        x_train = x_train[0:args.get('size')]
+        y_train = y_train[0:args.get('size')]
+        if args['use_hw']:
+            y_train = np.array([HW[int(val)] for val in y_train])
+
+    # key_guesses = np.load(f'{path}/Value/test_key_guesses.npy')
+    # key_guesses = key_guesses[0:args.get('size')]
+    # key = np.load(f'{path}/Value/test_keys.npy')
+    key_guesses = []
+    key = 0
+
+    return x_train, y_train, None, key, key_guesses
+
+
 def load_test_data_set_keys(args):
     print(args)
     path = f'{args["traces_path"]}/{str(args["data_set"])}/'
@@ -722,6 +759,7 @@ class DataSet(Enum):
     KEYS = 13
     KEYS_1B = 14
     KEYS_1 = 15
+    PORTABILITY = 16
 
     def __str__(self):
         if self.value == 1:
@@ -754,6 +792,8 @@ class DataSet(Enum):
             return "KEYS_1B"
         elif self.value == 15:
             return "KEYS_1"
+        elif self.value == 16:
+            return "portability"
         else:
             print("ERROR {}".format(self.value))
 
@@ -894,7 +934,8 @@ def get_raw_feature_size(the_data_set):
                 DataSet.ASCAD: 700,
                 DataSet.KEYS: 500,
                 DataSet.KEYS_1B: 500,
-                DataSet.KEYS_1: 500}
+                DataSet.KEYS_1: 500,
+                DataSet.PORTABILITY: 600}
     return switcher[the_data_set]
 
 
@@ -913,7 +954,9 @@ def load_data_set(data_set):
              DataSet.ASCAD_NORM: load_ascad_normalized,
              DataSet.KEYS: load_train_data_set_keys,
              DataSet.KEYS_1B: load_train_data_set_keys,
-             DataSet.KEYS_1: load_train_data_set_keys}
+             DataSet.KEYS_1: load_train_data_set_keys,
+             DataSet.PORTABILITY: load_train_portability,
+             }
     return table[data_set]
 
 
@@ -933,6 +976,7 @@ def loader_test_data(data_set):
         DataSet.AES_HD: load_test_generic,
         DataSet.DPA_V4: load_test_generic,
         DataSet.RANDOM_DELAY: load_test_generic,
+        DataSet.PORTABILITY: load_test_portability,
     }
     return switcher[data_set]
 

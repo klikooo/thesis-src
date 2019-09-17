@@ -5,12 +5,14 @@ from test import accuracy, create_key_probabilities_id, create_key_probabilities
 import numpy as np
 import sys
 
+attack_size = 50000
+
 
 def load_traces(traces_path, hamming_weight, data_set):
     args = util.EmptySpace
     args.load_traces = True
     args.use_hw = hamming_weight
-    args.size = 50000
+    args.size = attack_size
     args.unmask = True
     args.traces_path = traces_path
     args.data_set = data_set
@@ -23,13 +25,13 @@ def load_traces(traces_path, hamming_weight, data_set):
     args.desync = 0
     args.unmask = True
     args.noise_level = 0
-    args.attack_size = 50000
+    args.attack_size = attack_size
     x, y, _, key, key_guesses = util.load_test_data(args)
     return x, y, key, key_guesses
 
 
 def normalize_traces(traces, num_traces_to_normalize):
-    z = [np.random.randint(50000) for _ in range(num_traces_to_normalize)]
+    z = [np.random.randint(attack_size) for _ in range(num_traces_to_normalize)]
 
     to_normalize = traces[z]
 
@@ -111,14 +113,14 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw, data_set):
 
 
 def start():
-    epochs = 25
-    train_size = 1000
+    epochs = 75
+    train_size = 10000
     batch_size = 256
     hw = False
-    data_set = util.DataSet.KEYS_1B
+    data_set = util.DataSet.KEYS
     traces_p = '/media/rico/Data/TU/thesis/data/'
-    models_p = '/media/rico/Data/TU/thesis/runs3/'
-    num_experiments = 3
+    models_p = '/media/rico/Data/TU/thesis/runs/'
+    num_experiments = 1
 
     print(sys.argv)
     print(len(sys.argv))
@@ -145,7 +147,7 @@ def start():
     models_p = f'{models_p}/{str(data_set)}/subkey_2/'
 
     num_traces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100, 200]
-    # num_traces = [50]
+    # num_traces = [10000]
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
     do(models_p, traces_p,
