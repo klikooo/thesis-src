@@ -65,29 +65,7 @@ if __name__ == "__main__":
         z=sorted_data,
         x=x_labels,
         y=y_labels,
-        # colorscale=[
-        #     [0.0,  color_worst],
-        #     [0.05, "#5EC321"],
-        #     [0.1,  "#70C623"],
-        #     [0.15, "#83C924"],
-        #     [0.2,  "#96CD26"],
-        #     [0.25, "#A9D028"],
-        #     [0.3,  "#BCD32A"],
-        #     [0.35, "#D0D52C"],
-        #     [0.4,  "#D8CD2E"],
-        #     [0.45, "#DBBF30"],
-        #     [0.5,  "#DEB132"],
-        #     [0.55, "#E19638"],
-        #     [0.6,  "#E57C3D"],
-        #     [0.65, "#E86343"],
-        #     [0.7,  "#EB4C4A"],
-        #     [0.75, "#ED506B"],
-        #     [0.8,  "#F0568C"],
-        #     [0.85, "#F25DAD"],
-        #     [0.9,  "#F564CB"],
-        #     [0.95, "#F76BE8"],
-        #     [1,    "#EE72F8"]
-        # ],
+        colorbar={"title": "Accuracy (%)"}
     ))
     fig.update_layout(
         title=f'Accuracy, l2 {l2_penal}, noise {float(noise)}',

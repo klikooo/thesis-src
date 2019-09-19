@@ -327,11 +327,13 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
 
             plt.title("{} - {}".format(model_name, model_setting['title']))
 
+            color = iter(util.cm(len(model_setting['ge_x'])))
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
                          label=f"Kernel size {model_setting['kernel_sizes'][i]}",
-                         color=model_setting['plot_colors'][i])
+                         # color=model_setting['plot_colors'][i])
+                         color=next(color))
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"

@@ -13,6 +13,9 @@ import matplotlib
 from matplotlib.lines import Line2D
 
 # matplotlib.rcParams.update({'font.size': 18})
+# import matplotlib.style
+# matplotlib.style.use("fivethirtyeight")
+import matplotlib.cm as cm
 
 
 def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
@@ -348,17 +351,29 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
             plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
+            x_limits[i_counter][0] = 0 - x_limits[i_counter][1] * 0.01
+            y_limits[i_counter][0] = 0 - y_limits[i_counter][1] * 0.01
+
             axes.set_ylim(y_limits[i_counter])
             axes.set_xlim(x_limits[i_counter])
             i_counter += 1
 
             plt.title("{} - {}".format(model_name, model_setting['title']))
-
+            # z = cm.jet(np.linspace(0, 1, len(model_setting['ge_x'])))
+            # print(z)
+            # exit()
+            color = iter(util.cm(len(model_setting['ge_x'])))
+            line_marker = iter(('s', '+', '<', 'o', "D", "H", "*", ".", "^"))
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
                          label=f"Kernel size {model_setting['kernel_sizes'][i]}",
-                         color=model_setting['plot_colors'][i])
+                         color=next(color),
+                         # linewidth=1,
+                         markevery=0.3,
+                         marker=next(line_marker)
+                         #color=model_setting['plot_colors'][i]
+                         )
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"

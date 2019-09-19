@@ -1067,3 +1067,8 @@ def w_print(msg):
 
 def e_print(msg):
     print(f"{BColors.FAIL}{msg}{BColors.ENDC}")
+
+
+def cm(n):
+    import matplotlib.cm as color_map
+    return color_map.jet(np.linspace(1, 0, n))

@@ -211,11 +211,14 @@ def plot_rd(l2_penalty, noise_level, x_limits, y_limits, show=True, file_extensi
 
             plt.title("{} - {}".format(model_name, model_setting['title']))
 
+            color = iter(util.cm(len(model_setting['ge_x'])))
             for i in range(len(model_setting['ge_x'])):
+                n_layers = model_setting['num_layers'][i]
+                layers_text = 'layers' if n_layers > 1 else 'layer'
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
-                         label=f"Number layers {model_setting['num_layers'][i]}",
-                         color=model_setting['plot_colors'][i])
+                         label=f"{n_layers} {layers_text}",
+                         color=next(color))
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/"

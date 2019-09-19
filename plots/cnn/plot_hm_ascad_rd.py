@@ -167,7 +167,7 @@ def create():
             y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
             # z = np.transpose(get_sorted(data_for_hm))
-            z = np.transpose(get_sorted(cge))
+            z = np.transpose(get_sorted(minimal))
             annotations = generate_annotations(z, x_labels, y_labels)
 
             fig = go.Figure(data=go.Heatmap(
@@ -175,10 +175,11 @@ def create():
                 x=x_labels,
                 y=y_labels,
                 colorscale='Viridis',
-                reversescale=True
+                reversescale=True,
+                colorbar={"title": "CGE"}
             ))
             fig.update_layout(
-                title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}, noise {noise}',
+                # title=f'{title}, unmask {unmask} hw {hw}, L2 {l2_penal}, desync {desync}, noise {noise}',
                 xaxis=go.layout.XAxis(
                     title=go.layout.xaxis.Title(text="Stacked layers"),
                     linecolor='black'
@@ -194,7 +195,7 @@ def create():
             fig.update_yaxes(showgrid=False, zeroline=False)
             # fig.show()
             fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
-                            f"cnn/ascad_rd/hm/cge_desync{desync}_noise{noise}.pdf")
+                            f"cnn/ascad_rd/hm/ge_desync{desync}_noise{noise}.pdf")
 
 
 if __name__ == "__main__":

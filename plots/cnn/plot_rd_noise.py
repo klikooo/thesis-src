@@ -200,11 +200,12 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
 
             plt.title("{} - {}".format(model_name, model_setting['title']))
 
+            color = iter(util.cm(len(model_setting['ge_x'])))
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
                          label=f"Kernel size {model_setting['kernel_sizes'][i]}",
-                         color=model_setting['plot_colors'][i])
+                         color=next(color))
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd"
@@ -227,11 +228,11 @@ if __name__ == "__main__":
     limits_y = [[0, 85]] * 9
     plot_rd(0.25, limits_x, limits_y, show=False, file_extension="fitting")
 
-    limits_x = [[0, 550]] * 9
+    limits_x = [[0, 150]] * 9
     limits_y = [[0, 120]] * 9
     plot_rd(0.5, limits_x, limits_y, show=False, file_extension="fitting")
 
-    limits_x = [[0, 9000]] * 9
+    limits_x = [[0, 1500]] * 9
     limits_y = [[0, 150]] * 9
     plot_rd(0.75, limits_x, limits_y, show=True, file_extension="fitting")
 

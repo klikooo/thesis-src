@@ -283,11 +283,13 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
 
             plt.title("{} - {}".format(model_name, model_setting['title']))
 
+            color = iter(util.cm(len(model_setting['ge_x'])))
             for i in range(len(model_setting['ge_x'])):
+                n_layers = model_setting['num_layers'][i]
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),
-                         label=f"Conv layers p block {model_setting['num_layers'][i]}",
-                         color=model_setting['plot_colors'][i])
+                         label=f'l={n_layers}',
+                         color=next(color))
             plt.legend()
             figure = plt.gcf()
             file_path = "/media/rico/Data/TU/thesis/report/img/cnn/rd/layers/ascad/"

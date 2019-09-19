@@ -109,9 +109,10 @@ def do():
                 z=sorted_data,
                 x=x_labels,
                 y=y_labels,
+                colorbar={"title": "Accuracy (%)"}
             ))
             fig.update_layout(
-                title=f'Accuracy, l2 {l2_penal} noise {noise} desync {desync}',
+                # title=f'Accuracy, l2 {l2_penal} noise {noise} desync {desync}',
                 xaxis=go.layout.XAxis(
                     title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
                     linecolor='black'

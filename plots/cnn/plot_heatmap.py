@@ -19,6 +19,8 @@ def load_ge(kernel, l2_penal, noise_level):
         8: kernel,
         9: kernel,
     }
+    if l2_penal == 0.05 and noise_level > 0.0:
+        combinations = {1: kernel, 2: kernel, 3: kernel, 4: kernel, 5: kernel}
 
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
@@ -171,7 +173,8 @@ if __name__ == "__main__":
                 x=x_labels,
                 y=y_labels,
                 colorscale='Viridis',
-                reversescale=True
+                reversescale=True,
+                colorbar={"title": "CGE"}
             ))
             fig.update_layout(
                 # title=f'Convergence point L2 {l2_penal}, noise {noise_level}',

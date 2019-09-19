@@ -11,7 +11,7 @@ def load_acc(l2_penal, noise_level):
     noise_string = f'_noise{noise_level}' if noise_level > 0.0 else ''
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
-            '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
+        '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
     print(path)
     model = "VGGNumLayers"
 
@@ -41,7 +41,7 @@ def write_to(ls, ks, l2_penal, noise_level):
     noise_string = f'_noise{noise_level}' if noise_level > 0.0 else ''
     path = "/media/rico/Data/TU/thesis/runs3/" \
            "Random_Delay_Normalized/subkey_2/ID_SF1_E75_BZ100_LR1.00E-04{}_kaiming/train40000/".format(
-            '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
+        '_L2_{}'.format(l2_penal) if l2_penal > 0 else '')
 
     filename = "acc_VGGNumLayers_k{}_c32_l{}" + noise_string + ".acc"
     data = {}
@@ -72,6 +72,8 @@ if __name__ == "__main__":
     for l2_penal, noise_levels in todo.items():
         for noise_level in noise_levels:
             layers = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+            if l2_penal == 0.05 and noise_level > 0.0:
+                layers = {1, 2, 3, 4, 5}
             kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
             channels = 32
             # l2_penal = 0.005
@@ -100,6 +102,7 @@ if __name__ == "__main__":
                 x=x_labels,
                 y=y_labels,
                 colorscale='Viridis',
+                colorbar={"title": "Accuracy (%)"}
             ))
             fig.update_layout(
                 # title=f'Accuracy, l2 {l2_penal}, noise {noise_level}',
@@ -125,4 +128,3 @@ if __name__ == "__main__":
                             f"cnn/rd/hm/acc_l2_{l2_penal}_noise{noise_level}.pdf")
             # fig.show()
             # exit()
-
