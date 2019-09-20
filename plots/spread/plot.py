@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import matplotlib
-matplotlib.rcParams.update({'font.size': 18})
+# matplotlib.rcParams.update({'font.size': 18})
 
 
 # Function to load the GE of a single model
@@ -47,7 +47,7 @@ def create_plot(network_settings, fig_save_name,
                 y_lim,
                 show_loss=True, show_acc=True, font_size=18):
     plt.close('all')
-    matplotlib.rcParams.update({'font.size': font_size})
+    # matplotlib.rcParams.update({'font.size': font_size})
     ranks_x = []
     ranks_y = []
     rank_mean_y = []
@@ -95,8 +95,8 @@ def create_plot(network_settings, fig_save_name,
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces', fontsize=16)
-            plt.ylabel('Guessing Entropy', fontsize=16)
+            plt.xlabel('Number of traces')#, fontsize=16)
+            plt.ylabel('Guessing Entropy')#, fontsize=16)
             plt.grid(True)
             axes = plt.gca()
             axes.set_ylim([0, 256])
@@ -140,8 +140,8 @@ def create_plot(network_settings, fig_save_name,
         # Plot all GE in same plot
 
     plt.figure()
-    plt.xlabel('Number of traces', fontsize=font_size)
-    plt.ylabel('Guessing Entropy', fontsize=font_size)
+    plt.xlabel('Number of traces') #, fontsize=font_size)
+    plt.ylabel('Guessing Entropy') #, fontsize=font_size)
     plt.grid(True)
     axes = plt.gca()
     # axes.set_ylim([0, 95])
@@ -162,5 +162,5 @@ def create_plot(network_settings, fig_save_name,
     # exit()
     figure = plt.gcf()
     i = 1
-    figure.set_size_inches(16*i, 9*i)
+    # figure.set_size_inches(16*i, 9*i)
     figure.savefig(fig_save_name)

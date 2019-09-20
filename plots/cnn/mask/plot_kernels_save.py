@@ -13,7 +13,7 @@ if __name__ == "__main__":
     limits_x = [[0, 10000]] * 5
     limits_y = [[0, 250]] * 5
     plot_ascad(hw=True, desync=0, noise_level=0.0, x_limits=limits_x, y_limits=limits_y,
-               show=False, file_extension="fitting", unmask=False,
+               show=True, file_extension="fitting", unmask=False,
                file_path="/media/rico/Data/TU/thesis/report/img/cnn/ascad_masked")
 
 

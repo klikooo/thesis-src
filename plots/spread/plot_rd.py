@@ -8,7 +8,7 @@ import util
 setting = {"experiment": '3',
            "data_set": util.DataSet.RANDOM_DELAY,
            "subkey_index": 2,
-           "unmask": False,
+           "unmask": True,
            "desync": 0,
            "spread_factor": 6,
            "epochs": 80,
@@ -76,7 +76,7 @@ setting.update({"use_hw": True})
 
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/RD"
-hw_save_name = f"{path}/hw_" + "{}.png"
+hw_save_name = f"{path}/hw_" + "{}.pdf"
 plot_train_size(1000, hw_save_name.format(1000), [-1, 4000], [0, 256])
 plot_train_size(5000, hw_save_name.format(5000), [-1, 4000], [0, 256])
 plot_train_size(20000, hw_save_name.format(20000), [-1, 4000], [0, 256])
@@ -91,7 +91,7 @@ plot_train_size(40000, hw_save_name.format(40000), [-1, 4000], [0, 256])
 setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
-id_save_name = f"{path}/id_" + "{}.png"
+id_save_name = f"{path}/id_" + "{}.pdf"
 plot_train_size(1000, id_save_name.format(1000), [-1, 4000], [0, 256])
 plot_train_size(5000, id_save_name.format(5000), [-1, 4000], [0, 256])
 plot_train_size(20000, id_save_name.format(20000), [-1, 4000], [0, 256])

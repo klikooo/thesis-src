@@ -100,7 +100,7 @@ setting.update({"use_hw": True})
 
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/factors"
-hw_save_name = f"{path}/{data_set}_hw_" + "{}.png"
+hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
 plot_factors([3, 6, 9, 12], hw_save_name.format(1000), [-1, 100], [0, 101], show=False, font_size=22)
 plot_factors([3, 6, 9, 12], hw_save_name.format(5000), [-1, 25], [0, 70], train_size=5000)
 plot_factors([3, 6, 9, 12], hw_save_name.format(20000), [-1, 25], [0, 70], train_size=20000)
@@ -115,7 +115,7 @@ plot_factors([3, 6, 9, 12], hw_save_name.format(40000), [-1, 25], [0, 70], train
 setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
-id_save_name = f"{path}/{data_set}_id_" + "{}.png"
+id_save_name = f"{path}/{data_set}_id_" + "{}.pdf"
 plot_factors([3, 6, 9, 12], id_save_name.format(1000), [-100, 3500], [0, 140], show=False)
 plot_factors([3, 6, 9, 12], id_save_name.format(5000), [-1, 25], [0, 70], train_size=5000)
 plot_factors([3, 6, 9, 12], id_save_name.format(20000), [-1, 10], [0, 30], train_size=20000)
@@ -137,8 +137,8 @@ setting.update({"use_hw": True})
 
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/factors"
-hw_save_name = f"{path}/{data_set}_hw_" + "{}.png"
-plot_factors([3, 6, 9, 12], hw_save_name.format(1000), [-10, 500], [0, 120], show=False, font_size=22)
+hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
+plot_factors([3, 6, 9, 12], hw_save_name.format(1000), [-10, 500], [0, 120], show=False)
 plot_factors([3, 6, 9, 12], hw_save_name.format(5000), [-1, 25], [0, 70], train_size=5000)
 plot_factors([3, 6, 9, 12], hw_save_name.format(20000), [-1, 25], [0, 70], train_size=20000)
 plot_factors([3, 6, 9, 12], hw_save_name.format(40000), [-1, 25], [0, 70], train_size=40000)
@@ -152,7 +152,7 @@ plot_factors([3, 6, 9, 12], hw_save_name.format(40000), [-1, 25], [0, 70], train
 setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
-id_save_name = f"{path}/{data_set}_id_" + "{}.png"
+id_save_name = f"{path}/{data_set}_id_" + "{}.pdf"
 plot_factors([3, 6, 9, 12], id_save_name.format(1000), [-100, 3500], [0, 140], show=False)
 plot_factors([3, 6, 9, 12], id_save_name.format(5000), [-1, 25], [0, 100], train_size=5000)
 plot_factors([3, 6, 9, 12], id_save_name.format(20000), [-1, 10], [0, 30], train_size=20000)

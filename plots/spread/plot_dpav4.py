@@ -77,7 +77,7 @@ setting.update({"use_hw": True})
 
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/DPAv4"
-hw_save_name = f"{path}/hw_" + "{}.png"
+hw_save_name = f"{path}/hw_" + "{}.pdf"
 plot_train_size(1000, hw_save_name.format(1000), [-1, 100], [0, 101], font_size=22)
 plot_train_size(5000, hw_save_name.format(5000), [-1, 25], [0, 70])
 plot_train_size(20000, hw_save_name.format(20000), [-1, 25], [0, 70])
@@ -92,7 +92,7 @@ plot_train_size(40000, hw_save_name.format(40000), [-1, 25], [0, 70])
 setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
-id_save_name = f"{path}/id_" + "{}.png"
+id_save_name = f"{path}/id_" + "{}.pdf"
 plot_train_size(1000, id_save_name.format(1000), [-100, 3500], [0, 140])
 plot_train_size(5000, id_save_name.format(5000), [-1, 25], [0, 70])
 plot_train_size(20000, id_save_name.format(20000), [-1, 10], [0, 30])

@@ -25,25 +25,24 @@ if __name__ == "__main__":
     use_noise_data = False
     noise_level = 0.0
 
-
     # GE settings
     runs = [x for x in range(1)]
     rank_step = 1
     num_exps = 100
-    load_predictions = True
+    load_predictions = False
     save_predictions = False
 
     # Architecture settings
-    network_names = ['DenseNet']
-    spread_factor = 1
+    network_names = ['VGGNumLayers']
     kernel_sizes = [10]
-    channel_sizes = [32]
-    num_layers = [2]
+    channel_sizes = [128]
+    num_layers = [1]
     max_pool = 4
+    spread_factor = 1
 
     # Hyper parameters
     epochs = 75
-    batch_size = 256
+    batch_size = 100
     lr = 0.0001
     init_weights = ""
     l2_penalty = 0.0

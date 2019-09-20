@@ -143,6 +143,6 @@ setting.update({"use_hw": True})
 
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
-hw_save_name = f"{path}/{data_set}_hw_" + "{}.png"
+hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
 plot_factors([3, 6, 9], hw_save_name.format(1000), [-1, 40], [0, 101], show=False, font_size=22)
 # plot_factors([6], hw_save_name.format(40000), [-1, 40], [0, 200], show=False, font_size=22, train_size=40000, )
