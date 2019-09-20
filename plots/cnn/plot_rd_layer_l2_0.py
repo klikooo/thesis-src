@@ -363,7 +363,7 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
             # print(z)
             # exit()
             color = iter(util.cm(len(model_setting['ge_x'])))
-            line_marker = iter(('s', '+', '<', 'o', "D", "H", "*", ".", "^"))
+            line_marker = util.line_marker()
             for i in range(len(model_setting['ge_x'])):
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
                          # label="{} - {}".format(model_name, model_setting['line_title'][i]),

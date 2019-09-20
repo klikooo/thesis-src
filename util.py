@@ -1072,3 +1072,7 @@ def e_print(msg):
 def cm(n):
     import matplotlib.cm as color_map
     return color_map.jet(np.linspace(1, 0, n))
+
+
+def line_marker():
+    return iter(('s', '+', '<', 'o', "D", "H", "*", ".", "^"))

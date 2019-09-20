@@ -287,11 +287,13 @@ def plot_rd(l2_penalty, x_limits, y_limits, show=True, file_extension=""):
             plt.title("{} - {}".format(model_name, model_setting['title']))
 
             color = iter(util.cm(len(model_setting['ge_x'])))
+            line_marker = util.line_marker()
             for i in range(len(model_setting['ge_x'])):
                 n_layers = model_setting['num_layers'][i]
                 layers_text = 'layers' if n_layers > 1 else 'layer'
                 plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
-                         # label="{} - {}".format(model_name, model_setting['line_title'][i]),
+                         markevery=0.3,
+                         marker=next(line_marker),
                          label=f"{n_layers} {layers_text}",
                          color=next(color))
             plt.legend()
