@@ -135,6 +135,10 @@ if __name__ == "__main__":
         ),
         yaxis=go.layout.YAxis(
             title=go.layout.yaxis.Title(text="Kernel size")
-        )
+        ),
+        margin={
+            't': 5,
+            'b': 5
+        }
     )
     fig.show()

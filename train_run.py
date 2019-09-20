@@ -24,7 +24,7 @@ if __name__ == "__main__":
     unmask = False
     desync = 0
     use_noise_data = False
-    normalize = False
+    normalize = True
     save_predictions = True
     attack_size = 10000
     train_sizes = [45000]

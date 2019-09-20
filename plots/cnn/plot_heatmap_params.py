@@ -67,6 +67,10 @@ if __name__ == "__main__":
             title=go.layout.yaxis.Title(text="Kernel size"),
             linecolor='black'
         ),
+        margin={
+            't': 5,
+            'b': 5
+        }
     )
     fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_yaxes(showgrid=False, zeroline=False)

@@ -19,7 +19,7 @@ class VGGNumLayers(nn.Module):
         self.max_pool = 2
         self.channel_size = channel_size
         self.num_layers = num_layers
-        self.max_channels = 256
+        self.max_channels = 512
         self.num_blocks = 2
 
         num_features = input_shape

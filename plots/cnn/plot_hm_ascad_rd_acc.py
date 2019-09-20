@@ -122,6 +122,10 @@ def do():
                     linecolor='black'
                 ),
                 annotations=annotations,
+                margin={
+                    't': 5,
+                    'b': 5
+                }
             )
             fig.update_xaxes(showgrid=False, zeroline=False)
             fig.update_yaxes(showgrid=False, zeroline=False)

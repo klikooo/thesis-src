@@ -44,19 +44,10 @@ def run(args):
         p_train = plain[0:args.train_size]
         p_validation = plain[args.train_size:args.train_size + args.validation_size]
 
-    print('Shape x: {}'.format(np.shape(x_train)))
-
-    # Arguments for initializing the model
-    init_args = {"sf": args.spread_factor,
-                 "input_shape": args.input_shape,
-                 "n_classes": 9 if args.use_hw else 256,
-                 "kernel_size": args.kernel_size,
-                 "channel_size": args.channel_size,
-                 "num_layers": args.num_layers,
-                 "max_pool": args.max_pool
-                 }
-    print(f"INIT_ARGS: {args.input_shape}")
-    exit()
+    shape_train = np.shape(x_train)
+    print(f'Shape x: {shape_train}')
+    if len(shape_train) == 2 and shape_train[1] is not None:
+        args.input_shape = shape_train[1]
 
     # Load data for creating + saving predictions
     x_test, y_test, plain_test, key_test, _key_guesses_test = None, None, None, None, None
@@ -85,6 +76,16 @@ def run(args):
     # Folder path
     path = f"{args.model_save_path}/{dir_name}/"
     model_name = ""
+
+    # Arguments for initializing the models
+    init_args = {"sf": args.spread_factor,
+                 "input_shape": args.input_shape,
+                 "n_classes": 9 if args.use_hw else 256,
+                 "kernel_size": args.kernel_size,
+                 "channel_size": args.channel_size,
+                 "num_layers": args.num_layers,
+                 "max_pool": args.max_pool
+                 }
 
     # Do the runs
     for i in range(args.runs):
