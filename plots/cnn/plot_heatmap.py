@@ -113,7 +113,7 @@ def generate_annotations(data, x_label, y_label):
     annotations = go.Annotations()
     font = dict(
         # family="Courier New, monospace",
-        size=10,
+        size=14,
         color="#000000")
 
     for n, row in enumerate(data):
@@ -178,7 +178,7 @@ if __name__ == "__main__":
             ))
             fig.update_layout(
                 # title=f'Convergence point L2 {l2_penal}, noise {noise_level}',
-                title='',
+                # title='',
                 xaxis=go.layout.XAxis(
                     title=go.layout.xaxis.Title(text="Stacked layers per conv block"),
                     linecolor='black'
@@ -188,6 +188,10 @@ if __name__ == "__main__":
                     linecolor='black'
                 ),
                 annotations=annotations,
+                margin={
+                    't': 5,
+                    'b': 5
+                }
             )
             fig.update_xaxes(showgrid=False, zeroline=False)
             fig.update_yaxes(showgrid=False, zeroline=False)

@@ -55,6 +55,8 @@ def run(args):
                  "num_layers": args.num_layers,
                  "max_pool": args.max_pool
                  }
+    print(f"INIT_ARGS: {args.input_shape}")
+    exit()
 
     # Load data for creating + saving predictions
     x_test, y_test, plain_test, key_test, _key_guesses_test = None, None, None, None, None

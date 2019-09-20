@@ -19,29 +19,29 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.KEYS
+    data_set = DataSet.ASCAD_NORM
     runs = 1
-    unmask = True
+    unmask = False
     desync = 0
     use_noise_data = False
-    normalize = True
+    normalize = False
     save_predictions = True
-    attack_size = 100
-    train_sizes = [40000]
+    attack_size = 10000
+    train_sizes = [45000]
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["DenseNet"]
-    use_hw = False
-    kernel_size = 10
-    channel_size = 32
-    num_layers = 2
+    network_names = ["VGGNumLayers"]
+    use_hw = True
+    kernel_size = 20
+    channel_size = 64
+    num_layers = 1
     max_pool = 5
     spread_factor = 1
 
     # Hyper parameters
     epochs = 75
-    batch_size = 256
+    batch_size = 100
     lr = 0.0001
     scheduler = None  # "CyclicLR"
     scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
@@ -108,6 +108,7 @@ if __name__ == "__main__":
 
     # Change input shape according to the selected data set
     input_shape = get_raw_feature_size(data_set)
+    print(f"INPUT SHAPE: {input_shape}")
 
     if not os.path.isdir(args.model_save_path):
         print("Model save path ({}) does not exist.".format(args.model_save_path))

@@ -15,7 +15,8 @@ from matplotlib.lines import Line2D
 # matplotlib.rcParams.update({'font.size': 18})
 
 
-def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_extension=""):
+def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_extension="", unmask=True,
+               file_path="/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd"):
     #####################################################################################
     # Parameters
     use_hw = hw
@@ -27,7 +28,7 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
     lr = 0.0001
     sub_key_index = 2
 
-    unmask = True  # False if sub_kezy_index < 2 else True
+    # unmask = True  # False if sub_kezy_index < 2 else True
     kernel_sizes = []
     num_layers = []
     channel_sizes = [32]
@@ -266,12 +267,11 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
                              marker=training_marker,
                              color=color, markevery=0.1)
 
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/loss"
                 file_name = f"loss_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
                             f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
-                # figure.set_size_inches(16, 9)
                 figure.savefig(f"{file_path}/{file_name}", dpi=100)
+                # figure.set_size_inches(16, 9)
 
                 # SHOW ACCURACY
                 fig, ax = plt.subplots()
@@ -293,7 +293,6 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
                              marker=training_marker,
                              color=color, markevery=0.1)
 
-                file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd/acc"
                 file_name = f"acc_{hw_string}_VGGNumLayers_layers_{model_setting['num_layers'][0]}" \
                             f"_desync{desync}{noise_string}.pdf"
                 figure = plt.gcf()
@@ -323,7 +322,6 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
                          color=next(color))
             plt.legend()
             figure = plt.gcf()
-            file_path = "/media/rico/Data/TU/thesis/report/img/cnn/ascad_rd"
             file_name = f"{file_extension}_ge_{hw_string}_VGGNumLayers_layers_" \
                         f"{model_setting['num_layers'][0]}_desync{desync}{noise_string}.pdf"
             # figure.set_size_inches(16, 9)

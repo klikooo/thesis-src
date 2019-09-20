@@ -11,36 +11,46 @@ if __name__ == "__main__":
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
-    use_hw = False
-    n_classes = 9 if use_hw else 256
-    spread_factor = 1
-    runs = [x for x in range(1)]
-    train_size = 10000
-    epochs = 75
-    batch_size = 256
-    lr = 0.0001
     sub_key_index = 2
-    attack_size = 4000
+    raw_traces = True
+
+    # Data settings
+    data_set = DataSet.ASCAD_NORM
+    train_size = 45000
+    attack_size = 10000
+    validation_size = 1000
+    use_hw = True
+    desync = 0
+    unmask = False
+    use_noise_data = False
+    noise_level = 0.0
+
+
+    # GE settings
+    runs = [x for x in range(1)]
     rank_step = 1
-    type_network = 'HW' if use_hw else 'ID'
-    unmask = True
-    data_set = DataSet.KEYS
+    num_exps = 100
+    load_predictions = True
+    save_predictions = False
+
+    # Architecture settings
+    network_names = ['DenseNet']
+    spread_factor = 1
     kernel_sizes = [10]
     channel_sizes = [32]
     num_layers = [2]
-    init_weights = ""
-
-    network_names = ['DenseNet']
-    desync = 0
-    num_exps = 100
-    raw_traces = True
-    validation_size = 1000
-    use_noise_data = False
     max_pool = 4
+
+    # Hyper parameters
+    epochs = 75
+    batch_size = 256
+    lr = 0.0001
+    init_weights = ""
     l2_penalty = 0.0
-    noise_level = 0.0
-    load_predictions = False
-    save_predictions = False
+
+    n_classes = 9 if use_hw else 256
+    type_network = 'HW' if use_hw else 'ID'
+
     #####################################################################################
 
     parser = argparse.ArgumentParser('Calculate GE for a nn')
