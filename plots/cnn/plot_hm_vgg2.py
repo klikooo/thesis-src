@@ -3,6 +3,8 @@ import os
 import util
 import numpy as np
 
+from plots.cnn.plot_heatmap import generate_annotations
+
 hit_worst = False
 
 
@@ -112,60 +114,47 @@ def get_x_labels(data):
 if __name__ == "__main__":
 
     # kernels = {i for i in range(5, 105, 5)}
-    kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.0
-    noise = 0.25
-    data_ge = load_ge(kernels, l2_penal, noise)
-    minimal = get_first_min(data_ge)
-    first = get_first(data_ge)
+    for noise in [0.0, 0.25, 0.5, 0.75, 1.0]:
+        kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
+        l2_penal = 0.0
+        data_ge = load_ge(kernels, l2_penal, noise)
+        minimal = get_first_min(data_ge)
+        first = get_first(data_ge)
 
-    x_labels = get_x_labels(minimal)
-    y_labels = [f'K{i}' for i in sorted(list(kernels))]
+        x_labels = get_x_labels(minimal)
+        y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
-    print(get_sorted(first))
+        print(get_sorted(first))
 
-    color_worst = "#000000" if hit_worst else "#4CC01F"
-    z = np.transpose(get_sorted(minimal))
-    fig = go.Figure(data=go.Heatmap(
-        z=z,
-        x=x_labels,
-        y=y_labels,
-        colorscale=[
-            [0.0,  color_worst],
-            [0.05, "#5EC321"],
-            [0.1,  "#70C623"],
-            [0.15, "#83C924"],
-            [0.2,  "#96CD26"],
-            [0.25, "#A9D028"],
-            [0.3,  "#BCD32A"],
-            [0.35, "#D0D52C"],
-            [0.4,  "#D8CD2E"],
-            [0.45, "#DBBF30"],
-            [0.5,  "#DEB132"],
-            [0.55, "#E19638"],
-            [0.6,  "#E57C3D"],
-            [0.65, "#E86343"],
-            [0.7,  "#EB4C4A"],
-            [0.75, "#ED506B"],
-            [0.8,  "#F0568C"],
-            [0.85, "#F25DAD"],
-            [0.9,  "#F564CB"],
-            [0.95, "#F76BE8"],
-            [1,    "#EE72F8"]
-        ],
-        # text=z,
-    ))
-    fig.update_layout(
-        title=f'Convergence point, noise {noise}, L2 {l2_penal}',
-        xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers"),
-            linecolor='black'
-        ),
-        yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(text="Kernel size"),
-            linecolor='black'
-        ),
-    )
-    fig.update_xaxes(showgrid=False, zeroline=False)
-    fig.update_yaxes(showgrid=False, zeroline=False)
-    fig.show()
+        color_worst = "#000000" if hit_worst else "#4CC01F"
+        z = np.transpose(get_sorted(minimal))
+        annotations = generate_annotations(z, x_labels, y_labels)
+
+        fig = go.Figure(data=go.Heatmap(
+            z=z,
+            x=x_labels,
+            y=y_labels,
+            colorbar={"title": "CGE"},
+            reversescale=True,
+            colorscale='Viridis',
+        ))
+        fig.update_layout(
+            # title=f'Convergence point, noise {noise}, L2 {l2_penal}',
+            xaxis=go.layout.XAxis(
+                title=go.layout.xaxis.Title(text="Stacked layers"),
+                linecolor='black'
+            ),
+            yaxis=go.layout.YAxis(
+                title=go.layout.yaxis.Title(text="Kernel size"),
+                linecolor='black'
+            ),
+            annotations=annotations,
+            margin={
+                't': 5,
+                'b': 5
+            }
+        )
+        fig.update_xaxes(showgrid=False, zeroline=False)
+        fig.update_yaxes(showgrid=False, zeroline=False)
+        fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
+                        f"cnn/rd/hm/vgg2/ge_noise{noise}.pdf")

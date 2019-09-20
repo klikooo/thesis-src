@@ -2,6 +2,8 @@ import plotly.graph_objects as go
 import numpy as np
 import json
 
+from plots.cnn.plot_heatmap import generate_annotations
+
 hit_worst = False
 
 
@@ -36,48 +38,56 @@ def get_x_labels(data):
 
 if __name__ == "__main__":
 
-    # kernels = {i for i in range(5, 105, 5)}
-    layers = {1, 2, 3, 4, 5}
-    kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    channels = 32
-    l2_penal = 0.0
-    noise = 0.25
-    data_acc = load_acc(l2_penal, noise)
+    for noise in [0.0, 0.25, 0.5, 0.75, 1.0]:
 
-    x_labels = [f'L{i}' for i in sorted(list(layers))]
-    y_labels = [f'K{i}' for i in sorted(list(kernels))]
+        layers = {1, 2, 3, 4, 5}
+        kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
+        channels = 32
+        l2_penal = 0.0
+        data_acc = load_acc(l2_penal, noise)
 
-    # Update the ones were we have no data of
-    sorted_data = []
-    for l in sorted(layers):
-        k_list = []
-        sorted_data.append(k_list)
-        for k in sorted(kernels):
-            key = f"c_{channels}_l{l}_k{k}"
-            if key not in data_acc:
-                data_acc.update({key: float("nan")})
-            k_list.append(data_acc[key])
-            print(f"l{l}k{k}: {data_acc[key]}")
-    sorted_data = np.transpose(sorted_data)
+        x_labels = [f'L{i}' for i in sorted(list(layers))]
+        y_labels = [f'K{i}' for i in sorted(list(kernels))]
 
-    color_worst = "#000000" if hit_worst else "#4CC01F"
-    fig = go.Figure(data=go.Heatmap(
-        z=sorted_data,
-        x=x_labels,
-        y=y_labels,
-        colorbar={"title": "Accuracy (%)"}
-    ))
-    fig.update_layout(
-        title=f'Accuracy, l2 {l2_penal}, noise {float(noise)}',
-        xaxis=go.layout.XAxis(
-            title=go.layout.xaxis.Title(text="Stacked layers"),
-            linecolor='black'
-        ),
-        yaxis=go.layout.YAxis(
-            title=go.layout.yaxis.Title(text="Kernel size"),
-            linecolor='black'
-        ),
-    )
-    fig.update_xaxes(showgrid=False, zeroline=False)
-    fig.update_yaxes(showgrid=False, zeroline=False)
-    fig.show()
+        # Update the ones were we have no data of
+        sorted_data = []
+        for l in sorted(layers):
+            k_list = []
+            sorted_data.append(k_list)
+            for k in sorted(kernels):
+                key = f"c_{channels}_l{l}_k{k}"
+                if key not in data_acc:
+                    data_acc.update({key: float("nan")})
+                k_list.append(data_acc[key])
+                print(f"l{l}k{k}: {data_acc[key]}")
+        sorted_data = np.transpose(sorted_data)
+        annotations = generate_annotations(sorted_data, x_labels, y_labels)
+
+        fig = go.Figure(data=go.Heatmap(
+            z=sorted_data,
+            x=x_labels,
+            y=y_labels,
+            colorbar={"title": "Accuracy (%)"},
+            reversescale=False,
+            colorscale='Viridis',
+        ))
+        fig.update_layout(
+            # title=f'Accuracy, l2 {l2_penal}, noise {float(noise)}',
+            xaxis=go.layout.XAxis(
+                title=go.layout.xaxis.Title(text="Stacked layers"),
+                linecolor='black'
+            ),
+            yaxis=go.layout.YAxis(
+                title=go.layout.yaxis.Title(text="Kernel size"),
+                linecolor='black'
+            ),
+            annotations=annotations,
+            margin={
+                't': 5,
+                'b': 5
+            }
+        )
+        fig.update_xaxes(showgrid=False, zeroline=False)
+        fig.update_yaxes(showgrid=False, zeroline=False)
+        fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
+                        f"cnn/rd/hm/vgg2/acc_noise{noise}.pdf")

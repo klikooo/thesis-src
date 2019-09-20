@@ -229,7 +229,6 @@ def plot_rd(l2_penalty, noise_level, x_limits, y_limits, show=True, file_extensi
             # figure.set_size_inches(16, 9)
             figure.savefig(f"{file_path}/{file_name}", dpi=100)
 
-
     if show:
         plt.show()
     else:
