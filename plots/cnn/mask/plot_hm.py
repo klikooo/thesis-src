@@ -82,12 +82,13 @@ def get_x_labels(data):
 
 def create():
     kernels = {100, 50, 25, 20, 15, 10, 7, 5, 3}
-    l2_penal = 0.0
+    l2_penal = 0.005
     desync = 0
-    hw = False
+    channels = 128
+    hw = True
     unmask = False
     # noise = 0.0
-    data_ge, cge = load_ge(kernels, l2_penal, desync, hw, unmask, 0)
+    data_ge, cge = load_ge(kernels, l2_penal, desync, hw, unmask, 0, channels=channels)
     minimal = get_first_min(data_ge)
     first = get_first(data_ge)
     end = get_end(data_ge)
@@ -130,8 +131,9 @@ def create():
     fig.update_xaxes(showgrid=False, zeroline=False)
     fig.update_yaxes(showgrid=False, zeroline=False)
     # fig.show()
+    hw_string = 'hw' if hw else 'id'
     fig.write_image(f"/media/rico/Data/TU/thesis/report/img/"
-                    f"cnn/ascad_masked/hm/ge.pdf")
+                    f"cnn/ascad_masked/hm/ge_c{channels}_{hw_string}_l2_{l2_penal}.pdf")
 
 
 if __name__ == "__main__":

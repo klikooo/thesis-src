@@ -4,6 +4,7 @@ import torch.nn as nn
 from util import device
 
 
+# Select max pool value, no dropout for classification block, start with batch norm
 class VGGNumLayers4(nn.Module):
     def __init__(self, input_shape, out_shape, num_layers, kernel_size, channel_size, max_pool=4):
         super(VGGNumLayers4, self).__init__()

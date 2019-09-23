@@ -63,6 +63,8 @@ from models.VGG.VGGNumLayers import VGGNumLayers
 from models.VGG.VGGNumLayers2 import VGGNumLayers2
 from models.VGG.VGGNumLayers3 import VGGNumLayers3
 from models.VGG.VGGNumLayers4 import VGGNumLayers4
+from models.VGG.VGGNumLayers5 import VGGNumLayers5
+from models.VGG.VGGNumLayers6 import VGGNumLayers6
 from models.makesomenoise.MakeSomeNoise import MakeSomeNoiseReal
 
 MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
@@ -81,7 +83,7 @@ MODELS = [DenseSpreadNet, DenseNet, SpreadV2,
           VGGNumLayers, VGGNumBlocks, SpreadFirstLayer, BigChannels,
           DenseNorm, DenseBatch, SpreadV3, SmallCNN, MakeSomeNoiseReal,
           VGGNumLayers2, VGGMasked, VGGNumLayers3, VGGNumLayers4, VGGNumLayers4DK,
-          AscadCnn, ZaidCNN, ZaidCNNRD, ZaidCNNMasked]
+          AscadCnn, ZaidCNN, ZaidCNNRD, ZaidCNNMasked, VGGNumLayers5, VGGNumLayers6]
 MODELS_TABLE = dict(zip([model.basename() for model in MODELS], MODELS))
 
 

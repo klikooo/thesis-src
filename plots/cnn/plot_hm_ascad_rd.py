@@ -6,7 +6,7 @@ import numpy as np
 from plots.cnn.plot_heatmap import generate_annotations
 
 
-def load_ge(kernel, l2_penal, desync, hw, unmask, noise):
+def load_ge(kernel, l2_penal, desync, hw, unmask, noise, channels=32):
     combinations = {
         1: kernel,
         2: kernel,
@@ -39,7 +39,7 @@ def load_ge(kernel, l2_penal, desync, hw, unmask, noise):
         for kernel_size in kernel_sizes:
             ge_runs = []
             noise_string = f"_noise{noise}" if noise > 0.0 else ''
-            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c32_l{layers}{noise_string}.exp"
+            file = path + "/model_r{}_" + f"{model}_k{kernel_size}_c{channels}_l{layers}{noise_string}.exp"
             if not (os.path.exists(file.format(0)) or os.path.exists(file.format(0) + "__")):
                 kernel_size_dict.update({kernel_size: float("nan")})
                 cge_dict.update({kernel_size: float("nan")})

@@ -8,7 +8,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.rcParams.update({'font.size': 30})
+# matplotlib.rcParams.update({'font.size': 30})
 
 
 from util import load_ascad, shuffle_permutation
@@ -112,8 +112,8 @@ def get_ranks(use_hw, runs, train_size,
                 plt.ylabel("Frequency")
 
                 fig = plt.gcf()
-                fig.set_size_inches(16, 9)
-                fig.savefig('/media/rico/Data/TU/thesis/report/img/spread/inter/spread-{}.png'.format(
+                # fig.set_size_inches(16, 9)
+                fig.savefig('/media/rico/Data/TU/thesis/report/img/spread/inter/spread-{}.pdf'.format(
                     epoch.replace('.pt', '').replace('.', '')), dpi=100)
 
                 plt.show()

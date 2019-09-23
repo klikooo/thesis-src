@@ -4,10 +4,11 @@ import torch.nn as nn
 from util import device
 
 
-# Select max pool value
-class VGGNumLayers2(nn.Module):
+# Select max pool value, no dropout for classification block, less neurons in classification block, average pooling,
+# more dense layers
+class VGGNumLayers6(nn.Module):
     def __init__(self, input_shape, out_shape, num_layers, kernel_size, channel_size, max_pool=4):
-        super(VGGNumLayers2, self).__init__()
+        super(VGGNumLayers6, self).__init__()
         self.out_shape = out_shape
         self.input_shape = input_shape
 
@@ -42,11 +43,13 @@ class VGGNumLayers2(nn.Module):
         # CLASSIFICATION BLOCK #
         ########################
         self.classification_block = nn.Sequential(
-            nn.Dropout(p=0.5),
-            torch.nn.Linear(int(channel_size * num_features), 256).to(device),
+            torch.nn.Linear(int(channel_size * num_features), 8).to(device),
             nn.ReLU(),
-            nn.Dropout(p=0.5),
-            torch.nn.Linear(256, self.out_shape).to(device)
+            torch.nn.Linear(8, 8).to(device),
+            nn.ReLU(),
+            torch.nn.Linear(8, 8).to(device),
+            nn.ReLU(),
+            torch.nn.Linear(8, self.out_shape).to(device)
         ).to(device)
 
     def conv_block(self, in_channels, num_layers):
@@ -63,7 +66,7 @@ class VGGNumLayers2(nn.Module):
 
         return nn.Sequential(
             nn.Sequential(*conv_layers),
-            nn.MaxPool1d(self.max_pool),
+            nn.AvgPool1d(self.max_pool),
             nn.BatchNorm1d(out_channels)
         ).to(device)
 
@@ -80,7 +83,7 @@ class VGGNumLayers2(nn.Module):
 
         return nn.Sequential(
             nn.Sequential(*conv_layers),
-            nn.MaxPool1d(self.max_pool),
+            nn.AvgPool1d(self.max_pool),
             nn.BatchNorm1d(out_channels)
         ).to(device)
 
@@ -110,18 +113,18 @@ class VGGNumLayers2(nn.Module):
         return x
 
     def name(self):
-        return "{}_k{}_c{}_l{}_m{}".format(VGGNumLayers2.basename(),
+        return "{}_k{}_c{}_l{}_m{}".format(VGGNumLayers6.basename(),
                                            self.kernel_size, self.channel_size, self.num_layers,
                                            self.max_pool)
 
     @staticmethod
     def save_name(args):
-        return "{}_k{}_c{}_l{}_m{}".format(VGGNumLayers2.basename(), args['kernel_size'],
+        return "{}_k{}_c{}_l{}_m{}".format(VGGNumLayers6.basename(), args['kernel_size'],
                                            args['channel_size'], args['num_layers'], args['max_pool'])
 
     @staticmethod
     def basename():
-        return VGGNumLayers2.__name__
+        return VGGNumLayers6.__name__
 
     def save(self, path):
         torch.save({
@@ -138,7 +141,7 @@ class VGGNumLayers2(nn.Module):
     def load_model(file):
         checkpoint = torch.load(file)
 
-        model = VGGNumLayers2(input_shape=checkpoint['input_shape'],
+        model = VGGNumLayers6(input_shape=checkpoint['input_shape'],
                               out_shape=checkpoint['out_shape'],
                               kernel_size=checkpoint['kernel_size'],
                               channel_size=checkpoint['channel_size'],
@@ -149,7 +152,7 @@ class VGGNumLayers2(nn.Module):
 
     @staticmethod
     def init(args):
-        return VGGNumLayers2(out_shape=args['n_classes'],
+        return VGGNumLayers6(out_shape=args['n_classes'],
                              input_shape=args['input_shape'],
                              kernel_size=args['kernel_size'],
                              num_layers=args['num_layers'],

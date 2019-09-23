@@ -24,17 +24,17 @@ if __name__ == "__main__":
     unmask = False
     desync = 0
     use_noise_data = False
-    normalize = True
+    normalize = False
     save_predictions = True
     attack_size = 10000
     train_sizes = [45000]
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["VGGNumLayers"]
-    use_hw = True
-    kernel_size = 20
-    channel_size = 64
+    network_names = ["VGGNumLayers6"]
+    use_hw = False
+    kernel_size = 7
+    channel_size = 128
     num_layers = 1
     max_pool = 5
     spread_factor = 1
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     epochs = 75
     batch_size = 100
     lr = 0.0001
-    scheduler = None  # "CyclicLR"
+    scheduler = None # "CyclicLR"
     scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""
