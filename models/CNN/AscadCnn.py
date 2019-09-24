@@ -38,7 +38,8 @@ class AscadCnn(nn.Module):
         # CLASSIFICATION BLOCK #
         ########################
         self.classification_block = nn.Sequential(
-            torch.nn.Linear(10752, 4096).to(device),
+            # torch.nn.Linear(10752, 4096).to(device), # For Ascad Keys
+            torch.nn.Linear(5120, 4096).to(device),
             nn.ReLU(),
             torch.nn.Linear(4096, 4096).to(device),
             nn.ReLU(),

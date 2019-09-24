@@ -31,7 +31,7 @@ if __name__ == "__main__":
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["VGGNumLayers6"]
+    network_names = ["AscadCnn"]
     use_hw = False
     kernel_size = 7
     channel_size = 128
