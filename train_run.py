@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     # Architecture settings
     network_names = ["SpreadV3"]
-    use_hw = False
+    use_hw = True
     kernel_size = 7
     channel_size = 128
     num_layers = 1

@@ -388,6 +388,8 @@ def load_random_delay_npy(args):
 
     x_train = x_train[args['start']:args['start'] + args.get('size')]
     y_train = y_train[args['start']:args['start'] + args.get('size')]
+    if args['use_hw']:
+        y_train = np.array([HW[int(y_train[i])] for i in range(len(y_train))])
 
     y_train = np.reshape(y_train, (args.get('size')))
     return x_train, y_train, None

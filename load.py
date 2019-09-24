@@ -15,8 +15,8 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD_KEYS
-    train_size = 5000
+    data_set = DataSet.RANDOM_DELAY
+    train_size = 40000
     attack_size = 9000
     validation_size = 1000
     runs = [x for x in range(5)]
