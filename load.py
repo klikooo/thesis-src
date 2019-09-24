@@ -15,9 +15,9 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD
-    train_size = 40000
-    attack_size = 10000
+    data_set = DataSet.ASCAD_KEYS
+    train_size = 5000
+    attack_size = 9000
     validation_size = 1000
     runs = [x for x in range(5)]
     use_hw = False
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     channel_sizes = [128]
     num_layers = [1]
     max_pool = 5
-    spread_factor = 9
+    spread_factor = 6
 
     # Hyper parameters
     epochs = 80

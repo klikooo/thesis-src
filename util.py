@@ -1005,33 +1005,28 @@ def load_test_random_delay_large(args):
 
 
 def load_test_generic(args):
-    loader = load_data_set(args.data_set)
-    total_x_attack, total_y_attack, plain = loader({'use_hw': args.use_hw,
-                                                    'traces_path': args.traces_path,
-                                                    'raw_traces': args.raw_traces,
-                                                    'start': args.train_size + args.validation_size,
-                                                    'size': args.attack_size,
-                                                    'domain_knowledge': True,
-                                                    'use_noise_data': args.use_noise_data,
-                                                    'data_set': args.data_set,
-                                                    'noise_level': args.noise_level})
+    loader = load_data_set(args['data_set'])
+    total_x_attack, total_y_attack, plain = loader(args)
     _dk_plain = None
     if plain is not None:
         _dk_plain = torch.from_numpy(plain).cuda()
+
+    print(total_y_attack)
+    print(np.shape(total_y_attack))
     print('Loading key guesses')
 
     ####################################
     # Load the key guesses and the key #
     ####################################
-    data_set_name = str(args.data_set)
+    data_set_name = str(args['data_set'])
     _key_guesses = load_csv('{}/{}/Value/key_guesses_ALL_transposed.csv'.format(
-        args.traces_path,
+        args['traces_path'],
         data_set_name),
         delimiter=' ',
         dtype=np.int,
-        start=args.train_size + args.validation_size,
-        size=args.attack_size)
-    _real_key = load_csv('{}/{}/secret_key.csv'.format(args.traces_path, data_set_name),
+        start=args['train_size'] + args['validation_size'],
+        size=args['attack_size'])
+    _real_key = load_csv('{}/{}/secret_key.csv'.format(args['traces_path'], data_set_name),
                          dtype=np.int)
 
     _x_attack = total_x_attack

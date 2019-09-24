@@ -118,7 +118,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
         s_dense_spread = copy.deepcopy(setting_dense_batch)
         s_dense_spread.update({
-            # "experiment": '2',
+            "experiment": '2',
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": ["h"],
@@ -139,11 +139,14 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
     network_settings = {
         # "DenseNorm": settings_spread_norm,
-        "DenseBatch": settings_dense_batch,
+        # "DenseBatch": settings_dense_batch,
         "SpreadV3": settings_spread_v3,
         # "SpreadNet": settings_spread,
         # "DenseNet": settings_mlp_best
     }
+    if train_size == 1000 or train_size == 40000:
+        network_settings.update({"DenseBatch": settings_dense_batch})
+
     plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size, show_acc=False, show_loss=False)
     if show:
         plt.show()
