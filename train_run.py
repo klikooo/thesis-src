@@ -13,37 +13,37 @@ if __name__ == "__main__":
     e_print(' '.join(sys.argv))
 
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    model_save_path = '/media/rico/Data/TU/thesis/runs/'
+    model_save_path = '/media/rico/Data/TU/thesis/runs2/'
 
     subkey_index = 2
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD_NORM
-    runs = 1
-    unmask = False
+    data_set = DataSet.ASCAD
+    runs = 5
+    unmask = True
     desync = 0
     use_noise_data = False
     normalize = False
     save_predictions = True
     attack_size = 10000
-    train_sizes = [45000]
+    train_sizes = [40000]
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["AscadCnn"]
-    use_hw = False
+    network_names = ["DenseBatch"]
+    use_hw = True
     kernel_size = 7
     channel_size = 128
     num_layers = 1
     max_pool = 5
-    spread_factor = 1
+    spread_factor = 9
 
     # Hyper parameters
-    epochs = 75
+    epochs = 80
     batch_size = 100
     lr = 0.0001
-    scheduler = None # "CyclicLR"
+    scheduler = None  # "CyclicLR"
     scheduler_args = ""  # {"max_lr": 0.001, "base_lr": lr}
     loss_function = nn.CrossEntropyLoss()
     init_weights = ""

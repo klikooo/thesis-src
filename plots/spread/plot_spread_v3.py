@@ -38,7 +38,8 @@ setting = {"experiment": '',
            }
 
 
-def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size=1000, font_size=18):
+def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size=1000, font_size=18,
+                 change_run=''):
     setting_spread = copy.deepcopy(setting)
     setting_spread.update({"network_name": "SpreadNet",
                            "line_title2": "$Spread_{PH}$",
@@ -97,7 +98,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
         s_spread_v3 = copy.deepcopy(setting_spreadv3)
         s_spread_v3.update({
-            "experiment": "",
+            "experiment": change_run,
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": [">"],
@@ -117,6 +118,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
         s_dense_spread = copy.deepcopy(setting_dense_batch)
         s_dense_spread.update({
+            # "experiment": '2',
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": ["h"],
@@ -137,7 +139,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
     network_settings = {
         # "DenseNorm": settings_spread_norm,
-        # "DenseBatch": settings_dense_batch,
+        "DenseBatch": settings_dense_batch,
         "SpreadV3": settings_spread_v3,
         # "SpreadNet": settings_spread,
         # "DenseNet": settings_mlp_best
@@ -163,7 +165,18 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/spreadv3"
 hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
-plot_factors([3, 6, 9], hw_save_name.format(1000), [-5, 5000], [0, 256], show=False, font_size=22, train_size=1000)
-plot_factors([3, 6, 9], hw_save_name.format(5000), [-5, 5000], [0, 256], show=False, font_size=22, train_size=5000)
-plot_factors([3, 6, 9], hw_save_name.format(40000), [-1, 20], [0, 80], show=False, font_size=22, train_size=40000)
-plot_factors([3, 6, 9], hw_save_name.format(200), [-5, 5000], [0, 256], show=False, font_size=22, train_size=200)
+plot_factors([3, 6, 9], hw_save_name.format(1000), [0, 5000], [0, 256], show=False, font_size=22, train_size=1000)
+plot_factors([3, 6, 9], hw_save_name.format(5000), [0, 5000], [0, 256], show=False, font_size=22, train_size=5000)
+plot_factors([3, 6, 9], hw_save_name.format(40000), [0, 20], [0, 80], show=False, font_size=22, train_size=40000)
+plot_factors([3, 6, 9], hw_save_name.format(200), [0, 5000], [0, 256], show=False, font_size=22, train_size=200)
+
+# Set the global setting to ID
+setting.update({"use_hw": False})
+
+# Test for HW with different training sizes
+path = "/media/rico/Data/TU/thesis/report/img/spread/spreadv3"
+id_save_name = f"{path}/{data_set}_id_" + "{}.pdf"
+plot_factors([3, 6, 9], id_save_name.format(1000), [0, 5000], [0, 256], show=False, font_size=22,
+             train_size=1000, change_run='2')
+plot_factors([3, 6, 9], id_save_name.format(40000), [0, 10], [0, 20], show=False, font_size=22,
+             train_size=40000, change_run='2')

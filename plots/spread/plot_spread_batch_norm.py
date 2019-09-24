@@ -38,7 +38,8 @@ setting = {"experiment": '',
            }
 
 
-def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size=1000, font_size=18):
+def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size=1000, font_size=18,
+                 change_run=''):
     setting_spread = copy.deepcopy(setting)
     setting_spread.update({"network_name": "SpreadNet",
                            "line_title2": "$Spread_{PH}$",
@@ -82,6 +83,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": [" "],
+            "experiment": change_run,
             "line_title2": s_spread_norm['line_title2'] + " sf " + str(spread_factor)
         })
         settings_spread_norm.append(s_spread_norm)
@@ -101,6 +103,7 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
             "spread_factor": spread_factor,
             "plot_colors": [color],
             "plot_markers": ["h"],
+            "experiment": change_run,
             "line_title2": s_dense_spread['line_title2'] + " sf " + str(spread_factor)
         })
         settings_dense_batch.append(s_dense_spread)
@@ -144,5 +147,18 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
 hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
-plot_factors([3, 6, 9], hw_save_name.format(1000), [-1, 40], [0, 101], show=False, font_size=22)
-# plot_factors([6], hw_save_name.format(40000), [-1, 40], [0, 200], show=False, font_size=22, train_size=40000, )
+plot_factors([3, 6, 9], hw_save_name.format(1000), [0, 40], [0, 101], show=False, font_size=22)
+
+# Set the global setting to ID
+setting.update({"use_hw": False})
+
+# Test for HW with different training sizes
+path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
+id_save_name = f"{path}/{data_set}_id_" + "{}.pdf"
+plot_factors([3, 6, 9], id_save_name.format(1000), [0, 1000], [0, 140], show=False, change_run='2')
+
+path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
+id_save_name = f"{path}/{data_set}_id_" + "{}.pdf"
+plot_factors([3, 6, 9], id_save_name.format(40000), [0, 10], [0, 20], show=False,
+             train_size=40000, change_run='2')
+

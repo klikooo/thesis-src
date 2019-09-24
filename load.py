@@ -7,7 +7,7 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs/'
+    models_path = '/media/rico/Data/TU/thesis/runs2/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
@@ -15,33 +15,33 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD_NORM
-    train_size = 45000
+    data_set = DataSet.ASCAD
+    train_size = 40000
     attack_size = 10000
     validation_size = 1000
+    runs = [x for x in range(5)]
     use_hw = False
     desync = 0
-    unmask = False
+    unmask = True
     use_noise_data = False
     noise_level = 0.0
 
     # GE settings
-    runs = [x for x in range(1)]
     rank_step = 1
     num_exps = 100
     load_predictions = True
     save_predictions = False
 
     # Architecture settings
-    network_names = ['VGGNumLayers6']
+    network_names = ['SpreadV3']
     kernel_sizes = [7]
     channel_sizes = [128]
     num_layers = [1]
     max_pool = 5
-    spread_factor = 1
+    spread_factor = 9
 
     # Hyper parameters
-    epochs = 75
+    epochs = 80
     batch_size = 100
     lr = 0.0001
     init_weights = ""
