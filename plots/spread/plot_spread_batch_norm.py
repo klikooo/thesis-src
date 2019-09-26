@@ -76,6 +76,8 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
     settings_spread = []
     settings_dense_batch = []
     colors = ["r", "g", "b", "y", "g", "b", "g", "r"]
+    colors2 = ["y", "black", "pink"]
+    i = 0
     for spread_factor, color in zip(spread_factors, colors):
         print(spread_factor)
         s_spread_norm = copy.deepcopy(setting_spread_norm)
@@ -101,12 +103,13 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
         s_dense_spread = copy.deepcopy(setting_dense_batch)
         s_dense_spread.update({
             "spread_factor": spread_factor,
-            "plot_colors": [color],
+            "plot_colors": [colors2[i]],
             "plot_markers": ["h"],
             "experiment": change_run,
             "line_title2": s_dense_spread['line_title2'] + " sf " + str(spread_factor)
         })
         settings_dense_batch.append(s_dense_spread)
+        i += 1
 
     settings_mlp_best = []
     s_mlp_best = copy.deepcopy(setting_mlp_best)
@@ -121,10 +124,10 @@ def plot_factors(spread_factors, save_name, x_lim, y_lim, show=False, train_size
 
     # TODO: Dense Batch should have spread factors right?
     network_settings = {
-        "DenseNorm": settings_spread_norm,
+        "DenseNorm": settings_spread_norm, #Spread V2
         "DenseBatch": settings_dense_batch,
-        # "SpreadNet": settings_spread,
-        # "DenseNet": settings_mlp_best
+        # "SpreadNet": settings_spread, # Spread arch
+        # "DenseNet": settings_mlp_best # MLP Best
     }
     plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size, show_acc=False, show_loss=False)
     if show:
@@ -148,6 +151,8 @@ setting.update({"use_hw": True})
 path = "/media/rico/Data/TU/thesis/report/img/spread/batch_norm"
 hw_save_name = f"{path}/{data_set}_hw_" + "{}.pdf"
 plot_factors([3, 6, 9], hw_save_name.format(1000), [0, 40], [0, 101], show=False, font_size=22)
+plot_factors([3, 6, 9], hw_save_name.format(40000), [0, 40], [0, 101], show=False, font_size=22,
+             train_size=40000, change_run='2')
 
 # Set the global setting to ID
 setting.update({"use_hw": False})

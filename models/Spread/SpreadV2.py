@@ -6,6 +6,7 @@ import numpy as np
 from util import device
 
 
+# NOTE THIS IS NOT THE SPREAD V2 AS IN MY REPORT
 class SpreadV2(nn.Module):
     def __init__(self, spread_factor, input_shape, out_shape):
         super(SpreadV2, self).__init__()

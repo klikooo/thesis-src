@@ -62,22 +62,37 @@ def plot_train_size(train_size, save_name, x_lim, y_lim, show=False, font_size=1
     setting_spread_v3.update({"network_name": "SpreadV3",
                               "line_title2": "$Spread_{V3}$",
                               "plot_colors": ["y"],
-                              "experiment": '',
+                              "experiment": '2',
                               "train_size": train_size})
 
-    setting_dense_bn = copy.deepcopy(setting)
-    setting_dense_bn.update({"network_name": "DenseNorm",
-                             "line_title2": "$Dense_{BN}$",
-                             "plot_colors": ["brown"],
-                             "experiment": '',
-                             "train_size": train_size})
+    settings_spread_v3 = []
+    settings_dense_spread = []
+    s_dense_spread = copy.deepcopy(setting)  # DenseBatch
+    s_dense_spread.update({
+        "network_name": "DenseBatch",
+        "plot_colors": ["black"],
+        "experiment": '2',
+        "train_size": train_size,
+        "line_title2": "$DenseBatch_{RT}$"
+    })
+    for (sf, m) in [(3, "H"),  (6, "<"), (9, "*")]:
+        s_spread = copy.deepcopy(setting_spread_v3)
+        s_spread.update({"spread_factor": sf,
+                         "line_title2": setting_spread_v3['line_title2'] + f" sf {sf}",
+                         "plot_markers": [m]})
+        settings_spread_v3.append(s_spread)
 
+        s_dense = copy.deepcopy(s_dense_spread)
+        s_dense.update({"spread_factor": sf,
+                        "line_title2": s_dense_spread['line_title2'] + f" sf {sf}",
+                        "plot_markers": [m]})
+        settings_dense_spread.append(s_dense)
     network_settings = {
-        "SpreadNet": [setting_spread],
-        "DenseNet": [setting_dense],
-        "DenseSpreadNet": [setting_dense_spread],
-        "SpreadV3": [setting_spread_v3],
-        "DenseNorm": [setting_dense_bn],
+        "SpreadNet": [setting_spread],  # Spread
+        "DenseNet": [setting_dense],  # MLP BEST
+        "DenseSpreadNet": [setting_dense_spread],  # MLP RT
+        "SpreadV3": settings_spread_v3,
+        "DenseBatch": settings_dense_spread
     }
     plot.create_plot(network_settings, save_name, x_lim, y_lim, font_size=font_size)
     if show:
@@ -94,9 +109,7 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/ASCAD_masked_spreadv3"
 hw_save_name = f"{path}/hw_" + "{}.pdf"
-# plot_train_size(1000, hw_save_name.format(1000), [-1, 9000], [0, 256])
-# plot_train_size(5000, hw_save_name.format(5000), [-1, 9000], [0, 256])
-# plot_train_size(20000, hw_save_name.format(20000), [-1, 9000], [0, 256])
+plot_train_size(1000, hw_save_name.format(1000), [-1, 9000], [0, 256])
 plot_train_size(40000, hw_save_name.format(40000), [-1, 9000], [0, 256])
 
 ###############
@@ -108,7 +121,6 @@ setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
 id_save_name = f"{path}/id_" + "{}.pdf"
-# plot_train_size(1000, id_save_name.format(1000), [-1, 9000], [0, 256])
-# plot_train_size(5000, id_save_name.format(5000), [-1, 9000], [0, 256])
-# plot_train_size(20000, id_save_name.format(20000), [-1, 9000], [0, 256])
-# plot_train_size(40000, id_save_name.format(40000), [-1, 9000], [0, 256])
+plot_train_size(1000, id_save_name.format(1000), [-1, 9000], [0, 256])
+plot_train_size(40000, id_save_name.format(40000), [-1, 9000], [0, 256], show=True)
+plt.show()

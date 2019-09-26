@@ -6,6 +6,7 @@ import numpy as np
 from util import device
 
 
+# NOTE: THIS IS SPREAD V2 AS IN THE REPORT
 class DenseNorm(nn.Module):
     def __init__(self, spread_factor, input_shape, out_shape):
         super(DenseNorm, self).__init__()

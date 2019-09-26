@@ -13,6 +13,7 @@ def get_ge(net_name, model_parameters, load_parameters):
     for key, value in load_parameters.items():
         setattr(args, key, value)
     folder = "/media/rico/Data/TU/thesis/runs{}/{}".format(args.experiment, util.generate_folder_name(args))
+    print(folder)
 
     ge_x, ge_y = [], []
     lta, lva, ltl, lvl = [], [], [], []
@@ -83,7 +84,6 @@ def create_plot(network_settings, fig_save_name,
             for cs in setting['channel_sizes']:
                 model_params.update({"channel_size": cs})
                 for i in range(len(setting['num_layers'])):
-                    print(cs)
                     model_params.update({"kernel_size": setting['kernel_sizes'][i]})
                     model_params.update({"num_layers": setting['num_layers'][i]})
                     plot_colors.append(setting['plot_colors'][i])
@@ -91,56 +91,56 @@ def create_plot(network_settings, fig_save_name,
     ###############################################
     # Plot the runs of the same model in one plot #
     ###############################################
-    for model_name, model_settings in network_settings.items():
-        for model_setting in model_settings:
-            # Plot GE
-            plt.figure()
-            plt.xlabel('Number of traces')#, fontsize=16)
-            plt.ylabel('Guessing Entropy')#, fontsize=16)
-            plt.grid(True)
-            axes = plt.gca()
-            axes.set_ylim([0, 256])
-            plt.title("{} - {}".format(model_name, model_setting['title']))
-
-            # print(model_setting)
-
-            for i in range(len(model_setting['ge_x'])):
-                plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
-                         label="{} - {}".format(model_name, model_setting['line_title'][i]),
-                         color=model_setting['plot_colors'][i])
-            plt.legend()
-
-            # Plot accuracy if asked for
-            if show_acc:
-                plt.figure()
-                plt.title("Accuracy during training {} - {}".format(model_name, model_setting['title']))
-                plt.xlabel('Epoch')
-                plt.ylabel('Accuracy')
-                plt.grid(True)
-                for i in range(len(model_setting['ge_x'])):
-                    plt.plot(model_setting['ta'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
-                             color='orange', marker=model_setting['plot_markers'][i])
-                    plt.plot(model_setting['va'][i] * 100, label="Validation {}".format(model_setting['line_title'][i]),
-                             color='green', marker=model_setting['plot_markers'][i])
-                plt.legend()
-
-            if show_loss:
-                plt.figure()
-                plt.title("Loss during training {} - {}".format(model_name, model_setting['title']))
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.grid(True)
-                for i in range(len(model_setting['ge_x'])):
-                    plt.plot(model_setting['tl'][i], label="Train {}".format(model_setting['line_title'][i]),
-                             color='orange', marker=model_setting['plot_markers'][i])
-                    plt.plot(model_setting['vl'][i], label="Validation {}".format(model_setting['line_title'][i]),
-                             color='green', marker=model_setting['plot_markers'][i])
-                plt.legend()
-
+    # for model_name, model_settings in network_settings.items():
+    #     for model_setting in model_settings:
+    #         # Plot GE
+    #         plt.figure()
+    #         plt.xlabel('Number of traces')#, fontsize=16)
+    #         plt.ylabel('Guessing Entropy')#, fontsize=16)
+    #         plt.grid(True)
+    #         axes = plt.gca()
+    #         axes.set_ylim([0, 256])
+    #         plt.title("{} - {}".format(model_name, model_setting['title']))
+    #
+    #         # print(model_setting)
+    #
+    #         for i in range(len(model_setting['ge_x'])):
+    #             plt.plot(model_setting['ge_x'][i], model_setting['ge_y'][i],
+    #                      label="{} - {}".format(model_name, model_setting['line_title'][i]),
+    #                      color=model_setting['plot_colors'][i])
+    #         plt.legend()
+    #
+    #         # Plot accuracy if asked for
+    #         if show_acc:
+    #             plt.figure()
+    #             plt.title("Accuracy during training {} - {}".format(model_name, model_setting['title']))
+    #             plt.xlabel('Epoch')
+    #             plt.ylabel('Accuracy')
+    #             plt.grid(True)
+    #             for i in range(len(model_setting['ge_x'])):
+    #                 plt.plot(model_setting['ta'][i] * 100, label="Train {}".format(model_setting['line_title'][i]),
+    #                          color='orange', marker=model_setting['plot_markers'][i])
+    #                 plt.plot(model_setting['va'][i] * 100, label="Validation {}".format(model_setting['line_title'][i]),
+    #                          color='green', marker=model_setting['plot_markers'][i])
+    #             plt.legend()
+    #
+    #         if show_loss:
+    #             plt.figure()
+    #             plt.title("Loss during training {} - {}".format(model_name, model_setting['title']))
+    #             plt.xlabel('Epoch')
+    #             plt.ylabel('Loss')
+    #             plt.grid(True)
+    #             for i in range(len(model_setting['ge_x'])):
+    #                 plt.plot(model_setting['tl'][i], label="Train {}".format(model_setting['line_title'][i]),
+    #                          color='orange', marker=model_setting['plot_markers'][i])
+    #                 plt.plot(model_setting['vl'][i], label="Validation {}".format(model_setting['line_title'][i]),
+    #                          color='green', marker=model_setting['plot_markers'][i])
+    #             plt.legend()
+    #
         # Plot all GE in same plot
 
     plt.figure()
-    plt.xlabel('Number of traces') #, fontsize=font_size)
+    plt.xlabel('Attack traces') #, fontsize=font_size)
     plt.ylabel('Guessing Entropy') #, fontsize=font_size)
     plt.grid(True)
     axes = plt.gca()
@@ -156,11 +156,11 @@ def create_plot(network_settings, fig_save_name,
                          label=f"{model_setting['line_title2']}",
                          color=model_setting['plot_colors'][i],
                          marker=model_setting['plot_markers'][i],
-                         markevery=0.1)
+                         markevery=0.2)
     plt.legend()
     # print(dir(mng))
     # exit()
     figure = plt.gcf()
-    i = 1
+    # i = 1
     # figure.set_size_inches(16*i, 9*i)
     figure.savefig(fig_save_name)

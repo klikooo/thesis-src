@@ -57,11 +57,46 @@ def plot_train_size(train_size, save_name, x_lim, y_lim, show=False):
                                  "line_title2": "$MLP_{RT}$",
                                  "plot_colors": ["b"],
                                  "train_size": train_size})
+    s_spread_v3 = copy.deepcopy(setting)
+    s_spread_v3.update({
+        "experiment": '2',
+        "network_name": "SpreadV3",
+        "line_title2": "$Spread_{V3}$",
+        "plot_colors": ["y"],
+        "plot_marker": [" "],
+        "train_size": train_size
+    })
+    s_dense_spread = copy.deepcopy(setting)
+    s_dense_spread.update({
+        "plot_colors": ["black"],
+        "plot_markers": ["H", "<", "*"],
+        "experiment": '2',
+        "line_title2": "$DenseBatch_{RT}$"
+    })
+
     network_settings = {
         "SpreadNet": [setting_spread],
         "DenseNet": [setting_dense],
         "DenseSpreadNet": [setting_dense_spread]
     }
+    if train_size == 1000 or train_size == 10000 or train_size == 40000:
+        settings_spread = []
+        settings_dense_spread = []
+        for (sf, m) in [(3, "H"),  (6, "<"), (9, "*")]:
+            s_spread = copy.deepcopy(s_spread_v3)
+            s_spread.update({"spread_factor": sf,
+                             "line_title2": s_spread_v3['line_title2'] + f" sf {sf}",
+                             "plot_markers": [m]})
+            settings_spread.append(s_spread)
+
+            s_dense = copy.deepcopy(s_dense_spread)
+            s_dense.update({"spread_factor": sf,
+                            "line_title2": s_dense_spread['line_title2'] + f" sf {sf}",
+                            "plot_markers": [m]})
+            settings_dense_spread.append(s_dense)
+
+        network_settings.update({"SpreadV3": settings_spread,
+                                "DenseBatch": settings_dense_spread})
     plot.create_plot(network_settings, save_name, x_lim, y_lim)
     if show:
         plt.plot()
@@ -77,10 +112,10 @@ setting.update({"use_hw": True})
 # Test for HW with different training sizes
 path = "/media/rico/Data/TU/thesis/report/img/spread/RD"
 hw_save_name = f"{path}/hw_" + "{}.pdf"
-plot_train_size(1000, hw_save_name.format(1000), [-1, 4000], [0, 256])
-plot_train_size(5000, hw_save_name.format(5000), [-1, 4000], [0, 256])
-plot_train_size(20000, hw_save_name.format(20000), [-1, 4000], [0, 256])
-plot_train_size(40000, hw_save_name.format(40000), [-1, 4000], [0, 256])
+plot_train_size(1000, hw_save_name.format(1000), [-1, 5000], [0, 256])
+plot_train_size(5000, hw_save_name.format(5000), [-1, 5000], [0, 256])
+plot_train_size(20000, hw_save_name.format(20000), [-1, 5000], [0, 256])
+plot_train_size(40000, hw_save_name.format(40000), [-1, 5000], [0, 256])
 
 
 ###############
@@ -92,8 +127,8 @@ setting.update({"use_hw": False})
 
 # Test for ID with different training sizes
 id_save_name = f"{path}/id_" + "{}.pdf"
-plot_train_size(1000, id_save_name.format(1000), [-1, 4000], [0, 256])
-plot_train_size(5000, id_save_name.format(5000), [-1, 4000], [0, 256])
-plot_train_size(20000, id_save_name.format(20000), [-1, 4000], [0, 256])
-plot_train_size(40000, id_save_name.format(40000), [-1, 4000], [0, 256])
+plot_train_size(1000, id_save_name.format(1000), [-1, 5000], [0, 256])
+plot_train_size(5000, id_save_name.format(5000), [-1, 5000], [0, 256])
+plot_train_size(20000, id_save_name.format(20000), [-1, 5000], [0, 256])
+plot_train_size(40000, id_save_name.format(40000), [-1, 5000], [0, 256])
 

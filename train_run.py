@@ -19,19 +19,19 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.RANDOM_DELAY
+    data_set = DataSet.ASCAD
     runs = 5
     unmask = True
     desync = 0
     use_noise_data = False
     normalize = False
     save_predictions = True
-    attack_size = 9000
+    attack_size = 10000
     train_sizes = [40000]
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["SpreadV3"]
+    network_names = ["DenseNorm"]
     use_hw = True
     kernel_size = 7
     channel_size = 128

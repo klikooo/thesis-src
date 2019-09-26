@@ -147,6 +147,7 @@ def run(args):
 
         # Create + save predictions
         if args.create_predictions:
+            network.eval()
             predictions, acc = accuracy(network, x_test, y_test, plain_test)
             predictions_save_file = f'{path}/predictions_{filename}'
             np.save(predictions_save_file, predictions.cpu().numpy())
