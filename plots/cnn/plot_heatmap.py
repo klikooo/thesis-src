@@ -2,7 +2,6 @@ import plotly.graph_objects as go
 import os
 import util
 import numpy as np
-import plotly
 
 hit_worst = False
 
@@ -115,7 +114,6 @@ def generate_annotations(data, x_label, y_label):
         # family="Courier New, monospace",
         size=14,
         color="#000000")
-
     for n, row in enumerate(data):
         for m, val in enumerate(row):
             print(f"{type(data[n][m])} - {data[n][m]}")
@@ -167,6 +165,9 @@ if __name__ == "__main__":
             color_worst = "#000000" if hit_worst else "#4CC01F"
             z = np.transpose(get_sorted(minimal))
             annotations = generate_annotations(z, x_labels, y_labels)
+            print(x_labels)
+            print(y_labels)
+            exit()
 
             fig = go.Figure(data=go.Heatmap(
                 z=z,

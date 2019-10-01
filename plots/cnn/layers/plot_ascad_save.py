@@ -223,7 +223,7 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
                 plt.grid(True)
                 plt.xlabel('Epoch')
                 plt.ylabel('Loss')
-                plt.title("Loss {} - {}".format(model_name, model_setting['title']))
+                # plt.title("Loss {} - {}".format(model_name, model_setting['title']))
                 iter_colors = itertools.cycle(colors)
                 for i in range(len(ks_validation_loss)):
                     color = next(iter_colors)
@@ -250,7 +250,7 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
                 plt.grid(True)
                 plt.xlabel('Epoch')
                 plt.ylabel('Accuracy')
-                plt.title("Accuracy {} - {}".format(model_name, model_setting['title']))
+                # plt.title("Accuracy {} - {}".format(model_name, model_setting['title']))
                 iter_colors = itertools.cycle(colors)
                 for i in range(len(ks_validation_acc)):
                     color = next(iter_colors)
@@ -273,7 +273,7 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces')
+            plt.xlabel('Attack traces')
             plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
@@ -281,7 +281,7 @@ def plot_ascad(hw, desync, noise_level, x_limits, y_limits, show=True, file_exte
             axes.set_xlim(x_limits[i_counter])
             i_counter += 1
 
-            plt.title("{} - {}".format(model_name, model_setting['title']))
+            # plt.title("{} - {}".format(model_name, model_setting['title']))
 
             color = iter(util.cm(len(model_setting['ge_x'])))
             line_marker = util.line_marker()

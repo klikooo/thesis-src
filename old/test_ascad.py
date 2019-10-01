@@ -2,33 +2,8 @@ from keras.models import load_model
 import util
 import numpy as np
 import pprint
+from test import create_key_probabilities, test_with_key_probabilities
 
-
-def test_with_key_guess_p(key_guesses, predictions, use_hw, real_key,
-                          attack_size=10000,
-                          ):
-    ranks = np.zeros(attack_size)
-    probabilities = np.zeros(256)
-    if not use_hw:
-        for trace_num in range(attack_size):
-            for key_guess in range(256):
-                sbox_out = key_guesses[trace_num][key_guess]
-                if predictions[trace_num][sbox_out] > 0.0:
-                    probabilities[key_guess] += np.log(predictions[trace_num][sbox_out])
-
-            res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
-            ranks[trace_num] = res
-    else:
-        for trace_num in range(attack_size):
-            for key_guess in range(256):
-                sbox_out = key_guesses[trace_num][key_guess]
-                probabilities[key_guess] += predictions[trace_num][util.HW[sbox_out]]
-            res = np.argmax(np.argsort(probabilities)[::-1] == real_key)
-            ranks[trace_num] = res
-
-    print('Key guess: {}'.format(np.argmax(probabilities)))
-
-    return np.array(range(1, attack_size + 1)), ranks
 
 
 def accuracy(predi, y):
@@ -42,43 +17,49 @@ def accuracy(predi, y):
     return z
 
 
-model = load_model('cnn2-ascad-desync0.h5')
+model = load_model('test_model_cnn')
 printer = pprint.PrettyPrinter(indent=2)
 printer.pprint(model.get_config())
 
 hw = False
 num_classes = 9 if hw else 256
-size = 1000
-# For testing for overfit on training data
-# x, y, _ = util.load_ascad_keys({
-#     "data_set": util.DataSet.ASCAD_KEYS,
-#     "traces_path": "/media/rico/Data/TU/thesis/data/",
-#     "use_hw": hw,
-#     "unmask": False,
-#     "size": size,
-#     "start": 0
-# })
-# import sys
-# np.set_printoptions(threshold=sys.maxsize)
+size = 10000
 
-x, y, key_guesses, key, _ = util.load_ascad_keys_test({
-    "data_set": util.DataSet.ASCAD_KEYS,
+x, y, _, key, key_guesses = util.load_ascad_test_traces({
+    "data_set": util.DataSet.ASCAD,
     "traces_path": "/media/rico/Data/TU/thesis/data/",
     "use_hw": hw,
     "unmask": False,
-    "size": size
+    "size": size,
+    "desync": 0,
+    "sub_key_index": 2,
 })
 
 x = x.reshape((x.shape[0], x.shape[1], 1))
 predictions = model.predict(x)
 acc = accuracy(predictions, y)
 ranks = []
+
+print("Key guesses")
+print(np.shape(key_guesses))
+
+print("Predictions")
+print(predictions)
+print(np.shape(predictions))
+
+
+key_probabilities = create_key_probabilities(key_guesses, predictions, size, hw)
+print("Key proba")
+print(key_probabilities)
+print(np.shape(key_probabilities))
 for i in range(100):
     permutation = np.random.permutation(size)
     p_key_guesses = key_guesses[permutation]
     p_predictions = predictions[permutation]
 
-    x_rank, y_rank = test_with_key_guess_p(p_key_guesses, p_predictions, hw, key, attack_size=size)
+    key_probabilities_shuffled = util.shuffle_permutation(permutation, key_probabilities)
+
+    x_rank, y_rank, k_guess = test_with_key_probabilities(key_probabilities_shuffled, key)
     ranks.append(y_rank)
 
 mean_rank = np.mean(ranks, axis=0)

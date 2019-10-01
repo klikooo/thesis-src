@@ -284,10 +284,9 @@ def load_ascad_test_traces(args):
         y_test = np.array([HW[val] for val in y_test])
 
     key = metadata_attack[0]['key'][args['sub_key_index']]
-    key_guesses = np.load('{}/ASCAD/key_guesses_{}masked_{}.npy'.format(
+    key_guesses = np.load('{}/ASCAD/key_guesses_{}masked_0.npy'.format(
         args['traces_path'],
-        'un' if args['unmask'] else '',
-        args['desync']
+        'un' if args['unmask'] else ''
     ))
     return x_test, y_test, plain, key, key_guesses
 

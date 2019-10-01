@@ -47,11 +47,11 @@ if __name__ == "__main__":
         "desync": 0,
         "domain_knowledge": False,
         "use_hw": hw,
-        "unmask": True,
+        "unmask": False,
     })
 
-    x = x[0:20000]
-    y = y[0:20000]
+    x = x[0:40000]
+    y = y[0:40000]
 
     num_classes = 9 if hw else 256
     y_profiling = to_categorical(y, num_classes=256, dtype='int32')
@@ -59,6 +59,7 @@ if __name__ == "__main__":
     callbacks = [save_model]
 
     x = x.reshape((x.shape[0], x.shape[1], 1))
+
     model = cnn_model(num_classes)
     model.fit(x, y_profiling, epochs=75, batch_size=256, callbacks=callbacks,
               validation_split=0.05)

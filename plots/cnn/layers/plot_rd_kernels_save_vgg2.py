@@ -203,7 +203,7 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
         for model_setting in model_settings:
             # Plot GE
             plt.figure()
-            plt.xlabel('Number of traces')
+            plt.xlabel('Attack traces')
             plt.ylabel('Guessing Entropy')
             plt.grid(True)
             axes = plt.gca()
@@ -211,7 +211,7 @@ def plot_rd(noise_level, x_limits, y_limits, show=True, file_extension=""):
             axes.set_xlim(x_limits[i_counter])
             i_counter += 1
 
-            plt.title("{} - {}".format(model_name, model_setting['title']))
+            # plt.title("{} - {}".format(model_name, model_setting['title']))
 
             color = iter(util.cm(len(model_setting['ge_x'])))
             line_marker = util.line_marker()
