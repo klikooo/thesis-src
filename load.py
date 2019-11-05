@@ -7,7 +7,7 @@ from util import DataSet, BoolAction
 
 if __name__ == "__main__":
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    models_path = '/media/rico/Data/TU/thesis/runs2/'
+    models_path = '/media/rico/Data/TU/thesis/runs/'
     # traces_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/student-datasets/'
     # models_path = '/tudelft.net/staff-bulk/ewi/insy/CYS/spicek/rtubbing/'
 
@@ -15,12 +15,12 @@ if __name__ == "__main__":
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD
-    train_size = 40000
-    attack_size = 10000
+    data_set = DataSet.DPA_V4
+    train_size = 1000
+    attack_size = 5000
     validation_size = 1000
     runs = [x for x in range(5)]
-    use_hw = True
+    use_hw = False
     desync = 0
     unmask = True
     use_noise_data = False
@@ -33,12 +33,12 @@ if __name__ == "__main__":
     save_predictions = False
 
     # Architecture settings
-    network_names = ['DenseNorm']
+    network_names = ['DenseBatch']
     kernel_sizes = [5]
     channel_sizes = [32]
     num_layers = [1]
     max_pool = 5
-    spread_factor = 1
+    spread_factor = 6
 
     # Hyper parameters
     epochs = 80

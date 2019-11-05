@@ -13,26 +13,26 @@ if __name__ == "__main__":
     e_print(' '.join(sys.argv))
 
     traces_path = '/media/rico/Data/TU/thesis/data/'
-    model_save_path = '/media/rico/Data/TU/thesis/runs2/'
+    model_save_path = '/media/rico/Data/TU/thesis/runs/'
 
     subkey_index = 2
     raw_traces = True
 
     # Data settings
-    data_set = DataSet.ASCAD
+    data_set = DataSet.DPA_V4
     runs = 5
     unmask = True
     desync = 0
     use_noise_data = False
     normalize = False
     save_predictions = True
-    attack_size = 10000
+    attack_size = 5000
     train_sizes = [40000]
     validation_size = 1000
 
     # Architecture settings
-    network_names = ["DenseNorm"]
-    use_hw = True
+    network_names = ["DenseBatch"]
+    use_hw = False
     kernel_size = 7
     channel_size = 128
     num_layers = 1

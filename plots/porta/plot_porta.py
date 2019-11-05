@@ -47,7 +47,7 @@ def retrieve_data(train_sizes, list_epochs, data_set):
 
 def create_plot_train_sizes(data, train_sizes, epochs, ge):
     plt.figure()
-    plt.xlabel('Traces')
+    plt.xlabel('Attack traces')
     if ge:
         y_label = 'Guessing entropy'
         title = "Guessing entropy"
@@ -74,14 +74,12 @@ def create_plot_train_sizes(data, train_sizes, epochs, ge):
 
 def create_plot_epochs(data, list_epochs, train_size, ge):
     plt.figure()
-    plt.xlabel('Traces')
+    plt.xlabel('Attack traces')
     if ge:
         y_label = 'Guessing entropy'
-        title = "Guessing entropy"
         y_lim = [-5, 140]
     else:
         y_label = "Accuracy"
-        title = "Accuracy"
         y_lim = [0, 100]
     axes = plt.gca()
     axes.set_ylim(y_lim)
@@ -92,7 +90,7 @@ def create_plot_epochs(data, list_epochs, train_size, ge):
         x = data[key]
         # print(x)
         z = np.mean(x, axis=1)
-        plt.plot(list_num_traces, z, label=f"Epochs {epochs}")
+        plt.plot(list_num_traces, z, label=f"{epochs} epochs")
     plt.legend()
     plt.grid(True)
     return plt.gcf()
@@ -104,7 +102,7 @@ def save_fig(fig, path):
 
 
 def run():
-    data_set = util.DataSet.KEYS_1
+    data_set = util.DataSet.KEYS
     train_sizes = [1000, 2000, 5000, 10000, 20000]
     epochs = [10, 25, 50, 75]
     # train_sizes = [20000]
@@ -130,6 +128,7 @@ def run():
         fig_acc = create_plot_train_sizes(id_acc, train_sizes, epoch, ge=False)
         save_fig(fig_ge, path_epochs + f"ge_id_epoch{epoch}.pdf")
         save_fig(fig_acc, path_epochs + f"acc_id_epoch{epoch}.pdf")
+        plt.close("all")
 
         # Hamming weight
         fig_ge = create_plot_train_sizes(hw_ge, train_sizes, epoch, ge=True)
@@ -143,13 +142,14 @@ def run():
         fig_acc = create_plot_epochs(id_acc, epochs, train_size=train_size, ge=False)
         save_fig(fig_ge, path_train_size + f"ge_id_tz{train_size}.pdf")
         save_fig(fig_acc, path_train_size + f"acc_id_tz{train_size}.pdf")
+        plt.close("all")
 
         # Hamming weight
         fig_ge = create_plot_epochs(hw_ge, epochs, train_size=train_size, ge=True)
         fig_acc = create_plot_epochs(hw_acc, epochs, train_size=train_size, ge=False)
         save_fig(fig_ge, path_train_size + f"ge_hw_tz{train_size}.pdf")
         save_fig(fig_acc, path_train_size + f"acc_hw_tz{train_size}.pdf")
-        # plt.show()
+        plt.show()
         plt.close("all")
 
 

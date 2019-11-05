@@ -331,7 +331,8 @@ def load_dpav4(args):
 def load_dpa_npy(args):
     print(args)
 
-    x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    # x_train = np.load('{}/DPAv4/traces/traces_complete.csv.npy'.format(args['traces_path']))
+    x_train = np.load('{}/DPAv4/traces/50000_traces.npy'.format(args['traces_path']))
     x_train = x_train[args['start']:args['start'] + args.get('size')]
     import gc
     gc.collect()
@@ -339,6 +340,10 @@ def load_dpa_npy(args):
     print("Loaded and cut x")
     y_train = np.load('{}/DPAv4/Value/model.csv.npy'.format(args['traces_path']))
     y_train = y_train[args['start']:args['start'] + args.get('size')]
+    if args['use_hw']:
+        y_train = np.array([HW[int(y_train[i])] for i in range(len(y_train))])
+    else:
+        y_train = np.array([int(y_train[i]) for i in range(len(y_train))])
     import gc
     gc.collect()
     return x_train, y_train, None

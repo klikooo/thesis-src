@@ -1,6 +1,6 @@
 from models.Spread.SpreadNet import SpreadNet
 
-from util import save_model, load_data_set, save_loss_acc, generate_folder_name, load_test_data, BColors
+from util import save_model, load_data_set, save_loss_acc, generate_folder_name, load_test_data, BColors, DataSet
 from train import train, train_dk2
 from test import accuracy
 

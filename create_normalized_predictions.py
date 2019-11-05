@@ -39,6 +39,7 @@ def normalize_traces(traces, num_traces_to_normalize):
     scale.fit(to_normalize)
 
     normalized = scale.transform(traces)
+    # normalized = traces  # Use if you want to test with non-normalized traces
     return normalized, z
 
 
@@ -108,19 +109,19 @@ def do(path, traces_path, list_num_traces, num_experiments, runs, hw, data_set):
         util.e_print(f"Avg rank: {avg_ge}")
 
         # Save the files
-        np.save(f'{path}/traces_{num_traces}_avg_accuracy', avg_accuracy)
-        np.save(f'{path}/traces_{num_traces}_avg_ge', avg_ge)
+        # np.save(f'{path}/traces_{num_traces}_avg_accuracy', avg_accuracy)
+        # np.save(f'{path}/traces_{num_traces}_avg_ge', avg_ge)
 
 
 def start():
     epochs = 75
-    train_size = 10000
+    train_size = 40000
     batch_size = 256
     hw = False
-    data_set = util.DataSet.KEYS
+    data_set = util.DataSet.KEYS_1B
     traces_p = '/media/rico/Data/TU/thesis/data/'
-    models_p = '/media/rico/Data/TU/thesis/runs/'
-    num_experiments = 1
+    models_p = '/media/rico/Data/TU/thesis/runs2/'
+    num_experiments = 10
 
     print(sys.argv)
     print(len(sys.argv))
@@ -146,13 +147,13 @@ def start():
     hw_string = "HW" if hw else "ID"
     models_p = f'{models_p}/{str(data_set)}/subkey_2/'
 
-    num_traces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100, 200]
-    # num_traces = [10000]
+    # num_traces = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 25, 50, 100, 200]
+    num_traces = [10000]
 
     models_p = models_p + f'{hw_string}_SF1_E{epochs}_BZ{batch_size}_LR1.00E-04/train{train_size}/'
     do(models_p, traces_p,
        num_traces,
-       num_experiments=num_experiments, runs=5, hw=hw, data_set=data_set)
+       num_experiments=num_experiments, runs=1, hw=hw, data_set=data_set)
 
 
 if __name__ == "__main__":
